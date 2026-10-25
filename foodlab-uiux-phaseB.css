@@ -1,0 +1,339 @@
+/* FoodLab UI/UX Phase B
+   Scope: compact mobile dashboard and production/expiry screen redesign.
+   This file changes presentation only; calculation/storage/auth/print logic remains in page scripts. */
+
+/* ---------------- Dashboard: mobile-first density and hierarchy ---------------- */
+@media (max-width: 760px) {
+  #homeScreen.fl-app-shell { min-height: 100dvh; }
+  #homeScreen .fl-sidebar {
+    padding: 10px 12px 6px;
+    gap: 8px;
+    border-bottom-color: var(--fl-line);
+  }
+  #homeScreen .fl-brand { gap: 9px; }
+  #homeScreen .fl-brand-mark { width: 38px; height: 38px; border-radius: 12px; }
+  #homeScreen .fl-brand-mark svg { width: 24px; height: 24px; }
+  #homeScreen .fl-brand-title { font-size: 17px; }
+  #homeScreen .fl-brand-sub { font-size: 7px; margin-top: 3px; }
+  #homeScreen .fl-nav { gap: 6px; padding: 1px 0 3px; scrollbar-width: none; }
+  #homeScreen .fl-nav::-webkit-scrollbar { display: none; }
+  #homeScreen .fl-nav-item { min-height: 36px; padding: 6px 9px; gap: 6px; font-size: 10px; border-radius: 11px !important; }
+  #homeScreen .fl-nav-item svg { width: 16px; height: 16px; }
+  #homeScreen .fl-main { padding: 12px 12px 30px; }
+  #homeScreen .fl-page-header { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 12px; }
+  #homeScreen .fl-eyebrow { font-size: 10px; margin-bottom: 2px; }
+  #homeScreen .fl-welcome h1 { font-size: clamp(20px, 5.2vw, 24px); line-height: 1.35; letter-spacing: -.025em; }
+  #homeScreen .fl-welcome p { font-size: 11px; line-height: 1.55; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  #homeScreen .fl-header-actions { width: 100%; gap: 7px; }
+  #homeScreen .fl-date-chip { flex: 1 1 auto; min-width: 0; min-height: 46px; padding: 7px 10px; gap: 8px; border-radius: 13px; }
+  #homeScreen .fl-date-chip svg { width: 19px; height: 19px; }
+  #homeScreen .fl-date-weekday { font-size: 10px; }
+  #homeScreen .fl-date-value { font-size: 9px; }
+  #homeScreen .fl-icon-action { width: 38px; height: 38px; flex: 0 0 38px; border-radius: 12px !important; }
+  #homeScreen .fl-icon-action svg { width: 18px; height: 18px; }
+  #homeScreen .announcement { margin: 0 0 10px !important; padding: 8px 11px !important; font-size: 11px; line-height: 1.6; }
+  #homeScreen .fl-stat-grid { gap: 8px; }
+  #homeScreen .fl-stat-card { min-height: 78px; padding: 10px; gap: 8px; border-radius: 15px; align-items: center; flex-direction: row; }
+  #homeScreen .fl-stat-icon { width: 35px; height: 35px; border-radius: 10px; }
+  #homeScreen .fl-stat-icon svg { width: 20px; height: 20px; }
+  #homeScreen .fl-stat-value { font-size: 20px; line-height: 1.15; }
+  #homeScreen .fl-stat-label { font-size: 9px; line-height: 1.45; margin-top: 3px; }
+  #homeScreen .fl-stat-note { font-size: 8px; margin-top: 3px; }
+  #homeScreen .fl-section-head { margin: 15px 0 9px; gap: 8px; }
+  #homeScreen .fl-section-title { font-size: 14px; gap: 7px; }
+  #homeScreen .fl-section-title svg { width: 17px; height: 17px; }
+  #homeScreen .fl-section-hint { font-size: 9px; }
+  #homeScreen .fl-tools-grid { gap: 8px; }
+  #homeScreen .fl-tool-card { padding: 12px 11px 11px !important; border-radius: 16px !important; }
+  #homeScreen .fl-tool-icon { width: 43px; height: 43px; margin-bottom: 8px; }
+  #homeScreen .fl-tool-icon svg { width: 23px; height: 23px; }
+  #homeScreen .fl-tool-title { font-size: 11px; line-height: 1.5; }
+  #homeScreen .fl-tool-desc { font-size: 9px; line-height: 1.65; min-height: 31px; margin-top: 3px; }
+  #homeScreen .fl-tool-foot { margin-top: 7px; }
+  #homeScreen .fl-tool-foot span { font-size: 9px; }
+  #homeScreen .fl-tool-arrow { width: 25px; height: 25px; }
+  #homeScreen .fl-lower-grid { margin-top: 12px; gap: 10px; }
+  #homeScreen .fl-panel { padding: 13px; border-radius: 16px; }
+  #homeScreen .fl-panel-header { margin-bottom: 9px; }
+  #homeScreen .fl-panel-title { font-size: 12px; }
+  #homeScreen .fl-panel-sub { font-size: 9px; }
+  #homeScreen .fl-chart-bars { min-height: 135px; }
+  #homeScreen .fl-chart-day { height: 124px; }
+  #homeScreen .fl-chart-track { height: 82px; }
+  #homeScreen .fl-backup-panel { margin-top: 12px; padding: 12px; border-radius: 16px; }
+  #homeScreen .fl-footer-note { font-size: 9px; padding-top: 12px; }
+}
+@media (max-width: 390px) {
+  #homeScreen .fl-stat-card { min-height: 74px; padding: 8px; gap: 7px; }
+  #homeScreen .fl-stat-icon { width: 31px; height: 31px; flex: 0 0 31px; }
+  #homeScreen .fl-stat-value { font-size: 19px; }
+  #homeScreen .fl-stat-label { font-size: 8px; }
+  #homeScreen .fl-stat-note { display: none; }
+  #homeScreen .fl-tool-desc { min-height: 36px; }
+}
+
+/* ---------------- Production & expiry: full component redesign ---------------- */
+body.foodlab-production-page {
+  --fl-amber-ink: #956307;
+  --border: var(--fl-line) !important;
+  --border-w: 1px solid var(--fl-line) !important;
+  --shadow: var(--fl-shadow) !important;
+  --shadow-sm: 0 4px 14px rgba(27, 86, 111, .06) !important;
+  display: block !important;
+  min-height: 100dvh;
+  padding: 14px 14px 34px !important;
+  align-items: initial !important;
+  justify-content: initial !important;
+  background: radial-gradient(ellipse at 72% -12%, rgba(68,199,213,.12), transparent 34%), var(--fl-bg) !important;
+  color: var(--fl-ink) !important;
+}
+body.foodlab-production-page .wrap {
+  width: min(100%, 1120px) !important;
+  max-width: 1120px !important;
+  margin: 0 auto !important;
+}
+body.foodlab-production-page .menu-btn {
+  top: 12px; right: 12px; width: 44px; height: 44px;
+  border: 1px solid var(--fl-line) !important;
+  border-radius: 14px !important;
+  background: var(--fl-surface) !important;
+  box-shadow: var(--fl-shadow) !important;
+  gap: 4px;
+}
+body.foodlab-production-page .menu-btn span { width: 19px; height: 2px; background: var(--fl-primary); }
+body.foodlab-production-page .header-row {
+  padding-right: 58px;
+  margin-bottom: 14px;
+  align-items: center;
+  gap: 12px;
+}
+body.foodlab-production-page .header-row > div:first-child { min-width: 0; flex: 1; }
+body.foodlab-production-page .page-title { font-size: clamp(20px, 2.4vw, 28px); line-height: 1.4; color: var(--fl-primary); margin-bottom: 3px; }
+body.foodlab-production-page .page-subtitle { max-width: 720px; font-size: 12px; line-height: 1.8; color: var(--fl-muted); }
+body.foodlab-production-page .status-pill {
+  background: var(--fl-green-soft) !important; color: var(--fl-green) !important;
+  border: 1px solid var(--fl-line) !important; box-shadow: none !important;
+  padding: 7px 11px; font-size: 11px; border-radius: 999px !important;
+}
+body.foodlab-production-page .status-pill .dot { width: 7px; height: 7px; background: var(--fl-green); }
+body.foodlab-production-page .controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(105px, .75fr) minmax(105px, .75fr);
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 15px;
+  background: var(--fl-surface) !important;
+  border: 1px solid var(--fl-line) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--fl-shadow) !important;
+}
+body.foodlab-production-page .field { min-width: 0; padding: 0; }
+body.foodlab-production-page .field + .field { border-right: 0; }
+body.foodlab-production-page .field label {
+  display: block; margin: 0 0 6px; color: var(--fl-muted) !important;
+  font-size: 11px; font-weight: 800; letter-spacing: 0; text-transform: none;
+}
+body.foodlab-production-page .field input,
+body.foodlab-production-page .field select {
+  width: 100%; min-width: 0; min-height: 47px; padding: 10px 12px !important;
+  border: 1px solid #cbdfe7 !important; border-radius: 12px !important;
+  background: var(--fl-surface-soft) !important; color: var(--fl-ink) !important;
+  font: 700 14px/1.5 Vazirmatn, Tahoma, sans-serif !important;
+  box-shadow: none !important;
+}
+body.foodlab-production-page .field select { padding-left: 28px !important; }
+body.foodlab-production-page #batchSeq { text-align: center; font-variant-numeric: tabular-nums; }
+body.foodlab-production-page #shelfError { margin: 0 0 8px; padding: 9px 12px !important; border-radius: 12px; background: var(--fl-red-soft); border: 1px solid #f3cbd0; }
+body.foodlab-production-page .production-note {
+  display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline;
+  margin: 0 0 12px; padding: 10px 12px !important;
+  border: 1px solid #f2dfac; border-radius: 13px;
+  background: var(--fl-amber-soft); color: #74520b !important;
+  font-size: 10px !important; line-height: 1.85 !important;
+}
+body.foodlab-production-page #priceSyncInfo { display: inline; font-weight: 700; color: inherit; overflow-wrap: anywhere; }
+body.foodlab-production-page .hero {
+  position: relative; overflow: hidden; margin-bottom: 12px; padding: 20px !important;
+  border: 1px solid var(--fl-line) !important; border-radius: 24px !important;
+  background: linear-gradient(135deg, var(--fl-surface), var(--fl-teal-soft)) !important;
+  box-shadow: var(--fl-shadow) !important; animation: none;
+}
+body.foodlab-production-page .hero-top {
+  display: grid; grid-template-columns: minmax(0, 1fr) 78px; align-items: start; gap: 18px;
+}
+body.foodlab-production-page .hero-top > div:first-child {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 0; min-width: 0;
+}
+body.foodlab-production-page .hero-eyebrow {
+  grid-column: 1 / -1; grid-row: 1; justify-self: start; align-self: start;
+  display: inline-flex; max-width: 100%; align-items: center; gap: 7px;
+  margin: 0 0 12px; padding: 6px 10px; border-radius: 999px;
+  background: var(--fl-teal-soft); color: var(--fl-teal-deep) !important;
+  font-size: 11px; letter-spacing: 0; overflow-wrap: anywhere;
+}
+body.foodlab-production-page .hero-top > div:first-child > :nth-child(2) { grid-column: 1; grid-row: 2; }
+body.foodlab-production-page .hero-top > div:first-child > #prodDate { grid-column: 1; grid-row: 3; }
+body.foodlab-production-page .hero-top > div:first-child > #prodDateSub { grid-column: 1; grid-row: 4; }
+body.foodlab-production-page .hero-top > div:first-child > :nth-child(6) { grid-column: 2; grid-row: 2; }
+body.foodlab-production-page .hero-top > div:first-child > #expDate { grid-column: 2; grid-row: 3; }
+body.foodlab-production-page .hero-top > div:first-child > #shelfNote { grid-column: 2; grid-row: 4; }
+body.foodlab-production-page .hero-top > div:first-child > :nth-child(5),
+body.foodlab-production-page .hero-top > div:first-child > :nth-child(9) { display: none !important; }
+body.foodlab-production-page .date-block-label { margin-bottom: 3px; color: var(--fl-muted) !important; font-size: 11px; font-weight: 800; letter-spacing: 0; }
+body.foodlab-production-page .date-block-label.amber { color: var(--fl-amber-ink) !important; }
+body.foodlab-production-page .hero-headline {
+  min-width: 0; margin: 0 0 4px; color: var(--fl-primary) !important;
+  font: 900 clamp(24px, 3vw, 38px)/1.35 Vazirmatn, Tahoma, sans-serif !important;
+  letter-spacing: -.025em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+body.foodlab-production-page .hero-headline.amber { color: var(--fl-amber-ink) !important; font-size: clamp(22px, 2.4vw, 30px) !important; }
+body.foodlab-production-page .hero-sub { color: var(--fl-muted) !important; font-size: 11px; line-height: 1.7; font-weight: 600; }
+body.foodlab-production-page .hero-price-row {
+  grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+  margin-top: 16px; flex-direction: row;
+}
+body.foodlab-production-page .hero-price-col {
+  min-width: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px;
+  padding: 12px 14px; border: 1px solid var(--fl-line) !important; border-radius: 14px !important;
+  background: var(--fl-surface) !important; box-shadow: none !important;
+}
+body.foodlab-production-page .hero-price-label { white-space: normal; color: var(--fl-muted) !important; font-size: 10px; }
+body.foodlab-production-page .hero-price-value { max-width: 100%; color: var(--fl-primary) !important; font-size: clamp(16px, 2vw, 22px); line-height: 1.5; white-space: normal; overflow-wrap: anywhere; }
+body.foodlab-production-page .hero-price-value.pending { font-size: 12px; }
+:root[data-theme="dark"] body.foodlab-production-page { --fl-amber-ink: #f2c55e; }
+body.foodlab-production-page .badge-col { gap: 6px; padding-top: 4px; }
+body.foodlab-production-page .badge-glow { width: 66px; height: 66px; }
+body.foodlab-production-page .badge-ring { border-color: #c5dbe1; }
+body.foodlab-production-page .badge-ring.r2 { border-color: #d5e7ec; }
+body.foodlab-production-page .badge-core { width: 42px; height: 42px; border: 1px solid #c9e8df; background: var(--fl-green-soft); color: #16875f; font-size: 22px; }
+body.foodlab-production-page .badge-label { color: var(--fl-muted); font-size: 9px; letter-spacing: 0; text-align: center; }
+body.foodlab-production-page .hero-batch {
+  display: inline-flex; align-items: center; max-width: 100%; margin-top: 14px; padding: 7px 11px;
+  border: 1px solid var(--fl-line) !important; border-radius: 11px !important;
+  background: var(--fl-surface) !important; color: var(--fl-ink) !important;
+  font: 700 11px/1.6 Vazirmatn, Tahoma, sans-serif; letter-spacing: 0; overflow-wrap: anywhere;
+}
+body.foodlab-production-page .compare-open-btn,
+body.foodlab-production-page #officialPrintOpen {
+  min-height: 44px; padding: 10px 13px; border: 1px solid var(--fl-line) !important;
+  border-radius: 12px !important; box-shadow: none !important;
+  background: var(--fl-surface) !important; color: var(--fl-primary) !important;
+  font: 700 12px/1.6 Vazirmatn, Tahoma, sans-serif; transition: background-color .16s ease, border-color .16s ease, transform .16s ease;
+}
+body.foodlab-production-page #compareOpenBtn { margin-top: 12px; }
+body.foodlab-production-page #officialPrintShift { min-height: 44px; flex: 0 0 110px !important; border: 1px solid var(--fl-line) !important; border-radius: 12px !important; background: var(--fl-surface) !important; color: var(--fl-ink) !important; padding: 8px 10px !important; font: 700 12px Vazirmatn,Tahoma,sans-serif !important; }
+body.foodlab-production-page .print-actions-row { display: flex; gap: 8px; align-items: stretch; margin-top: 9px !important; }
+body.foodlab-production-page .print-note { margin-top: 7px !important; color: var(--fl-muted) !important; font-size: 10px !important; line-height: 1.8 !important; }
+body.foodlab-production-page .hero-actions { display: grid; grid-template-columns: 46px minmax(0, 1fr) 46px; gap: 8px; margin-top: 14px; }
+body.foodlab-production-page .hero-actions button {
+  min-width: 0; min-height: 44px; padding: 9px 12px; border: 1px solid var(--fl-line) !important;
+  border-radius: 12px !important; box-shadow: none !important; background: var(--fl-surface) !important;
+  color: var(--fl-ink) !important; font: 700 13px Vazirmatn,Tahoma,sans-serif;
+}
+body.foodlab-production-page .hero-actions button#prodToday { background: var(--fl-teal) !important; border-color: var(--fl-teal) !important; color: #fff !important; }
+body.foodlab-production-page .activity-bar {
+  display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 12px 14px;
+  background: var(--fl-surface) !important; border: 1px solid var(--fl-line) !important;
+  border-radius: 14px !important; box-shadow: none !important;
+}
+body.foodlab-production-page .activity-icon { width: 26px; height: 26px; border: 0; background: var(--fl-green-soft); color: #16875f; }
+body.foodlab-production-page .activity-text { color: var(--fl-muted); font-size: 11px; line-height: 1.7; }
+body.foodlab-production-page .activity-text strong { color: var(--fl-ink); }
+body.foodlab-production-page .drawer {
+  background: var(--fl-surface) !important; border-left: 1px solid var(--fl-line) !important;
+  box-shadow: -10px 0 30px rgba(27,86,111,.12) !important; padding: 18px !important;
+}
+body.foodlab-production-page .drawer-note { border: 1px solid var(--fl-line) !important; background: var(--fl-surface-soft) !important; border-radius: 13px !important; color: var(--fl-muted) !important; }
+body.foodlab-production-page .drawer-close { border: 1px solid var(--fl-line) !important; background: var(--fl-surface-soft) !important; color: var(--fl-ink) !important; }
+body.foodlab-production-page .admin-open-btn { border: 1px solid var(--fl-line) !important; border-radius: 12px !important; background: var(--fl-teal) !important; color: white !important; box-shadow: none !important; }
+body.foodlab-production-page .modal-box { border: 1px solid var(--fl-line) !important; border-radius: 20px !important; box-shadow: var(--fl-shadow) !important; }
+body.foodlab-production-page .compare-overlay { background: #03080d !important; }
+
+@media (min-width: 761px) {
+  body.foodlab-production-page .hero-price-row { max-width: 760px; }
+  body.foodlab-production-page .hero-top { grid-template-columns: minmax(0, 1fr) 90px; }
+}
+@media (max-width: 600px) {
+  body.foodlab-production-page { padding: 12px 12px 28px !important; }
+  body.foodlab-production-page .header-row { padding-right: 56px; margin-bottom: 12px; align-items: flex-start; gap: 8px; }
+  body.foodlab-production-page .page-title { font-size: 20px; }
+  body.foodlab-production-page .page-subtitle { font-size: 11px; line-height: 1.7; }
+  body.foodlab-production-page .status-pill { padding: 6px 9px; font-size: 10px; }
+  body.foodlab-production-page .controls { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 11px; padding: 13px; border-radius: 17px !important; }
+  body.foodlab-production-page .controls .field:first-child { grid-column: 1 / -1; }
+  body.foodlab-production-page .field label { font-size: 10px; }
+  body.foodlab-production-page .field input,
+  body.foodlab-production-page .field select { min-height: 45px; font-size: 13px !important; }
+  body.foodlab-production-page .production-note { font-size: 9px !important; padding: 9px 10px !important; }
+  body.foodlab-production-page .hero { padding: 15px !important; border-radius: 20px !important; }
+  body.foodlab-production-page .hero-top { grid-template-columns: minmax(0, 1fr) 56px; gap: 9px; }
+  body.foodlab-production-page .hero-top > div:first-child { column-gap: 10px; }
+  body.foodlab-production-page .hero-eyebrow { font-size: 9px; padding: 5px 8px; margin-bottom: 9px; }
+  body.foodlab-production-page .date-block-label { font-size: 9px; }
+  body.foodlab-production-page .hero-headline { font-size: clamp(20px, 5.4vw, 27px) !important; line-height: 1.45 !important; letter-spacing: -.04em; }
+  body.foodlab-production-page .hero-headline.amber { font-size: clamp(19px, 4.9vw, 24px) !important; }
+  body.foodlab-production-page .hero-sub { font-size: 9px; line-height: 1.65; }
+  body.foodlab-production-page .badge-glow { width: 48px; height: 48px; }
+  body.foodlab-production-page .badge-ring.r2 { inset: 7px; }
+  body.foodlab-production-page .badge-core { width: 32px; height: 32px; font-size: 17px; }
+  body.foodlab-production-page .badge-label { font-size: 8px; }
+  body.foodlab-production-page .hero-price-row { gap: 7px; margin-top: 12px; }
+  body.foodlab-production-page .hero-price-col { padding: 9px; border-radius: 11px !important; gap: 4px; }
+  body.foodlab-production-page .hero-price-label { font-size: 8px; }
+  body.foodlab-production-page .hero-price-value { font-size: 14px; line-height: 1.6; }
+  body.foodlab-production-page .hero-price-value.pending { font-size: 10px; }
+  body.foodlab-production-page .hero-batch { font-size: 9px; padding: 6px 9px; margin-top: 10px; }
+  body.foodlab-production-page .compare-open-btn,
+  body.foodlab-production-page #officialPrintOpen { font-size: 10px; padding: 9px 10px; min-height: 42px; }
+  body.foodlab-production-page #officialPrintShift { flex-basis: 92px !important; min-height: 42px; font-size: 10px !important; }
+  body.foodlab-production-page .print-note { font-size: 9px !important; }
+  body.foodlab-production-page .hero-actions { grid-template-columns: 42px minmax(0,1fr) 42px; gap: 6px; margin-top: 11px; }
+  body.foodlab-production-page .hero-actions button { min-height: 42px; padding: 8px; font-size: 11px; }
+  body.foodlab-production-page .activity-bar { padding: 10px; }
+  body.foodlab-production-page .activity-text { font-size: 10px; }
+}
+@media (max-width: 360px) {
+  body.foodlab-production-page .hero-top { grid-template-columns: minmax(0,1fr) 46px; gap: 7px; }
+  body.foodlab-production-page .hero-top > div:first-child { column-gap: 7px; }
+  body.foodlab-production-page .hero-headline { font-size: 19px !important; }
+  body.foodlab-production-page .hero-headline.amber { font-size: 18px !important; }
+  body.foodlab-production-page .badge-glow { width: 42px; height: 42px; }
+  body.foodlab-production-page .badge-core { width: 28px; height: 28px; }
+  body.foodlab-production-page .hero-price-value { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.foodlab-production-page *, body.foodlab-production-page *::before, body.foodlab-production-page *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------------- Phase C: honest, actionable form status ---------------- */
+body.foodlab-production-page .badge-col[data-state="waiting"] .badge-core {
+  background: var(--fl-surface-soft); color: var(--fl-muted); border-color: var(--fl-line);
+}
+body.foodlab-production-page .badge-col[data-state="warning"] .badge-core,
+body.foodlab-production-page .badge-col[data-state="invalid"] .badge-core {
+  background: var(--fl-amber-soft); color: var(--fl-amber-ink); border-color: #f1d79a;
+}
+body.foodlab-production-page .badge-col[data-state="ready"] .badge-core {
+  background: var(--fl-green-soft); color: #16875f; border-color: #bde7d7;
+}
+body.foodlab-production-page .badge-col[data-state="waiting"] .badge-ring { border-color: #d3e0e5; }
+body.foodlab-production-page .badge-col[data-state="warning"] .badge-ring,
+body.foodlab-production-page .badge-col[data-state="invalid"] .badge-ring { border-color: #ead5a6; }
+body.foodlab-production-page .badge-col[data-state="ready"] .badge-ring { border-color: #bde7d7; }
+body.foodlab-production-page .activity-bar[data-state="waiting"] { background: var(--fl-surface-soft) !important; }
+body.foodlab-production-page .activity-bar[data-state="warning"],
+body.foodlab-production-page .activity-bar[data-state="invalid"] { background: var(--fl-amber-soft) !important; border-color: #f1d79a !important; }
+body.foodlab-production-page .activity-bar[data-state="ready"] { background: var(--fl-green-soft) !important; border-color: #bde7d7 !important; }
+body.foodlab-production-page .activity-bar[data-state="waiting"] .activity-icon { background: #e6f0f3; color: #537985; }
+body.foodlab-production-page .activity-bar[data-state="warning"] .activity-icon,
+body.foodlab-production-page .activity-bar[data-state="invalid"] .activity-icon { background: #f7dfaa; color: #805b12; }
+body.foodlab-production-page .activity-bar[data-state="ready"] .activity-icon { background: #ccefe2; color: #16875f; }
+body.foodlab-production-page .activity-text { overflow-wrap: anywhere; }
+body.foodlab-production-page .activity-text strong { font-weight: 700; }
+body.foodlab-production-page #batchSeq::placeholder { color: var(--fl-muted); opacity: .85; font-size: .88em; }
+@media (max-width: 600px) {
+  body.foodlab-production-page .badge-label { max-width: 66px; line-height: 1.5; }
+  body.foodlab-production-page .activity-bar { align-items: flex-start; }
+  body.foodlab-production-page .activity-icon { flex: 0 0 26px; }
+}

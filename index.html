@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#edf8fb">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>QC Toolbox | مرکز کنترل کیفیت صنایع غذایی</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://ubrydkyqmradyuiinjla.supabase.co" crossorigin>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efdf;
+    --bg-2:#eee7d2;
+    --ink:#18140d;
+    --paper:#fffdf6;
+    --muted:#756b57;
+
+    --green:#37b34a;
+    --green-deep:#1f7a34;
+    --green-soft:#e2f3e1;
+
+    --blue:#3d6ce0;
+    --blue-soft:#e2e9fb;
+
+    --yellow:#f2c33e;
+    --yellow-soft:#fbf1d6;
+
+    --teal:#2fbf9e;
+    --teal-soft:#dff5ee;
+
+    --coral:#e85a3a;
+
+    --line:var(--ink);
+    --glow:rgba(55,179,74,.16);
+    --border:3px solid var(--line);
+    --shadow:6px 6px 0 var(--line);
+    --shadow-sm:4px 4px 0 var(--line);
+  }
+  :root[data-theme="dark"]{
+    --bg:#171310;
+    --bg-2:#211b13;
+    --ink:#ece6d6;
+    --paper:#211b14;
+    --muted:#a99c85;
+    --line:#5f5646;
+    --glow:rgba(47,191,158,.07);
+
+    --green:#2c9143;
+    --green-deep:#8fd6a0;
+
+    --blue:#3557b0;
+
+    --yellow:#c99a2e;
+
+    --teal:#278a72;
+
+    --coral:#b3492f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 12% -6%, var(--glow), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+    font-family:'Vazirmatn',sans-serif;
+    font-weight:700;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    transition:background-color .2s ease, color .2s ease;
+  }
+
+  .shell{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    padding:20px 16px 36px;
+    position:relative;
+  }
+
+  /* ---------- header ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .icon-btn{
+    width:52px;height:52px;flex-shrink:0;
+    border:var(--border);
+    border-radius:16px;
+    background:var(--paper);
+    box-shadow:var(--shadow-sm);
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .icon-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line);}
+  .icon-group{display:flex;gap:10px;}
+  .logo-mark{
+    background:var(--green);
+    border-radius:14px;
+    padding:0;
+  }
+  .logo-mark svg{width:26px;height:26px;}
+
+  .brand-title{
+    text-align:left;
+    flex:1;
+    min-width:0;
+  }
+  .brand-title h1{
+    font-size:21px;font-weight:800;margin:0 0 2px;line-height:1.25;
+  }
+  .brand-title p{
+    font-size:12px;font-weight:600;color:var(--muted);margin:0;
+  }
+
+  .logo-badge{
+    width:56px;height:56px;flex-shrink:0;
+    border:var(--border);
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:var(--shadow-sm);
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;
+  }
+  .logo-badge svg{width:27px;height:27px;}
+
+  /* ---------- home cards ---------- */
+  .card{
+    position:relative;
+    display:block;
+    text-decoration:none;color:#18140d;
+    border:var(--border);
+    border-radius:26px;
+    padding:24px 22px;
+    margin-bottom:20px;
+    min-height:150px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+    overflow:hidden;
+  }
+  .card:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--line);}
+  .card.green{background:var(--green);}
+  .card.teal{background:var(--teal);}
+  .card.yellow{background:var(--yellow);}
+  .card.blue{background:var(--blue);color:#fff;}
+  .card.coral{background:var(--coral);color:#fff;}
+  .card.coral p{color:rgba(255,255,255,.9);}
+
+  .card-arrow{
+    width:44px;height:44px;
+    border:2.5px solid var(--ink);
+    border-radius:50%;
+    background:var(--paper);
+    color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-size:19px;font-weight:800;
+    margin-bottom:14px;
+  }
+  .card h2{
+    font-size:24px;font-weight:800;margin:0 0 8px;line-height:1.3;
+  }
+  .card p{
+    font-size:14px;font-weight:600;line-height:1.75;margin:0;
+    max-width:88%;
+  }
+  .card.blue p{color:rgba(255,255,255,.88);}
+  .card-tag{
+    position:absolute;top:20px;left:22px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:700;
+    color:var(--ink);
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:999px;
+    padding:4px 10px;
+  }
+
+  .section-label{
+    font-size:13px;font-weight:800;color:var(--muted);
+    margin:6px 4px 12px;
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+
+  .info-strip{
+    display:flex;gap:10px;margin-bottom:10px;
+  }
+  .info-pill{
+    flex:1;
+    background:var(--paper);
+    border:var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow-sm);
+    padding:12px 14px;
+    text-align:center;
+  }
+  .info-pill .n{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;}
+  .info-pill .l{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+
+  .today-strip{
+    display:flex;align-items:center;gap:12px;
+    background:var(--paper);
+    border:var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow-sm);
+    padding:11px 16px;
+    margin-bottom:22px;
+  }
+  .today-icon{
+    width:34px;height:34px;flex-shrink:0;border-radius:11px;
+    background:var(--teal-soft);
+    display:flex;align-items:center;justify-content:center;font-size:17px;
+  }
+  .today-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+  .today-weekday{font-size:11px;font-weight:700;color:var(--muted);}
+  .today-date{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:800;letter-spacing:.01em;}
+
+  footer.note{
+    text-align:center;font-size:12px;color:var(--muted);font-weight:600;
+    margin-top:18px;line-height:1.9;
+  }
+
+  .copyright{
+    text-align:center;
+    font-size:11.5px;font-weight:600;color:var(--muted);
+    margin-top:26px;
+    padding-top:16px;
+    border-top:2px dashed var(--line);
+    opacity:.8;
+    line-height:1.9;
+  }
+
+  .announcement{
+    display:none;
+    background:var(--yellow-soft);
+    border:var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow-sm);
+    padding:12px 14px;
+    margin-bottom:18px;
+    font-size:13px;font-weight:700;line-height:1.9;
+    color:#5c4b0a;
+  }
+
+  /* ---------- app view (iframe host) ---------- */
+  .app-view{
+    display:none;
+    position:fixed;inset:0;
+    background:var(--bg);
+    z-index:40;
+    flex-direction:column;
+  }
+  .app-view.open{display:flex;}
+  .app-view-bar{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 14px 12px;
+    background:var(--paper);
+    border-bottom:var(--border);
+    flex-shrink:0;
+  }
+  .back-btn{
+    width:42px;height:42px;flex-shrink:0;
+    border:var(--border);border-radius:13px;
+    background:var(--paper);box-shadow:var(--shadow-sm);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;font-weight:800;cursor:pointer;
+  }
+  .back-btn:active{transform:translate(2px,2px);box-shadow:none;}
+  .app-view-title{font-size:15px;font-weight:800;}
+  .app-view iframe{
+    flex:1;width:100%;border:none;background:var(--bg);
+  }
+
+  /* ---------- about modal ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(20,17,11,.55);
+    display:none;align-items:center;justify-content:center;
+    padding:20px;z-index:60;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--paper);
+    border:var(--border);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    padding:24px 22px;
+    max-width:380px;width:100%;
+  }
+  .modal-box h3{font-size:18px;font-weight:800;margin:0 0 10px;}
+  .modal-box p{font-size:13.5px;line-height:2;color:var(--muted);font-weight:600;margin:0 0 18px;}
+  .modal-close{
+    width:100%;padding:13px;border:var(--border);border-radius:14px;
+    background:var(--green);color:#fff;font-family:inherit;font-weight:800;font-size:14.5px;
+    cursor:pointer;box-shadow:var(--shadow-sm);
+  }
+  .modal-close:active{transform:translate(2px,2px);box-shadow:none;}
+  .modal-secondary{
+    background:var(--paper);color:var(--ink);margin-top:10px;
+  }
+</style>
+<link rel="stylesheet" href="foodlab-theme.css">
+<link rel="stylesheet" href="foodlab-design-system.css">
+<link rel="stylesheet" href="foodlab-uiux-phaseB.css">
+<link rel="stylesheet" href="foodlab-polish-phaseH.css">
+
+</head>
+<body>
+<div class="fl-app-shell" id="homeScreen">
+  <aside class="fl-sidebar" aria-label="ناوبری اصلی">
+    <div class="fl-brand">
+      <div class="fl-brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.2 9.1A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.9L14 9V3"/><path d="M7.5 15h9M10 17.5h.01M14 18.5h.01"/></svg>
+      </div>
+      <div class="fl-brand-copy"><div class="fl-brand-title">QC Toolbox</div><div class="fl-brand-sub">FOOD INDUSTRY QUALITY CONTROL</div></div>
+    </div>
+
+    <nav class="fl-nav" aria-label="ابزارهای QC">
+      <div class="fl-nav-caption">فضای کاری</div>
+      <button type="button" class="fl-nav-item active" data-app="home" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></svg><span>داشبورد</span>
+      </button>
+      <button type="button" class="fl-nav-item" data-app="order">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h4"/></svg><span>آمار صادرات</span>
+      </button>
+      <button type="button" class="fl-nav-item" data-app="qc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h6"/></svg><span>تولید و انقضا</span>
+      </button>
+      <button type="button" class="fl-nav-item" data-app="lab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.2 9.1A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.9L14 9V3"/><path d="M7.5 15h9"/></svg><span>آزمایشگاه محاسبات</span>
+      </button>
+      <button type="button" class="fl-nav-item" data-app="checklist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10l1.5 1.5L12 9M14 11h2M8 16l1.5 1.5L12 15M14 17h2"/></svg><span>چک‌لیست‌ها</span>
+      </button>
+      <div class="fl-nav-separator"></div>
+      <div class="fl-nav-caption">مدیریت داده</div>
+      <a class="fl-nav-item" href="backup-manager.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>پشتیبان‌گیری</span>
+      </a>
+      <a class="fl-nav-item" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.2 1-1.5 2.6-1.5-.5a8 8 0 0 1-1.7 1l-.3 1.6h-3l-.3-1.6a8 8 0 0 1-1.7-1l-1.5.5-1.5-2.6 1.2-1a7 7 0 0 1 0-2l-1.2-1 1.5-2.6 1.5.5a8 8 0 0 1 1.7-1l.3-1.6h3l.3 1.6a8 8 0 0 1 1.7 1l1.5-.5 1.5 2.6-1.2 1a7 7 0 0 1 0 2Z"/></svg><span>مدیریت و قیمت‌ها</span>
+      </a>
+    </nav>
+
+    <div class="fl-sidebar-footer">
+      <div class="fl-user-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-3.5 3.1-5.2 7-5.2s6.3 1.7 7 5.2"/></svg></div>
+      <div class="fl-user-copy"><div class="fl-user-title">واحد کنترل کیفیت</div><div class="fl-user-sub">Food Industry · QC</div></div>
+    </div>
+  </aside>
+
+  <main class="fl-main">
+    <header class="fl-page-header">
+      <div class="fl-welcome">
+        <div class="fl-eyebrow">مرکز کنترل کیفیت صنایع غذایی</div>
+        <h1>سلام، به QC Toolbox خوش آمدید</h1>
+        <p>ابزارهای عملیاتی و سوابق کنترل کیفیت در یک فضای کاری یکپارچه</p>
+      </div>
+      <div class="fl-header-actions">
+        <div class="fl-date-chip" aria-label="تاریخ امروز">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>
+          <div><div class="fl-date-weekday" id="todayWeekday">—</div><div class="fl-date-value" id="todayDate">—</div></div>
+        </div>
+        <button type="button" class="fl-icon-action" id="aboutBtn" title="درباره برنامه" aria-label="درباره برنامه"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.3 2.3 0 1 1 3.8 1.7c-1.1.9-1.6 1.2-1.6 2.8M12 17h.01"/></svg></button>
+        <button type="button" class="fl-icon-action" id="themeToggleBtn" title="تغییر حالت روشن و تیره" aria-label="تغییر حالت روشن و تیره"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/></svg></button>
+      </div>
+    </header>
+
+    <div class="announcement" id="cloudAnnouncement" role="status" aria-live="polite"></div>
+
+    <section class="fl-stat-grid" aria-label="آمار ذخیره‌شده">
+      <article class="fl-stat-card"><div class="fl-stat-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.2 9.1A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.9L14 9V3"/><path d="M7.5 15h9"/></svg></div><div class="fl-stat-copy"><div class="fl-stat-value" id="statTools">۴</div><div class="fl-stat-label">ابزار فعال</div><div class="fl-stat-note">در دسترس</div></div></article>
+      <article class="fl-stat-card"><div class="fl-stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5M4 19h17M8 15l3-4 3 2 5-7"/></svg></div><div class="fl-stat-copy"><div class="fl-stat-value" id="statLabCount">۰</div><div class="fl-stat-label">نتایج آزمایش ذخیره‌شده</div><div class="fl-stat-note">حافظه همین مرورگر</div></div></article>
+      <article class="fl-stat-card"><div class="fl-stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h7M7 16h4"/></svg></div><div class="fl-stat-copy"><div class="fl-stat-value" id="statOrderCount">۰</div><div class="fl-stat-label">گزارش‌های صادرات</div><div class="fl-stat-note">ذخیره‌شده</div></div></article>
+      <article class="fl-stat-card"><div class="fl-stat-icon violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10l1.5 1.5L12 9M14 11h2M8 16l1.5 1.5L12 15M14 17h2"/></svg></div><div class="fl-stat-copy"><div class="fl-stat-value" id="statInspectionCount">۰</div><div class="fl-stat-label">سوابق بازرسی</div><div class="fl-stat-note">ذخیره‌شده</div></div></article>
+    </section>
+
+    <div class="fl-section-head"><h2 class="fl-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>ابزارهای اصلی</h2><span class="fl-section-hint">برای ورود، ابزار موردنظر را انتخاب کن</span></div>
+    <section class="fl-tools-grid" aria-label="ابزارهای اصلی">
+      <button type="button" class="fl-tool-card card" data-app="lab"><span class="fl-tool-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.2 9.1A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.9L14 9V3"/><path d="M7.5 15h9"/></svg></span><span class="fl-tool-title">محاسبات آزمایشگاهی</span><span class="fl-tool-desc">محاسبه خلوص و نتایج آزمون‌های تعریف‌شده در برنامه</span><span class="fl-tool-foot"><span>ورود به آزمایشگاه</span><span class="fl-tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></button>
+      <button type="button" class="fl-tool-card card" data-app="qc"><span class="fl-tool-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h6"/></svg></span><span class="fl-tool-title">تاریخ تولید و انقضا</span><span class="fl-tool-desc">محاسبه تاریخ‌ها، مدیریت قیمت‌ها و گزارش‌های روزانه</span><span class="fl-tool-foot"><span>ورود به تولید و انقضا</span><span class="fl-tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></button>
+      <button type="button" class="fl-tool-card card" data-app="checklist"><span class="fl-tool-icon violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10l1.5 1.5L12 9M14 11h2M8 16l1.5 1.5L12 15M14 17h2"/></svg></span><span class="fl-tool-title">چک‌لیست‌ها و بازرسی</span><span class="fl-tool-desc">مدیریت چک‌لیست‌های روزانه، قالب‌ها و سوابق ثبت‌شده</span><span class="fl-tool-foot"><span>ورود به چک‌لیست‌ها</span><span class="fl-tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></button>
+      <button type="button" class="fl-tool-card card" data-app="order"><span class="fl-tool-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></span><span class="fl-tool-title">آمار صادرات و سفارش‌ها</span><span class="fl-tool-desc">محاسبه بسته‌بندی و پالت و آماده‌سازی فرم رسمی چاپ</span><span class="fl-tool-foot"><span>ورود به سفارش‌ها</span><span class="fl-tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></button>
+    </section>
+
+    <section class="fl-lower-grid" aria-label="سوابق و روند">
+      <article class="fl-panel">
+        <div class="fl-panel-header"><div><h2 class="fl-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>آخرین فعالیت‌های ذخیره‌شده</h2><div class="fl-panel-sub">بر اساس سوابق محلی موجود در این مرورگر</div></div></div>
+        <div class="fl-activity-list" id="recentActivity" aria-live="polite"><div class="fl-empty"><strong>در حال بررسی سوابق…</strong></div></div>
+      </article>
+      <article class="fl-panel">
+        <div class="fl-panel-header"><div><h2 class="fl-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 2 5-7"/></svg>روند ثبت نتایج آزمایش</h2><div class="fl-panel-sub">تعداد نتایج ذخیره‌شده در ۷ روز اخیر</div></div></div>
+        <div class="fl-chart-bars" id="labTrendChart" aria-label="نمودار تعداد نتایج ذخیره‌شده در هفت روز اخیر"></div>
+        <div class="fl-chart-legend"><span class="fl-legend-dot"></span><span>نتایج آزمایش ثبت‌شده (داده واقعی محلی)</span></div>
+      </article>
+    </section>
+
+    <section class="fl-backup-panel" aria-label="پشتیبان‌گیری از داده‌ها">
+      <div class="fl-backup-copy"><div class="fl-backup-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><div><div class="fl-backup-title">از سوابق کاری خود محافظت کن</div><div class="fl-backup-desc">سوابق سفارش‌ها، آزمایش‌ها و چک‌لیست‌ها در حافظه همین مرورگر ذخیره می‌شوند. پشتیبان‌گیری منظم توصیه می‌شود.</div></div></div>
+      <div class="fl-backup-actions"><button type="button" id="backupExport">دریافت پشتیبان</button><button type="button" id="backupImport" class="ghost">بازیابی پشتیبان</button><input id="backupFile" type="file" accept=".json,application/json" hidden></div>
+    </section>
+    <div class="fl-footer-note">QC Toolbox · Food Industry Quality Control · <a href="dashboard.html">مدیریت و تنظیم قیمت‌ها</a><br>این داشبورد آمار را از سوابق محلی موجود می‌خواند؛ نبودن سابقه به معنی صفر بودن فعالیت ثبت‌شده در این مرورگر است.</div>
+  </main>
+</div>
+
+<div class="app-view" id="view-order"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">آمار صادرات و سفارش‌ها</div></div><iframe id="frame-order" title="آمار صادرات و سفارش‌ها" loading="lazy"></iframe></div>
+<div class="app-view" id="view-qc"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">تولید و انقضا</div></div><iframe id="frame-qc" title="تولید و انقضا" loading="lazy"></iframe></div>
+<div class="app-view" id="view-lab"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">آزمایشگاه محاسبات</div></div><iframe id="frame-lab" title="آزمایشگاه محاسبات" loading="lazy"></iframe></div>
+<div class="app-view" id="view-checklist"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">چک‌لیست‌ها و بازرسی</div></div><iframe id="frame-checklist" title="چک‌لیست‌ها و بازرسی" loading="lazy"></iframe></div>
+
+<div class="modal-overlay" id="aboutOverlay" role="dialog" aria-modal="true" aria-labelledby="aboutTitle"><div class="modal-box"><h3 id="aboutTitle">QC Toolbox · کنترل کیفیت صنایع غذایی</h3><p>این برنامه ابزارهای آمار صادرات، تولید و انقضا، محاسبات آزمایشگاهی و چک‌لیست‌های کنترل کیفیت را در یک فضای کاری جمع کرده است. سوابق برخی ابزارها روی همین مرورگر ذخیره می‌شوند؛ پیش از پاک‌کردن داده‌های مرورگر از آن‌ها پشتیبان بگیر.</p><button class="modal-close" id="aboutClose" type="button">متوجه شدم</button></div></div>
+<div class="modal-overlay" id="installOverlay" role="dialog" aria-modal="true" aria-labelledby="installTitle"><div class="modal-box"><h3 id="installTitle">نصب QC Toolbox روی دستگاه</h3><p>در صورت پشتیبانی مرورگر می‌توانی برنامه را روی صفحه اصلی گوشی نصب کنی و مانند یک اپ مستقل بازش کنی.</p><button class="modal-close" id="installBtn" type="button">نصب برنامه</button><button class="modal-close modal-secondary" id="installLater" type="button">فعلاً نه</button></div></div>
+
+<script>
+  /* ---------- haptic feedback on every tap ---------- */
+  document.addEventListener('click', (event) => {
+    if (navigator.vibrate && event.isTrusted && navigator.maxTouchPoints > 0) navigator.vibrate(6);
+  }, { capture: true });
+
+  /* ---------- today's exact Jalali date in the info strip ---------- */
+  (function renderTodayDate(){
+    const dateEl = document.getElementById('todayDate');
+    const weekdayEl = document.getElementById('todayWeekday');
+    if (!dateEl) return;
+    const now = new Date();
+    try {
+      dateEl.textContent = now.toLocaleDateString('fa-IR-u-ca-persian', { day: 'numeric', month: 'long', year: 'numeric' });
+      if (weekdayEl) weekdayEl.textContent = now.toLocaleDateString('fa-IR-u-ca-persian', { weekday: 'long' });
+    } catch (e) {
+      dateEl.textContent = now.toLocaleDateString('fa-IR');
+      if (weekdayEl) weekdayEl.style.display = 'none';
+    }
+  })();
+
+  /* ---------- data-backed dashboard: never fabricate history or QC statuses ---------- */
+  const DASH_KEYS = {
+    lab: 'qc-lab-history-v2',
+    orders: 'qc-export-history-v2',
+    inspections: 'qc-inspection-records-v1',
+    templates: 'qc-checklist-templates'
+  };
+  const LAB_LABELS = { 'naoh-purity': 'خلوص سود غلیظ (NaOH)', 'hno3-purity': 'خلوص اسید نیتریک (HNO₃)' };
+  function readLocalJSON(key, fallback) {
+    try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (_) { return fallback; }
+  }
+  function asValidDate(value) {
+    const d = value instanceof Date ? value : new Date(value);
+    return Number.isFinite(d.getTime()) ? d : null;
+  }
+  function faNum(value) { return Number(value || 0).toLocaleString('fa-IR'); }
+  function safeText(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function fmtDashboardDate(date) {
+    if (!date) return 'تاریخ نامشخص';
+    try { return date.toLocaleString('fa-IR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+    catch (_) { return date.toLocaleDateString(); }
+  }
+  function getDashboardData() {
+    const lab = readLocalJSON(DASH_KEYS.lab, {});
+    const labRecords = [];
+    if (lab && typeof lab === 'object' && !Array.isArray(lab)) {
+      Object.entries(lab).forEach(([testId, entries]) => {
+        if (!Array.isArray(entries)) return;
+        entries.forEach(entry => {
+          const date = asValidDate(entry && entry.ts);
+          if (!entry || !date || !entry.result || !Number.isFinite(Number(entry.result.primary))) return;
+          labRecords.push({ type: 'lab', date, title: LAB_LABELS[testId] || 'نتیجه آزمایش', detail: [entry.sampleId ? 'نمونه: ' + entry.sampleId : '', entry.analyst ? 'آزمایشگر: ' + entry.analyst : '', 'نتیجه: ' + Number(entry.result.primary).toLocaleString('fa-IR', {maximumFractionDigits: 2})].filter(Boolean).join(' · ') });
+        });
+      });
+    }
+    const orders = readLocalJSON(DASH_KEYS.orders, []);
+    const orderRecords = Array.isArray(orders) ? orders.filter(x => x && Array.isArray(x.groupList)).map(entry => {
+      const date = asValidDate(entry.timestamp);
+      if (!date) return null;
+      const products = entry.groupList.length;
+      const total = entry.groupList.reduce((sum, g) => sum + (Number(g && g.qty) || 0), 0);
+      return { type: 'order', date, title: products === 1 ? (entry.groupList[0].product || 'گزارش صادرات') : 'گزارش صادرات چندمحصولی', detail: faNum(products) + ' گروه محصول · ' + faNum(total) + ' بسته' };
+    }).filter(Boolean) : [];
+    const inspections = readLocalJSON(DASH_KEYS.inspections, []);
+    const inspectionRecords = Array.isArray(inspections) ? inspections.filter(x => x).map(entry => {
+      const date = asValidDate(entry.timestamp);
+      if (!date) return null;
+      return { type: 'inspection', date, title: entry.templateName || 'بازرسی ثبت‌شده', detail: [entry.batch ? 'بچ: ' + entry.batch : '', entry.inspector ? 'بازرس: ' + entry.inspector : ''].filter(Boolean).join(' · ') || 'سابقه بازرسی' };
+    }).filter(Boolean) : [];
+    return { labRecords, orderRecords, inspectionRecords, labCount: labRecords.length, orderCount: orderRecords.length, inspectionCount: inspectionRecords.length };
+  }
+  function renderDashboardStats(data) {
+    const pairs = [['statTools', 4], ['statLabCount', data.labCount], ['statOrderCount', data.orderCount], ['statInspectionCount', data.inspectionCount]];
+    pairs.forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.textContent = faNum(value); });
+  }
+  function renderRecentActivity(data) {
+    const host = document.getElementById('recentActivity');
+    if (!host) return;
+    const records = [...data.labRecords, ...data.orderRecords, ...data.inspectionRecords].sort((a,b) => b.date - a.date).slice(0, 6);
+    if (!records.length) {
+      host.innerHTML = '<div class="fl-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 9h8M8 13h5"/></svg><strong>هنوز سابقه‌ای ثبت نشده</strong><span>پس از ذخیره نتیجه آزمایش، سفارش یا بازرسی، فعالیت‌های اخیر اینجا نمایش داده می‌شوند.</span></div>';
+      return;
+    }
+    const iconMap = {
+      lab: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.2 9.1A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.9L14 9V3"/><path d="M7.5 15h9"/></svg>',
+      order: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg>',
+      inspection: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10l1.5 1.5L12 9M14 11h2"/></svg>'
+    };
+    host.innerHTML = records.map(record => '<div class="fl-activity-item"><div class="fl-activity-icon">' + iconMap[record.type] + '</div><div class="fl-activity-copy"><div class="fl-activity-title">' + safeText(record.title) + '</div><div class="fl-activity-detail">' + safeText(record.detail || '—') + '</div></div><div class="fl-activity-time">' + safeText(fmtDashboardDate(record.date)) + '</div></div>').join('');
+  }
+  function renderLabTrend(records) {
+    const host = document.getElementById('labTrendChart');
+    if (!host) return;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const days = [];
+    for (let offset = 6; offset >= 0; offset--) {
+      const date = new Date(today); date.setDate(today.getDate() - offset);
+      const next = new Date(date); next.setDate(date.getDate() + 1);
+      const count = records.filter(item => item.date >= date && item.date < next).length;
+      days.push({ date, count });
+    }
+    const max = Math.max(1, ...days.map(day => day.count));
+    host.innerHTML = days.map(day => {
+      const height = day.count ? Math.max(5, Math.round(day.count / max * 100)) : 0;
+      const label = day.date.toLocaleDateString('fa-IR', { day: 'numeric', month: 'short' });
+      const count = faNum(day.count);
+      return '<div class="fl-chart-day" title="' + safeText(label + ': ' + count + ' نتیجه') + '"><span class="fl-chart-count">' + count + '</span><div class="fl-chart-track"><div class="fl-chart-bar" style="height:' + height + '%"></div></div><span class="fl-chart-label">' + safeText(label) + '</span></div>';
+    }).join('');
+  }
+  function refreshDashboard() {
+    const data = getDashboardData();
+    renderDashboardStats(data);
+    renderRecentActivity(data);
+    renderLabTrend(data.labRecords);
+  }
+  refreshDashboard();
+  window.addEventListener('storage', event => { if (!event.key || Object.values(DASH_KEYS).includes(event.key)) refreshDashboard(); });
+  window.addEventListener('focus', refreshDashboard);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDashboard(); });
+
+  /* ---------- dark mode (persisted + synced into tool iframes) ---------- */
+  const THEME_KEY = 'qc-theme';
+  function applyTheme(mode){
+    document.documentElement.setAttribute('data-theme', mode);
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) { const icon = document.getElementById('themeIcon'); if (icon) icon.innerHTML = mode === 'dark' ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>' : '<path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/>'; btn.setAttribute('aria-label', mode === 'dark' ? 'فعال‌کردن حالت روشن' : 'فعال‌کردن حالت تیره'); }
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', mode === 'dark' ? '#102631' : '#f1f8fb');
+  }
+  function broadcastTheme(mode){
+    ['frame-order', 'frame-qc', 'frame-lab', 'frame-checklist'].forEach(id => {
+      const f = document.getElementById(id);
+      if (f && f.contentWindow) f.contentWindow.postMessage({ type: 'qc-theme', mode }, location.origin === 'null' ? '*' : location.origin);
+    });
+  }
+  function setTheme(mode){
+    localStorage.setItem(THEME_KEY, mode);
+    applyTheme(mode);
+    broadcastTheme(mode);
+  }
+  let currentTheme = localStorage.getItem(THEME_KEY) || 'light';
+  applyTheme(currentTheme);
+  document.getElementById('themeToggleBtn').addEventListener('click', () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(currentTheme);
+  });
+
+  const FRAME_SRC = { order: 'order-merge-v19.html', qc: 'qc-dairy-v2.html', lab: 'lab-calc-v1.html', checklist: 'checklist-hub.html' };
+  const loaded = { order: false, qc: false, lab: false, checklist: false };
+
+  function goTo(key){
+    document.getElementById('homeScreen').style.display = key === 'home' ? '' : 'none';
+    document.querySelectorAll('.fl-nav-item[data-app]').forEach(item => { const active = item.dataset.app === key; item.classList.toggle('active', active); if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current'); });
+    if (key === 'home') refreshDashboard();
+    document.getElementById('view-order').classList.toggle('open', key === 'order');
+    document.getElementById('view-qc').classList.toggle('open', key === 'qc');
+    document.getElementById('view-lab').classList.toggle('open', key === 'lab');
+    document.getElementById('view-checklist').classList.toggle('open', key === 'checklist');
+
+    if(key === 'order' && !loaded.order){
+      document.getElementById('frame-order').src = FRAME_SRC.order;
+      loaded.order = true;
+    }
+    if(key === 'qc' && !loaded.qc){
+      document.getElementById('frame-qc').src = FRAME_SRC.qc;
+      loaded.qc = true;
+    }
+    if(key === 'lab' && !loaded.lab){
+      document.getElementById('frame-lab').src = FRAME_SRC.lab;
+      loaded.lab = true;
+    }
+    if(key === 'checklist' && !loaded.checklist){
+      document.getElementById('frame-checklist').src = FRAME_SRC.checklist;
+      loaded.checklist = true;
+    }
+    // a freshly-loaded iframe boots in light mode until it reads localStorage;
+    // nudge it once it's ready in case the user is already in dark mode.
+    if (currentTheme === 'dark') {
+      setTimeout(() => broadcastTheme('dark'), 250);
+    }
+    window.scrollTo(0,0);
+  }
+
+  document.querySelectorAll('[data-nav]').forEach(el => {
+    el.addEventListener('click', () => goTo(el.dataset.nav));
+  });
+  document.querySelectorAll('[data-app]').forEach(el => {
+    el.addEventListener('click', () => goTo(el.dataset.app));
+    if (el.tagName !== 'BUTTON') el.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goTo(el.dataset.app); } });
+  });
+
+  const aboutBtn = document.getElementById('aboutBtn');
+  const aboutOverlay = document.getElementById('aboutOverlay');
+  aboutBtn.addEventListener('click', () => aboutOverlay.classList.add('open'));
+  document.getElementById('aboutClose').addEventListener('click', () => aboutOverlay.classList.remove('open'));
+  aboutOverlay.addEventListener('click', e => { if(e.target === aboutOverlay) aboutOverlay.classList.remove('open'); });
+
+  goTo('home');
+
+  /* ---------- unified backup manager ---------- */
+  document.getElementById('backupExport').addEventListener('click',()=>location.href='backup-manager.html');
+  document.getElementById('backupImport').addEventListener('click',()=>location.href='backup-manager.html');
+
+  /* ---------- announcement banner (synced from admin dashboard) ---------- */
+  const SUPABASE_URL = 'https://ubrydkyqmradyuiinjla.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVicnlka3lxbXJhZHl1aWluamxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMzcyNTgsImV4cCI6MjEwMTgxMzI1OH0.R7LF4uH7HGjqtkQEWs6zAdD2WgI9d2HRwMWXd1Xo2hc';
+  const SUPABASE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+  let supabaseSdkPromise = null;
+  function loadSupabaseSdk() {
+    if (window.supabase?.createClient) return Promise.resolve(window.supabase);
+    if (!supabaseSdkPromise) {
+      supabaseSdkPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = SUPABASE_SDK_URL;
+        script.async = true;
+        script.onload = () => window.supabase?.createClient ? resolve(window.supabase) : reject(new Error('Supabase SDK unavailable'));
+        script.onerror = () => reject(new Error('Supabase SDK failed to load'));
+        document.head.appendChild(script);
+      }).catch(error => {
+        supabaseSdkPromise = null;
+        throw error;
+      });
+    }
+    return supabaseSdkPromise;
+  }
+  (async function loadAnnouncement(){
+    try {
+      const sdk = await loadSupabaseSdk();
+      const supa = sdk.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const { data, error } = await supa.from('qc_settings').select('value').eq('key', 'announcement').single();
+      if(error || !data || !data.value) return;
+      const { text, active } = data.value;
+      if(active && text){
+        const el = document.getElementById('cloudAnnouncement');
+        el.textContent = '📌 ' + text;
+        el.style.display = 'block';
+      }
+    } catch(e){ /* offline — just skip the banner */ }
+  })();
+
+  /* ---------- PWA install prompt ---------- */
+  let deferredPrompt = null;
+  const installOverlay = document.getElementById('installOverlay');
+  const installBtn = document.getElementById('installBtn');
+  const installLater = document.getElementById('installLater');
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const dismissed = localStorage.getItem('qc-install-dismissed');
+    if(!dismissed && !isStandalone){
+      installOverlay.classList.add('open');
+    }
+  });
+
+  installBtn.addEventListener('click', async () => {
+    installOverlay.classList.remove('open');
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+    }
+  });
+  installLater.addEventListener('click', () => {
+    installOverlay.classList.remove('open');
+    localStorage.setItem('qc-install-dismissed', '1');
+  });
+  window.addEventListener('appinstalled', () => {
+    localStorage.setItem('qc-install-dismissed', '1');
+  });
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>

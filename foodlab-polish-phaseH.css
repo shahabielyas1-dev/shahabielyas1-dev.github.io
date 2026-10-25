@@ -1,0 +1,212 @@
+/* QC Toolbox / FoodLab — Phase H final visual polish.
+   Presentation and accessibility only. No calculation, storage, auth, or print-template logic. */
+
+@media screen {
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-bottom: 120px; }
+  body:not(.print-preview-page) { text-rendering: optimizeLegibility; }
+  :where(button, a, input, select, textarea, [role="button"]) { touch-action: manipulation; }
+  :where(button, a, [role="button"], input, select, textarea):focus-visible {
+    outline: 3px solid rgba(22, 183, 196, .62) !important;
+    outline-offset: 3px !important;
+  }
+  :where(button, input, select, textarea)[disabled], button:disabled {
+    cursor: not-allowed !important;
+    opacity: .62;
+    filter: saturate(.72);
+  }
+  :where(input, select, textarea)[aria-invalid="true"] {
+    border-color: #d75d6c !important;
+    box-shadow: 0 0 0 3px rgba(215, 93, 108, .10) !important;
+  }
+  ::selection { background: #b9edf0; color: #123c4a; }
+
+  /* Main workspace: calmer rhythm and readable small-screen labels. */
+  #homeScreen.fl-app-shell .fl-stat-card,
+  #homeScreen.fl-app-shell .fl-tool-card,
+  #homeScreen.fl-app-shell .fl-panel {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  #homeScreen.fl-app-shell .fl-stat-card { border-radius: 19px; }
+  #homeScreen.fl-app-shell .fl-tool-card { min-height: 100%; }
+  #homeScreen.fl-app-shell .fl-tool-title { line-height: 1.65; }
+  #homeScreen.fl-app-shell .fl-tool-desc { line-height: 1.8; }
+  #homeScreen.fl-app-shell .fl-panel-title { line-height: 1.6; }
+  #homeScreen.fl-app-shell .fl-activity-time { font-variant-numeric: tabular-nums; }
+
+  /* Admin login and admin workspace use the same soft FoodLab surfaces. */
+  #gate {
+    background: radial-gradient(ellipse at 50% 0%, rgba(22,183,196,.14), transparent 52%), var(--fl-bg) !important;
+  }
+  #gate .gate-box {
+    width: min(100%, 400px);
+    padding: clamp(22px, 5vw, 32px) !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: 24px !important;
+    background: var(--fl-surface) !important;
+    box-shadow: var(--fl-shadow) !important;
+  }
+  #gate .gate-box .ic {
+    width: 56px; height: 56px;
+    border: 0 !important;
+    border-radius: 17px !important;
+    background: var(--fl-teal-soft) !important;
+    color: var(--fl-teal-deep) !important;
+  }
+  #gate .gate-box h2 { color: var(--fl-primary); font-size: 21px; line-height: 1.5; }
+  #gate .gate-box p { font-size: 13px; line-height: 1.9; }
+  #gate .gate-box input { min-height: 48px; border: 1px solid var(--fl-line) !important; border-radius: 13px !important; background: var(--fl-surface-soft) !important; }
+  #gate .gate-box button { min-height: 48px; border: 1px solid var(--fl-teal) !important; border-radius: 13px !important; background: var(--fl-teal) !important; box-shadow: none !important; }
+  #dash.shell { width: min(100%, 900px); max-width: 900px !important; padding-bottom: calc(44px + env(safe-area-inset-bottom, 0px)) !important; }
+  #dash .topbar { align-items: center; gap: 14px; padding: 16px 18px; }
+  #dash .topbar h1 { font-size: clamp(20px, 3vw, 25px); line-height: 1.45; }
+  #dash .topbar p { line-height: 1.8; }
+  #dash .panel { padding: clamp(16px, 2.5vw, 24px) !important; }
+  #dash .panel h3 { font-size: 16px; line-height: 1.6; }
+  #dash .panel .sub { font-size: 12px; line-height: 1.8; }
+  #dash .price-fields { gap: 12px; }
+  #dash .price-fields input { min-height: 46px; border: 1px solid var(--fl-line) !important; border-radius: 11px !important; }
+  #dash .save-btn { min-height: 48px; border: 1px solid var(--fl-teal) !important; border-radius: 13px !important; background: var(--fl-teal) !important; box-shadow: none !important; }
+  #dash .toast { border: 1px solid rgba(255,255,255,.3) !important; border-radius: 14px !important; box-shadow: 0 10px 26px rgba(12,70,83,.18) !important; }
+
+  /* Lab calculations: input/output hierarchy and readable supporting notes. */
+  .fl-lab-hero { border-radius: 25px; }
+  .fl-lab-fields .field-row label { font-size: 12px; line-height: 1.8; }
+  .fl-lab-constant-note, .fl-lab-sop-note { font-size: 12px !important; line-height: 1.9 !important; }
+  .fl-lab-range-copy small, .fl-lab-range-hint { font-size: 11px; line-height: 1.9; }
+  .fl-lab-history-section .history-entry { font-size: 12.5px; }
+  .fl-lab-actions button { min-height: 46px; }
+
+  /* Production / expiry: avoid tiny helper text on the phone while keeping date layout intact. */
+  body.foodlab-production-page .field label { font-size: 11.5px !important; line-height: 1.65; }
+  body.foodlab-production-page .page-subtitle { font-size: 12px; }
+  body.foodlab-production-page .production-note { font-size: 10.5px !important; }
+  body.foodlab-production-page .hero-sub { font-size: 11px !important; line-height: 1.8; }
+  body.foodlab-production-page .hero-price-label { font-size: 10px !important; line-height: 1.6; }
+  body.foodlab-production-page .hero-price-value { font-size: clamp(13px, 2vw, 22px) !important; }
+  body.foodlab-production-page .hero-price-value.pending { font-size: 12px !important; }
+  body.foodlab-production-page .hero-batch { font-size: 10.5px !important; }
+  body.foodlab-production-page .badge-label { font-size: 9px !important; line-height: 1.6; }
+  body.foodlab-production-page .activity-text { font-size: 11px !important; line-height: 1.8; }
+  body.foodlab-production-page .hero-actions button,
+  body.foodlab-production-page .compare-open-btn,
+  body.foodlab-production-page #officialPrintOpen,
+  body.foodlab-production-page #officialPrintShift { min-height: 44px; }
+  body.foodlab-production-page .drawer { box-shadow: -12px 0 32px rgba(15, 55, 68, .16); }
+
+  /* Orders: clearer microcopy, steady number alignment, and safer floating navigation. */
+  body.foodlab-orders-page .pill-label { font-size: 11px !important; line-height: 1.65; }
+  body.foodlab-orders-page .hero-sub { font-size: 12.5px !important; line-height: 1.8; }
+  body.foodlab-orders-page .order-fields label,
+  body.foodlab-orders-page .field label { font-size: 12px !important; line-height: 1.7; }
+  body.foodlab-orders-page .stat .k { font-size: 11px; line-height: 1.7; }
+  body.foodlab-orders-page .stat .v { font-variant-numeric: tabular-nums; }
+  body.foodlab-orders-page .merged-note,
+  body.foodlab-orders-page footer.note { font-size: 11.5px; line-height: 1.9; }
+  body.foodlab-orders-page .bottom-nav { padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important; }
+  body.foodlab-orders-page .nav-item { min-width: 44px; min-height: 44px; border-radius: 12px !important; }
+
+  /* Checklists: better scanability for template cards and inspection tasks. */
+  body.foodlab-checklist-page .entry-title { font-size: 16px !important; line-height: 1.65 !important; }
+  body.foodlab-checklist-page .entry-sub { font-size: 13px !important; line-height: 1.85 !important; }
+  body.foodlab-checklist-page .entry-count { font-size: 11px; line-height: 1.6; }
+  body.foodlab-checklist-page .check-text { font-size: 14px; line-height: 1.85; }
+  body.foodlab-checklist-page .check-item { min-height: 50px; }
+  body.foodlab-checklist-page .progress-text { font-size: 11px; line-height: 1.8; }
+
+  /* Backup and restore: readable security notice and obvious file-validation feedback. */
+  body.foodlab-backup-page main > p { font-size: 14px; line-height: 1.95; }
+  body.foodlab-backup-page main small { font-size: 12px; line-height: 1.95; }
+  body.foodlab-backup-page #status:not(:empty) { font-size: 13px; line-height: 1.9; }
+  body.foodlab-backup-page .backup-file-picker label { min-height: 46px; }
+
+  /* Print-preview chrome only. The official A5 paper and its print geometry are untouched. */
+  body.print-preview-page .toolbar { gap: 10px; }
+  body.print-preview-page .toolbar button,
+  body.print-preview-page .toolbar a.btn { min-height: 44px; font-family: Vazirmatn, Tahoma, sans-serif; }
+  body.print-preview-page .note { border: 1px solid var(--fl-line); border-radius: 13px; background: rgba(255,255,255,.78); }
+}
+
+@media screen and (max-width: 760px) {
+  #homeScreen.fl-app-shell .fl-nav-item { min-height: 42px; padding: 8px 10px; font-size: 11px; }
+  #homeScreen.fl-app-shell .fl-welcome p { font-size: 11.5px; -webkit-line-clamp: 2; line-height: 1.7; }
+  #homeScreen.fl-app-shell .fl-tool-title { font-size: 12px; }
+  #homeScreen.fl-app-shell .fl-tool-desc { font-size: 10px; min-height: 36px; }
+  #homeScreen.fl-app-shell .fl-tool-foot span { font-size: 10px; }
+  #homeScreen.fl-app-shell .fl-stat-label { font-size: 9.5px; line-height: 1.6; }
+  #homeScreen.fl-app-shell .fl-section-hint { font-size: 10px; }
+
+  #dash .topbar { align-items: flex-start; }
+  #dash .topbar > div:first-child { min-width: 0; }
+  #dash .topbar p { font-size: 11px; }
+  #dash .panel .sub { font-size: 12px; }
+
+  body.foodlab-production-page .page-subtitle { font-size: 11.5px; }
+  body.foodlab-production-page .hero-sub { font-size: 10.5px !important; }
+  body.foodlab-production-page .hero-price-label { font-size: 9.5px !important; }
+  body.foodlab-production-page .hero-price-value { font-size: 13.5px !important; }
+  body.foodlab-production-page .hero-price-value.pending { font-size: 11px !important; }
+  body.foodlab-production-page .hero-batch { font-size: 10px !important; }
+  body.foodlab-production-page .activity-text { font-size: 10.5px !important; }
+  body.foodlab-production-page .badge-label { font-size: 9px !important; }
+
+  body.foodlab-orders-page .bottom-nav { max-width: calc(100vw - 24px); }
+  body.foodlab-orders-page .pill-label { font-size: 10.5px !important; }
+  body.foodlab-checklist-page .entry-card { gap: 12px; }
+  body.foodlab-checklist-page .entry-sub { font-size: 12.5px !important; }
+  body.foodlab-backup-page main > p { font-size: 13.5px; }
+  body.foodlab-backup-page main small { font-size: 11.5px; }
+}
+
+@media screen and (max-width: 390px) {
+  #homeScreen.fl-app-shell .fl-tool-desc { font-size: 10px; min-height: 40px; }
+  #homeScreen.fl-app-shell .fl-stat-label { font-size: 9px; }
+  #dash .price-fields { flex-direction: column; }
+  #dash .price-fields input { font-size: 16px !important; }
+  body.foodlab-orders-page .bottom-nav { gap: 4px; }
+  body.foodlab-checklist-page .entry-title { font-size: 15px !important; }
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* Phase H contrast pass: primary actions and filled navigation must remain legible. */
+@media screen {
+  body:not(.print-preview-page) :where(.primary, .save-btn, button.primary, button.save-btn) {
+    background: #087e8b !important;
+    border-color: #087e8b !important;
+    color: #ffffff !important;
+  }
+  #homeScreen.fl-app-shell .fl-nav-item.active {
+    background: linear-gradient(110deg, #0a6f7a, #087e8b) !important;
+    color: #ffffff !important;
+  }
+  #gate .gate-box button,
+  #dash .save-btn { background: #087e8b !important; border-color: #087e8b !important; color: #ffffff !important; }
+  body.foodlab-production-page .hero-actions button#prodToday,
+  body.foodlab-production-page .admin-open-btn,
+  body.foodlab-production-page .compare-open-btn,
+  body.foodlab-production-page #officialPrintOpen {
+    background: #087e8b !important; border-color: #087e8b !important; color: #ffffff !important;
+  }
+  body.foodlab-orders-page .hero-panel {
+    background: linear-gradient(120deg, #0a6f7a 0%, #087e8b 64%, #0a6f7a 100%) !important;
+  }
+  body.foodlab-orders-page button.primary,
+  body.foodlab-checklist-page button.primary,
+  body.foodlab-backup-page main button,
+  body.foodlab-backup-page .backup-file-picker label,
+  body.print-preview-page .toolbar button {
+    background: #087e8b !important; border-color: #087e8b !important; color: #ffffff !important;
+  }
+  body.foodlab-orders-page .nav-item.active { background: #087e8b !important; color: #ffffff !important; }
+}
+@media screen {
+  body .fl-lab-actions .primary {
+    background: #087e8b !important;
+    border-color: #087e8b !important;
+    color: #ffffff !important;
+  }
+}

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آزمایشگاه محاسبات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efdf;
+    --bg-2:#eee7d2;
+    --ink:#18140d;
+    --paper:#fffdf6;
+    --muted:#756b57;
+
+    --green:#37b34a;
+    --green-deep:#1f7a34;
+    --green-soft:#e2f3e1;
+
+    --blue:#3d6ce0;
+    --blue-soft:#e2e9fb;
+
+    --yellow:#f2c33e;
+    --yellow-soft:#fbf1d6;
+
+    --teal:#2fbf9e;
+    --teal-soft:#dff5ee;
+
+    --coral:#e85a3a;
+    --coral-soft:#fbe3dc;
+
+    --line:var(--ink);
+    --glow:rgba(242,195,62,.22);
+    --border:3px solid var(--line);
+    --shadow:6px 6px 0 var(--line);
+    --shadow-sm:4px 4px 0 var(--line);
+  }
+  :root[data-theme="dark"]{
+    --bg:#171310;
+    --bg-2:#211b13;
+    --ink:#ece6d6;
+    --paper:#211b14;
+    --muted:#a99c85;
+    --line:#5f5646;
+    --glow:rgba(201,154,46,.08);
+
+    --green:#2c9143;
+    --blue:#3557b0;
+    --yellow:#c99a2e;
+    --teal:#278a72;
+    --coral:#b3492f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 88% -6%, var(--glow), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+    font-family:'Vazirmatn',sans-serif;
+    font-weight:700;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    transition:background-color .2s ease, color .2s ease;
+  }
+  .shell{max-width:480px;margin:0 auto;min-height:100vh;padding:20px 16px 40px;}
+
+  /* ---------- header ---------- */
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .icon-badge{
+    width:52px;height:52px;flex-shrink:0;border:var(--border);border-radius:16px;
+    background:var(--yellow);box-shadow:var(--shadow-sm);
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+  }
+  .brand-title h1{font-size:20px;font-weight:800;margin:0 0 2px;line-height:1.25;}
+  .brand-title p{font-size:12px;font-weight:600;color:var(--muted);margin:0;line-height:1.7;}
+
+  .coming-note{
+    text-align:center;font-size:12.5px;color:var(--muted);font-weight:700;
+    border:2px dashed var(--line);border-radius:16px;padding:16px 12px;line-height:1.9;margin-top:6px;
+    background:var(--paper);
+  }
+
+  /* ---------- home: test list ---------- */
+  .section-label{
+    font-size:13px;font-weight:800;color:var(--muted);
+    margin:6px 4px 12px;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .test-card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--paper);border:var(--border);border-radius:20px;
+    padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm);cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .test-card:active{transform:translate(3px,3px);box-shadow:none;}
+  .test-icon{
+    width:46px;height:46px;flex-shrink:0;border:2.5px solid var(--line);border-radius:14px;
+    background:var(--yellow-soft);display:flex;align-items:center;justify-content:center;font-size:21px;
+  }
+  .test-body{flex:1;min-width:0;}
+  .test-name{font-size:15.5px;font-weight:800;margin-bottom:3px;}
+  .test-tag{font-size:11.5px;color:var(--muted);font-weight:700;}
+  .test-arrow{
+    width:32px;height:32px;flex-shrink:0;border:2px solid var(--line);border-radius:50%;
+    background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;
+  }
+
+  /* ---------- test detail ---------- */
+  #homeScreen.hidden{display:none;}
+  .view{display:none;}
+  .view.open{display:block;}
+
+  .back-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .back-btn{
+    width:44px;height:44px;flex-shrink:0;border:var(--border);border-radius:14px;
+    background:var(--paper);box-shadow:var(--shadow-sm);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;cursor:pointer;
+  }
+  .back-btn:active{transform:translate(2px,2px);box-shadow:none;}
+  .view-title{font-size:17px;font-weight:800;}
+
+  .card{
+    background:var(--paper);border:var(--border);border-radius:22px;
+    box-shadow:var(--shadow-sm);padding:18px 18px 20px;margin-bottom:16px;
+  }
+  .card-label{
+    font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.03em;margin-bottom:12px;
+  }
+  .test-desc{font-size:13.5px;color:var(--muted);line-height:1.95;font-weight:600;}
+
+  .field-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+  .field-row:last-child{margin-bottom:0;}
+  .field-row label{font-size:13px;font-weight:700;color:var(--ink);}
+  .field-input-wrap{
+    display:flex;align-items:center;gap:10px;
+    width:100%;max-width:100%;box-sizing:border-box;
+    background:var(--bg-2);border:2.5px solid var(--line);border-radius:12px;
+    padding:4px 14px;
+    transition:background-color .12s ease, border-color .12s ease;
+  }
+  .field-input-wrap:focus-within{background:var(--paper);border-color:var(--ink);}
+  .field-input-wrap input{
+    flex:1 1 auto;min-width:0;width:auto;
+    border:none;background:transparent;padding:11px 0;margin:0;
+    font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;
+    color:var(--ink);direction:ltr;text-align:right;
+  }
+  .field-input-wrap input:focus{outline:none;}
+  .field-input-wrap input[type="number"]{-moz-appearance:textfield;appearance:textfield;}
+  .field-input-wrap input[type="number"]::-webkit-outer-spin-button,
+  .field-input-wrap input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .field-unit{
+    flex:0 0 auto;
+    font-size:11.5px;color:var(--muted);font-weight:800;
+  }
+
+  .info-strip-note{
+    font-size:12px;color:var(--green-deep);font-weight:700;
+    background:var(--green-soft);border:2px solid var(--green-deep);border-radius:12px;
+    padding:10px 12px;margin-top:4px;line-height:1.8;
+  }
+
+  .result-card{
+    background:var(--green);border:var(--border);border-radius:24px;
+    box-shadow:var(--shadow);padding:22px 20px;margin-bottom:16px;
+  }
+  .result-label{font-size:12px;font-weight:800;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;}
+  .result-value{font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;color:#fff;line-height:1.15;}
+  .result-value .unit{font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-right:4px;}
+  .result-value.pending{font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.65);}
+  .result-secondary{
+    margin-top:16px;padding-top:14px;border-top:2.5px dashed rgba(255,255,255,.4);
+    display:flex;flex-wrap:wrap;gap:12px;
+  }
+  .result-sec-item{flex:1;min-width:120px;}
+  .result-sec-label{font-size:11px;color:rgba(255,255,255,.75);font-weight:700;margin-bottom:3px;}
+  .result-sec-value{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#fff;}
+
+  .status-badge{
+    display:inline-flex;align-items:center;gap:6px;margin-top:14px;
+    font-size:12.5px;font-weight:800;padding:7px 13px;border-radius:999px;
+    border:2px solid rgba(255,255,255,.5);
+  }
+  .status-badge.pass{background:#fff;color:var(--green-deep);}
+  .status-badge.fail{background:var(--coral);color:#fff;}
+
+  .range-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
+  .range-toggle span:first-child{font-size:13px;font-weight:800;color:var(--ink);}
+  .range-chevron{
+    width:26px;height:26px;border:2px solid var(--line);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;
+  }
+  .range-fields{display:none;gap:10px;margin-top:14px;}
+  .range-fields.open{display:flex;}
+  .range-fields .field-row{flex:1;margin-bottom:0;}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  button.primary,button.ghost{
+    font-family:inherit;font-weight:800;font-size:13.5px;padding:12px 16px;border-radius:14px;
+    cursor:pointer;border:var(--border);box-shadow:var(--shadow-sm);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button.primary:active,button.ghost:active{transform:translate(2px,2px);box-shadow:none;}
+  button.primary{background:var(--green);color:#fff;}
+  button.ghost{background:var(--paper);color:var(--ink);}
+  button.ghost.copied{background:var(--green-soft);color:var(--green-deep);}
+
+  .history-entry{
+    border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;
+    background:var(--bg-2);font-size:12.5px;color:var(--ink);line-height:1.85;font-weight:600;
+  }
+  .history-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700;}
+  .history-empty{text-align:center;font-size:12.5px;color:var(--muted);font-weight:700;padding:14px 4px;}
+</style>
+<link rel="stylesheet" href="foodlab-theme.css">
+<link rel="stylesheet" href="foodlab-design-system.css">
+<link rel="stylesheet" href="foodlab-lab-ui.css">
+<link rel="stylesheet" href="foodlab-polish-phaseH.css">
+</head>
+<body>
+<div class="shell fl-lab-shell">
+  <section id="homeScreen" class="fl-lab-home">
+    <header class="fl-lab-hero">
+      <div class="fl-lab-hero-mark" aria-hidden="true">🧪</div>
+      <div class="fl-lab-hero-copy">
+        <span class="fl-lab-eyebrow">FOODLAB · QUALITY CONTROL</span>
+        <h1>آزمایشگاه محاسبات</h1>
+        <p>محاسبات آزمایشگاهی، با ورودی‌های روشن و نتیجه‌ای قابل بررسی</p>
+      </div>
+      <span class="fl-lab-hero-chip"><i></i> محیط محاسبات</span>
+    </header>
+
+    <div class="fl-lab-section-heading">
+      <div>
+        <span class="fl-lab-eyebrow">TEST LIBRARY</span>
+        <h2>آزمون‌های آزمایشگاه</h2>
+        <p>برای شروع، آزمون موردنظر را انتخاب کن.</p>
+      </div>
+      <span class="fl-lab-count"><strong id="testCount">۰</strong> آزمون فعال</span>
+    </div>
+    <div id="testList" class="fl-lab-test-grid"></div>
+    <aside class="fl-lab-footnote">
+      <span class="fl-lab-footnote-icon" aria-hidden="true">ⓘ</span>
+      <div><strong>یادآوری کنترل کیفیت</strong><p>نتایج محاسبات را با روش اجرایی مصوب آزمایشگاه (SOP) و تأیید مسئول فنی تطبیق بده. این ابزار جایگزین روش آزمایشگاهی نیست.</p></div>
+    </aside>
+  </section>
+
+  <section class="view fl-lab-detail" id="testView" aria-live="polite">
+    <header class="fl-lab-detail-header">
+      <button type="button" class="back-btn" id="backBtn" aria-label="بازگشت به فهرست آزمون‌ها">→</button>
+      <div class="fl-lab-detail-heading">
+        <span class="fl-lab-eyebrow">LABORATORY WORKSPACE</span>
+        <h1 class="view-title" id="viewTitle">—</h1>
+        <p class="test-desc" id="viewDesc">—</p>
+      </div>
+      <span class="fl-lab-ready-chip"><i></i> آماده ورود داده</span>
+    </header>
+
+    <section class="card fl-lab-section fl-lab-input-section">
+      <header class="fl-lab-card-heading">
+        <span class="fl-lab-step">01</span>
+        <div><h2>ورودی‌های آزمون</h2><p>مقادیر اندازه‌گیری‌شده را با واحد درست وارد کن.</p></div>
+      </header>
+      <div id="fieldsHost" class="fl-lab-fields"></div>
+      <div class="info-strip-note fl-lab-constant-note" id="constInfo" style="display:none;"></div>
+    </section>
+
+    <section class="result-card fl-lab-result-section" aria-live="polite">
+      <div class="fl-lab-result-head">
+        <div><span class="fl-lab-eyebrow">CALCULATED OUTPUT</span><div class="result-label" id="resultLabel">نتیجه محاسبه</div></div>
+        <span class="fl-lab-result-icon" aria-hidden="true">∑</span>
+      </div>
+      <div class="fl-lab-result-main"><div class="result-value pending" id="resultValue">ورودی‌ها را تکمیل کن</div></div>
+      <div id="resultStatus" class="fl-lab-inline-status pending">برای نمایش نتیجه، همه مقادیر ضروری را وارد کن.</div>
+      <div class="result-secondary" id="resultSecondary" style="display:none;"></div>
+    </section>
+
+    <section class="card fl-lab-section fl-lab-range-section">
+      <button type="button" class="range-toggle fl-lab-range-toggle" id="rangeToggle" aria-expanded="false" aria-controls="rangeFields">
+        <span class="fl-lab-range-symbol" aria-hidden="true">↔</span>
+        <span class="fl-lab-range-copy"><strong>بازه پذیرش</strong><small>اختیاری · بر اساس معیار مصوب آزمایشگاه</small></span>
+        <span class="range-chevron" id="rangeChevron" aria-hidden="true">＋</span>
+      </button>
+      <div class="range-fields fl-lab-range-fields" id="rangeFields">
+        <div class="field-row"><label for="rangeMin">حداقل مجاز</label><div class="field-input-wrap"><input type="number" id="rangeMin" step="0.01" inputmode="decimal" placeholder="وارد کنید"></div></div>
+        <div class="field-row"><label for="rangeMax">حداکثر مجاز</label><div class="field-input-wrap"><input type="number" id="rangeMax" step="0.01" inputmode="decimal" placeholder="وارد کنید"></div></div>
+        <p class="fl-lab-range-hint">بازه واردشده توسط کاربر است و به‌صورت خودکار از استاندارد رسمی دریافت نمی‌شود.</p>
+      </div>
+    </section>
+
+    <section class="card fl-lab-section fl-lab-sample-section">
+      <header class="fl-lab-card-heading">
+        <span class="fl-lab-step">02</span>
+        <div><h2>مشخصات نمونه</h2><p>برای ذخیره قابل پیگیری نتیجه، این دو فیلد را تکمیل کن.</p></div>
+      </header>
+      <div class="fl-lab-fields fl-lab-sample-fields">
+        <div class="field-row"><label for="sampleId">شماره نمونه / بچ</label><div class="field-input-wrap"><input type="text" id="sampleId" maxlength="100" placeholder="مثلاً LOT-2026-01" style="font-family:inherit;"></div></div>
+        <div class="field-row"><label for="analystName">نام آزمایشگر</label><div class="field-input-wrap"><input type="text" id="analystName" maxlength="100" placeholder="نام آزمایشگر" style="font-family:inherit;"></div></div>
+      </div>
+      <div class="info-strip-note fl-lab-sop-note">⚠️ نتیجه محاسبات و بازه پذیرش جایگزین روش اجرایی مصوب آزمایشگاه (SOP) یا تأیید مسئول فنی نیست.</div>
+    </section>
+
+    <div class="toolbar fl-lab-actions" aria-label="اقدامات نتیجه">
+      <button type="button" class="primary" id="saveHistoryBtn">ذخیره در تاریخچه</button>
+      <button type="button" class="ghost" id="copyResultBtn">کپی نتیجه</button>
+      <button type="button" class="ghost fl-lab-reset" id="resetBtn">پاک‌کردن ورودی‌ها</button>
+    </div>
+
+    <section class="card fl-lab-section fl-lab-history-section">
+      <header class="fl-lab-card-heading">
+        <span class="fl-lab-step fl-lab-step-muted">03</span>
+        <div><h2>تاریخچه این آزمون</h2><p>سوابق محلی همین مرورگر؛ نسخه پشتیبان جداگانه تهیه کن.</p></div>
+      </header>
+      <div id="historyList"><div class="history-empty">هنوز نتیجه‌ای ذخیره نشده</div></div>
+    </section>
+  </section>
+</div>
+
+<script>
+// Gentle haptic feedback only for deliberate action controls (not every page tap).
+document.addEventListener('click', (event) => {
+  const control = event.target.closest('button, .test-card, [role=button]');
+  if (control && navigator.vibrate) navigator.vibrate(6);
+}, { capture: true });
+
+// ============ dark mode (follows the main app; also togglable standalone) ============
+const THEME_KEY = 'qc-theme';
+function applyTheme(mode){ document.documentElement.setAttribute('data-theme', mode); }
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'qc-theme') {
+    applyTheme(e.data.mode);
+    localStorage.setItem(THEME_KEY, e.data.mode);
+  }
+});
+
+// ============ shared helpers ============
+const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+function toFa(str){ return String(str).replace(/[0-9]/g, d => persianDigits[d]); }
+function num(v){ if(String(v).trim()==='') return NaN; const n=Number(v); return Number.isFinite(n) ? n : NaN; }
+function fmtNum(n, digits){
+  if (!Number.isFinite(n)) return '—';
+  return toFa(n.toLocaleString('en-US', { maximumFractionDigits: digits, minimumFractionDigits: 0 }));
+}
+
+// ============ test registry ============
+// Each test declares its own inputs and calc() — add new tests here later.
+const TESTS = [
+  {
+    id: 'naoh-purity',
+    icon: '🧪',
+    name: 'خلوص سود غلیظ (NaOH)',
+    tag: 'تیتراسیون اسید-باز',
+    desc: '۱ میلی‌لیتر نمونه غلیظ را با آب مقطر به حجم نهایی ۱۰۰ میلی‌لیتر برسان (رقت ۱:۱۰۰)، سپس ۱۰ سی‌سی از رقیق‌شده بردار، با فنل‌فتالئین و اسید کلریدریک ۰.۱ نرمال تیتر کن تا بی‌رنگ بشه. حجم اسید مصرفی رو یادداشت کن.',
+    constInfo: 'معادل وزنی NaOH = ۴۰ g/eq؛ رقت حجمی ۱ به ۱۰۰؛ نتیجه درصد وزنی (w/w) بر اساس چگالی نمونه اصلی است',
+    fields: [
+      { id: 'v1', label: 'حجم اسید مصرفی (V1)', unit: 'mL' },
+      { id: 'n1', label: 'نرمالیته اسید کلریدریک (N1)', unit: 'N', default: '0.1' },
+      { id: 'v2', label: 'حجم نمونه رقیق سود (V2)', unit: 'mL', default: '10' },
+      { id: 'm', label: 'وزن نمونه روی ترازو (m)', unit: 'g' },
+      { id: 'vd', label: 'حجم نمونه‌ی وزن‌شده (برای چگالی)', unit: 'mL', default: '5' },
+    ],
+    resultLabel: 'درصد خلوص سود غلیظ',
+    resultUnit: '%',
+    calc(v){
+      const V1 = num(v.v1), N1 = num(v.n1), V2 = num(v.v2), m = num(v.m), vd = num(v.vd);
+      const E = 40;
+      if (![V1, N1, V2, m, vd].every(x => Number.isFinite(x) && x > 0)) return null;
+      const d = m / vd;
+      const N2 = (N1 * V1) / V2;
+      const dilutionFactor = 100; // 1 mL original sample diluted to a final volume of 100 mL
+      const a = (N2 * E * dilutionFactor) / (10 * d); // mass percent (w/w)
+      return {
+        primary: a,
+        secondary: [
+          { label: 'چگالی محاسبه‌شده (d)', value: fmtNum(d, 4), unit: 'g/mL' },
+          { label: 'نرمالیته سود (رقیق)', value: fmtNum(N2, 4), unit: 'N' },
+        ],
+      };
+    },
+  },
+  {
+    id: 'hno3-purity',
+    icon: '🧫',
+    name: 'خلوص اسید نیتریک (HNO₃)',
+    tag: 'تیتراسیون اسید-باز',
+    desc: '۱ میلی‌لیتر نمونه غلیظ را با آب مقطر به حجم نهایی ۱۰۰ میلی‌لیتر برسان (رقت ۱:۱۰۰)، سپس ۱۰ سی‌سی از رقیق‌شده بردار، با فنل‌فتالئین و سود ۰.۱ نرمال تیتر کن تا رنگ صورتی ایجاد بشه. حجم سود مصرفی رو یادداشت کن.',
+    constInfo: 'معادل وزنی HNO₃ = ۶۳ g/eq؛ رقت حجمی ۱ به ۱۰۰؛ نتیجه درصد وزنی (w/w) بر اساس چگالی نمونه اصلی است',
+    fields: [
+      { id: 'v1', label: 'حجم سود مصرفی (تیتراسیون)', unit: 'mL' },
+      { id: 'n1', label: 'نرمالیته سود (N)', unit: 'N', default: '0.1' },
+      { id: 'v2', label: 'حجم نمونه رقیق اسید', unit: 'mL', default: '10' },
+      { id: 'm', label: 'وزن نمونه روی ترازو (m)', unit: 'g' },
+      { id: 'vd', label: 'حجم نمونه‌ی وزن‌شده (برای چگالی)', unit: 'mL', default: '5' },
+    ],
+    resultLabel: 'درصد خلوص اسید نیتریک غلیظ',
+    resultUnit: '%',
+    calc(v){
+      const V1 = num(v.v1), N1 = num(v.n1), V2 = num(v.v2), m = num(v.m), vd = num(v.vd);
+      const E = 63;
+      if (![V1, N1, V2, m, vd].every(x => Number.isFinite(x) && x > 0)) return null;
+      const d = m / vd;
+      const Nacid = (N1 * V1) / V2;
+      const dilutionFactor = 100; // 1 mL original sample diluted to a final volume of 100 mL
+      const a = (Nacid * E * dilutionFactor) / (10 * d); // mass percent (w/w)
+      return {
+        primary: a,
+        secondary: [
+          { label: 'چگالی محاسبه‌شده (d)', value: fmtNum(d, 4), unit: 'g/mL' },
+          { label: 'نرمالیته اسید (رقیق)', value: fmtNum(Nacid, 4), unit: 'N' },
+        ],
+      };
+    },
+  },
+];
+
+// ============ persistent audit snapshots (local device; not signed QC records) ============
+const LAB_HISTORY_KEY = 'qc-lab-history-v2';
+function loadLabHistory(){
+  try {
+    const obj=JSON.parse(localStorage.getItem(LAB_HISTORY_KEY)||'{}');
+    if(!obj || typeof obj!=='object' || Array.isArray(obj))return {};
+    for(const key of Object.keys(obj)){
+      if(!Array.isArray(obj[key])){delete obj[key];continue;}
+      obj[key]=obj[key].filter(e=>e && e.result && Number.isFinite(e.result.primary) && Number.isFinite(Date.parse(e.ts)))
+        .slice(-200).map(e=>({...e,ts:new Date(e.ts)}));
+    }
+    return obj;
+  }catch(e){return {};}
+}
+const historyStore=loadLabHistory();
+function saveLabHistory(){
+  try{localStorage.setItem(LAB_HISTORY_KEY,JSON.stringify(historyStore));return true;}
+  catch(e){ alert('نتیجه ذخیره نشد؛ فضای حافظه مرورگر را بررسی کن.');return false; }
+}
+function esc(s){const div=document.createElement('div');div.textContent=String(s??'');return div.innerHTML;}
+
+// ============ navigation ============
+const homeScreen = document.getElementById('homeScreen');
+const testView = document.getElementById('testView');
+const testListEl = document.getElementById('testList');
+let activeTest = null;
+
+function renderTestList(){
+  testListEl.innerHTML = '';
+  const countEl = document.getElementById('testCount');
+  if (countEl) countEl.textContent = toFa(TESTS.length);
+  TESTS.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'test-card';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `شروع آزمون ${t.name}`);
+    card.innerHTML = `
+      <div class="test-icon" aria-hidden="true">${t.icon}</div>
+      <div class="test-body">
+        <div class="test-name">${t.name}</div>
+        <div class="test-tag">${t.tag}</div>
+        <div class="test-summary">${t.id === 'naoh-purity' ? 'محاسبه درصد خلوص سود غلیظ بر پایه تیتراسیون و چگالی نمونه.' : 'محاسبه درصد خلوص اسید نیتریک بر پایه تیتراسیون و چگالی نمونه.'}</div>
+      </div>
+      <div class="test-arrow" aria-hidden="true">←</div>
+    `;
+    card.addEventListener('click', () => openTest(t.id));
+    card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openTest(t.id); } });
+    testListEl.appendChild(card);
+  });
+}
+renderTestList();
+
+function openTest(id){
+  activeTest = TESTS.find(t => t.id === id);
+  if (!activeTest) return;
+  if (!historyStore[id]) historyStore[id] = [];
+
+  document.getElementById('viewTitle').textContent = activeTest.name;
+  document.getElementById('viewDesc').textContent = activeTest.desc;
+  document.getElementById('resultLabel').textContent = activeTest.resultLabel;
+  document.getElementById('resultStatus').className = 'fl-lab-inline-status pending';
+
+  const constInfo = document.getElementById('constInfo');
+  if (activeTest.constInfo) {
+    constInfo.textContent = activeTest.constInfo;
+    constInfo.style.display = 'block';
+  } else {
+    constInfo.style.display = 'none';
+  }
+
+  const fieldsHost = document.getElementById('fieldsHost');
+  fieldsHost.innerHTML = '';
+  activeTest.fields.forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'field-row';
+    row.innerHTML = `
+      <label for="f-${f.id}">${f.label}</label>
+      <div class="field-input-wrap">
+        <input type="number" id="f-${f.id}" inputmode="decimal" step="any" placeholder="—" value="${f.default || ''}">
+        <span class="field-unit">${f.unit}</span>
+      </div>
+    `;
+    fieldsHost.appendChild(row);
+  });
+  fieldsHost.querySelectorAll('input').forEach(inp => inp.addEventListener('input', computeAndRender));
+
+  document.getElementById('rangeMin').value = '';
+  document.getElementById('rangeMax').value = '';
+  document.getElementById('rangeFields').classList.remove('open');
+  document.getElementById('rangeChevron').textContent = '›';
+
+  renderHistory();
+  computeAndRender();
+
+  homeScreen.classList.add('hidden');
+  testView.classList.add('open');
+  window.scrollTo(0, 0);
+}
+
+function closeTest(){
+  homeScreen.classList.remove('hidden');
+  testView.classList.remove('open');
+  activeTest = null;
+}
+document.getElementById('backBtn').addEventListener('click', closeTest);
+
+// ---- collapsible acceptable-range panel ----
+const rangeToggle = document.getElementById('rangeToggle');
+const rangeFields = document.getElementById('rangeFields');
+const rangeChevron = document.getElementById('rangeChevron');
+rangeToggle.addEventListener('click', () => {
+  const open = rangeFields.classList.toggle('open');
+  rangeToggle.setAttribute('aria-expanded', String(open));
+  rangeChevron.textContent = open ? '−' : '＋';
+});
+document.getElementById('rangeMin').addEventListener('input', computeAndRender);
+document.getElementById('rangeMax').addEventListener('input', computeAndRender);
+
+// ============ compute + render result ============
+function currentValues(){
+  const v = {};
+  activeTest.fields.forEach(f => { v[f.id] = document.getElementById('f-' + f.id).value; });
+  return v;
+}
+
+function computeAndRender(){
+  if (!activeTest) return;
+  const v = currentValues();
+  const result = activeTest.calc(v);
+  const resultValueEl = document.getElementById('resultValue');
+  const secondaryEl = document.getElementById('resultSecondary');
+  const statusEl = document.getElementById('resultStatus');
+
+  if (!result) {
+    resultValueEl.className = 'result-value pending';
+    resultValueEl.textContent = 'ورودی‌ها را تکمیل کن';
+    secondaryEl.style.display = 'none';
+    statusEl.className = 'fl-lab-inline-status pending';
+    statusEl.textContent = 'برای محاسبه، همه مقادیر ضروری را وارد کن.';
+    window.__lastResult = null;
+    return;
+  }
+
+  resultValueEl.className = 'result-value';
+  resultValueEl.innerHTML = fmtNum(result.primary, 2) + '<span class="unit">' + activeTest.resultUnit + '</span>';
+
+  if (result.secondary && result.secondary.length) {
+    secondaryEl.style.display = 'grid';
+    secondaryEl.innerHTML = result.secondary.map(s => `
+      <div class="result-sec-item">
+        <div class="result-sec-label">${s.label}</div>
+        <div class="result-sec-value">${s.value}<span style="font-size:11px;font-weight:700;color:rgba(24,20,13,.65);margin-right:3px;">${s.unit}</span></div>
+      </div>
+    `).join('');
+  } else {
+    secondaryEl.style.display = 'none';
+  }
+
+  // A physically implausible purity result must not be accepted as a QC record.
+  if (!Number.isFinite(result.primary) || result.primary < 0 || result.primary > 100) {
+    statusEl.className = 'fl-lab-inline-status warning';
+    statusEl.textContent = '⚠ نتیجه خلوص خارج از محدوده فیزیکی ۰ تا ۱۰۰٪ است؛ رقت، واحدها و داده‌های تیتراسیون را بررسی کن. ذخیره نتیجه غیرفعال است.';
+    window.__lastResult = null;
+    return;
+  }
+
+  const min = num(document.getElementById('rangeMin').value);
+  const max = num(document.getElementById('rangeMax').value);
+  if (Number.isFinite(min) && Number.isFinite(max) && min > max) {
+    statusEl.className = 'fl-lab-inline-status warning';
+    statusEl.textContent = '⚠ حداقل نمی‌تواند بیشتر از حداکثر باشد.';
+    window.__lastResult = null;
+    return;
+  }
+  if (Number.isFinite(min) || Number.isFinite(max)) {
+    const okMin = Number.isFinite(min) ? result.primary >= min : true;
+    const okMax = Number.isFinite(max) ? result.primary <= max : true;
+    const pass = okMin && okMax;
+    statusEl.className = `fl-lab-inline-status ${pass ? 'pass' : 'fail'}`;
+    statusEl.innerHTML = `<span class="status-badge ${pass ? 'pass' : 'fail'}">${pass ? '✓ در بازه مجاز' : '⚠ خارج از بازه مجاز'}</span>`;
+  } else {
+    statusEl.className = 'fl-lab-inline-status pending';
+    statusEl.textContent = 'نتیجه محاسبه شد؛ برای بررسی پذیرش، در صورت نیاز بازه مجاز را وارد کن.';
+  }
+
+  window.__lastResult = { test: activeTest, values: v, result };
+}
+
+// ============ history actions ============
+function renderHistory(){
+  const list = historyStore[activeTest.id] || [];
+  const el = document.getElementById('historyList');
+  if (!list.length) {
+    el.innerHTML = '<div class="history-empty">هنوز نتیجه‌ای ذخیره نشده</div>';
+    return;
+  }
+  el.innerHTML = [...list].reverse().map(entry => `
+    <div class="history-entry">
+      <span class="history-time">${entry.ts.toLocaleDateString('fa-IR')} — ${entry.ts.toLocaleTimeString('fa-IR')} ${entry.sampleId ? ' · نمونه: '+esc(entry.sampleId) : ''} ${entry.analyst ? ' · آزمایشگر: '+esc(entry.analyst) : ''}</span>
+      ${activeTest.resultLabel}: <strong>${fmtNum(entry.result.primary, 2)}${activeTest.resultUnit}</strong>
+    </div>
+  `).join('');
+}
+
+document.getElementById('saveHistoryBtn').addEventListener('click', () => {
+  if (!window.__lastResult) return;
+  const sampleId=document.getElementById('sampleId').value.trim();
+  const analyst=document.getElementById('analystName').value.trim();
+  if(!sampleId || !analyst){ alert('برای ذخیره نتیجه، شماره نمونه/بچ و نام آزمایشگر را وارد کن.');return; }
+  const rawMin=document.getElementById('rangeMin').value;
+  const rawMax=document.getElementById('rangeMax').value;
+  const entry={ts:new Date(),sampleId,analyst,values:{...window.__lastResult.values},
+    acceptance:{min:rawMin,max:rawMax,source:'ورودی کاربر، تأیید نشده'},
+    result:structuredClone(window.__lastResult.result), method:'محاسبه داخلی برنامه؛ تأیید SOP لازم است'};
+  historyStore[activeTest.id].push(entry);
+  // Keep a bounded local history to avoid exhausting mobile storage.
+  const older=historyStore[activeTest.id].length>200?historyStore[activeTest.id].shift():null;
+  if(!saveLabHistory()){historyStore[activeTest.id].pop();if(older)historyStore[activeTest.id].unshift(older);return;}
+  renderHistory();
+  const btn = document.getElementById('saveHistoryBtn');
+  btn.textContent = '✓ ذخیره شد';
+  setTimeout(() => { btn.textContent = 'ذخیره در تاریخچه'; }, 1400);
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  activeTest.fields.forEach(f => { document.getElementById('f-' + f.id).value = f.default || ''; });
+  document.getElementById('rangeMin').value = '';
+  document.getElementById('rangeMax').value = '';
+  document.getElementById('sampleId').value = '';
+  document.getElementById('analystName').value = '';
+  computeAndRender();
+});
+
+document.getElementById('copyResultBtn').addEventListener('click', async () => {
+  if (!window.__lastResult) return;
+  const { test, values, result } = window.__lastResult;
+  const lines = [test.name, ''];
+  test.fields.forEach(f => lines.push(f.label + ': ' + toFa(values[f.id] || '—') + ' ' + f.unit));
+  lines.push('');
+  lines.push(test.resultLabel + ': ' + fmtNum(result.primary, 2) + test.resultUnit);
+  if (result.secondary) result.secondary.forEach(s => lines.push(s.label + ': ' + s.value + ' ' + s.unit));
+  const text = lines.join('\n');
+  const btn = document.getElementById('copyResultBtn');
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = '✓ کپی شد';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'کپی نتیجه'; btn.classList.remove('copied'); }, 1600);
+  } catch (e) { /* clipboard unavailable */ }
+});
+</script>
+</body>
+</html>

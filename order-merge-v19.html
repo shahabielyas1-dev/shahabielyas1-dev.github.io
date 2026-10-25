@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4efdf">
+<title>محاسبه آمار محصول صادراتی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efdf;
+    --frame:transparent;
+    --panel:#fffdf6;
+    --panel-2:#eee7d2;
+    --chip:#fbf1d6;
+    --ink:#18140d;
+    --muted:#756b57;
+    --line:rgba(24,20,13,.14);
+    --frame-line:var(--ink);
+    --glow:rgba(55,179,74,.16);
+    --border:2.5px solid var(--frame-line);
+    --shadow:6px 6px 0 var(--frame-line);
+    --shadow-sm:4px 4px 0 var(--frame-line);
+    --accent:#37b34a;
+    --accent-dark:#1f7a34;
+    --accent-bright:#4bd489;
+    --accent-soft:#e2f3e1;
+    --accent-soft-strong:rgba(55,179,74,.35);
+    --ok:#1f7a34;
+    --ok-soft:#e2f3e1;
+    --amber:#b5790a;
+    --amber-soft:#fbf1d6;
+  }
+  :root[data-theme="dark"]{
+    --bg:#171310;
+    --panel:#211b14;
+    --panel-2:#291f16;
+    --chip:#291f16;
+    --ink:#ece6d6;
+    --muted:#a99c85;
+    --line:rgba(236,230,214,.12);
+    --frame-line:#5f5646;
+    --glow:rgba(47,145,67,.07);
+
+    --accent:#2c9143;
+    --accent-bright:#4bd489;
+    --amber:#e0a83f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:radial-gradient(circle at 12% -6%, var(--glow), transparent 55%), var(--bg);
+    color:var(--ink);
+    font-family:'Vazirmatn',sans-serif;font-weight:700;
+    padding:20px 14px 36px;
+    font-size:16px;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    transition:background-color .2s ease, color .2s ease;
+  }
+  .frame{
+    max-width:460px;margin:0 auto;
+    background:transparent;
+    padding:0 0 90px;
+    position:relative;
+  }
+  .top-title{font-size:26px;font-weight:800;margin:4px 4px 18px;font-family:'Vazirmatn',sans-serif;}
+
+  .hero-panel{
+    background:var(--accent);border:var(--border);box-shadow:var(--shadow);
+    border-radius:24px;padding:22px 20px;margin-bottom:22px;
+    position:relative;overflow:hidden;
+  }
+  .hero-top{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+  .hero-avatar{
+    width:56px;height:56px;border-radius:50%;flex-shrink:0;
+    background:var(--panel);border:2.5px solid var(--frame-line);
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+  }
+  .hero-greet{font-size:19px;font-weight:800;color:#fff;margin-bottom:4px;}
+  .hero-sub{font-size:14px;color:rgba(255,255,255,.85);font-weight:600;}
+  .stat-pills{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stat-pill{
+    background:#fffdf6;border:2px solid var(--frame-line);border-radius:16px;padding:14px 14px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .pill-chip{
+    width:38px;height:38px;border-radius:50%;background:var(--accent-soft);
+    color:var(--accent-dark);border:2px solid var(--frame-line);display:flex;align-items:center;justify-content:center;
+    font-size:17px;flex-shrink:0;
+  }
+  .pill-num{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--ink);}
+  .pill-label{font-size:12.5px;color:var(--muted);font-weight:600;}
+
+  .section-title{font-size:18px;font-weight:800;margin:0 4px 12px;}
+
+  .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+  .quick-card{
+    background:var(--panel);border-radius:18px;padding:16px;cursor:pointer;
+    border:var(--border);box-shadow:var(--shadow-sm);
+    transition:transform .12s ease, box-shadow .12s ease;
+    display:block;text-decoration:none;color:inherit;
+  }
+  .quick-card:active{transform:translate(3px,3px);box-shadow:none;}
+  .quick-chip{
+    width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);
+    border:2px solid var(--frame-line);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;
+  }
+  .quick-title{font-size:15.5px;font-weight:800;margin-bottom:3px;}
+  .quick-sub{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.6;}
+  .quick-arrow{
+    width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);
+    border:1.5px solid var(--frame-line);display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:10px;
+  }
+
+  .settings-list{
+    background:var(--panel);border-radius:18px;border:var(--border);box-shadow:var(--shadow-sm);
+    margin-bottom:16px;overflow:hidden;
+  }
+  .settings-row summary, .settings-row{
+    list-style:none;display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;
+  }
+  .settings-row summary::-webkit-details-marker{display:none;}
+  .settings-row + .settings-row, details.settings-row{border-top:2px solid var(--frame-line);}
+  .row-chip{
+    width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);
+    border:2px solid var(--frame-line);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+  }
+  .row-body{flex:1;min-width:0;}
+  .row-title{font-size:14.5px;font-weight:800;}
+  .row-sub{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;}
+  .row-chev{color:var(--muted);font-size:15px;transition:transform .18s ease;transform:rotate(-90deg);}
+  details.settings-row[open] .row-chev{transform:rotate(90deg);}
+  .settings-row.danger .row-chip{background:var(--accent);color:#fff;}
+  .settings-row.danger .row-title{color:var(--accent-dark);}
+
+  .params-body{padding:0 16px 16px;}
+  .config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:600;}
+  .field input{
+    width:100%;padding:11px 12px;border:2.5px solid var(--frame-line);border-radius:10px;
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;background:var(--panel-2);
+    color:var(--ink);
+  }
+  .field input:focus{outline:none;background:var(--panel);}
+
+  .panel-card{
+    background:var(--panel);border-radius:18px;border:var(--border);box-shadow:var(--shadow-sm);
+    padding:18px;margin-bottom:16px;
+  }
+  .panel-card h2{font-size:16px;font-weight:800;margin:0 0 14px;}
+
+  .order-card{
+    border:2px solid var(--frame-line);border-radius:14px;padding:14px;margin-bottom:10px;
+    background:var(--panel-2);
+  }
+  .order-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;}
+  .order-index{
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+    color:var(--accent-dark);background:var(--accent-soft);border:1.5px solid var(--frame-line);padding:3px 11px;border-radius:20px;
+  }
+  .order-fields{display:grid;grid-template-columns:1fr;gap:9px;}
+  .order-fields label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+  .order-fields input, .order-fields select{
+    width:100%;padding:11px 12px;border:2.5px solid var(--frame-line);border-radius:10px;
+    font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:15px;background:var(--panel);
+    color:var(--ink);
+  }
+  .order-fields input:focus, .order-fields select:focus{outline:none;box-shadow:0 0 0 3px var(--accent-soft);}
+  .qty-input{font-family:'JetBrains Mono',monospace;}
+  .row-del{
+    background:var(--panel);border:2px solid var(--frame-line);color:var(--accent-dark);cursor:pointer;font-size:13px;
+    width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .row-del:active{transform:translate(2px,2px);}
+
+  .qc-details{margin-top:10px;border-top:2px dashed var(--frame-line);padding-top:10px;}
+  .qc-details summary{
+    list-style:none;cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:700;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .qc-details summary::-webkit-details-marker{display:none;}
+  .qc-details summary .row-chev{font-size:13px;transition:transform .18s ease;transform:rotate(-90deg);}
+  .qc-details[open] summary .row-chev{transform:rotate(90deg);}
+  .qc-fields{margin-top:12px;}
+  .qc-checks{display:flex;flex-direction:column;gap:8px;}
+  .check-label{
+    display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);font-weight:600;
+    background:var(--panel);border:2px solid var(--frame-line);border-radius:10px;padding:10px 12px;
+  }
+  .check-label input{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+
+  .toolbar{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap;}
+  button.primary, button.ghost{
+    font-family:'Vazirmatn',sans-serif;font-weight:800;font-size:14.5px;
+    padding:11px 16px;border-radius:12px;cursor:pointer;border:var(--border);box-shadow:var(--shadow-sm);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button.primary:active, button.ghost:active{transform:translate(2px,2px);box-shadow:none;}
+  button.primary{background:var(--accent);color:#fff;}
+  button.ghost{background:var(--panel);color:var(--ink);}
+
+  .summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin-bottom:14px;}
+  .summary-strip .stat{padding:12px 13px;}
+  .summary-strip .k{font-size:11.5px;}
+  .summary-strip .v{font-size:20px;}
+
+  .group{border:2px solid var(--frame-line);border-radius:14px;padding:15px 16px;margin-bottom:10px;background:var(--panel-2);}
+  .group-head{margin-bottom:12px;}
+  .group-title{font-weight:800;font-size:15.5px;}
+  .merged-note{font-size:12.5px;color:var(--muted);margin-top:9px;}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:9px;}
+  .stat{background:var(--panel);border:2px solid var(--frame-line);border-radius:11px;padding:11px 12px;}
+  .stat .k{font-size:11.5px;color:var(--muted);margin-bottom:4px;}
+  .stat .v{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--ink);}
+  .stat .v small{font-size:11.5px;font-weight:700;color:var(--muted);font-family:'Vazirmatn',sans-serif;}
+  .stat.highlight{background:var(--ok-soft);border-color:var(--frame-line);}
+  .stat.highlight .v{color:var(--ok);}
+  .pallet-warn{color:var(--amber);}
+  .pallet-bar{height:8px;border-radius:8px;background:var(--panel);border:2px solid var(--frame-line);overflow:hidden;margin-top:12px;}
+  .pallet-bar-fill{height:100%;background:var(--accent);}
+
+  .pallet-override{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-top:13px;padding-top:12px;border-top:2px solid var(--frame-line);
+  }
+  .pallet-override label{font-size:12px;color:var(--muted);font-weight:600;}
+  .pallet-override-input{
+    width:90px;padding:8px 9px;border:2px solid var(--frame-line);border-radius:9px;
+    font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--panel);color:var(--ink);text-align:center;
+  }
+  .pallet-override-input:focus{outline:none;background:var(--panel-2);}
+
+  .history-entry{
+    border:2px solid var(--frame-line);border-radius:12px;padding:13px 14px;margin-bottom:9px;background:var(--panel-2);
+  }
+  .history-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;}
+  .history-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);}
+  .history-actions{display:flex;gap:6px;}
+  .history-actions button{
+    background:var(--panel);border:1.5px solid var(--frame-line);color:var(--muted);cursor:pointer;
+    font-size:12px;padding:5px 10px;border-radius:8px;font-family:'Vazirmatn',sans-serif;font-weight:700;
+  }
+  .history-actions button:active{transform:translate(1px,1px);}
+  .history-actions button.copied{color:var(--ok);border-color:var(--ok);}
+  .history-lines{font-size:12.5px;color:var(--ink);line-height:1.9;}
+  .history-lines .hl-total{color:var(--muted);}
+
+  .empty{text-align:center;padding:30px 12px;color:var(--muted);font-size:14px;}
+  .empty .icon{font-size:24px;margin-bottom:8px;opacity:.7;}
+  footer.note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.9;padding:0 6px;}
+
+  .bottom-nav{
+    position:fixed;left:50%;bottom:20px;
+    transform:translateX(-50%);
+    width:min(92vw, 420px);
+    background:#fffdf6;border:var(--border);box-shadow:var(--shadow);border-radius:24px;
+    display:flex;justify-content:space-around;align-items:center;
+    padding:10px 8px;
+    z-index:50;
+  }
+  .nav-item{
+    background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer;text-decoration:none;
+    width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    transition:background .15s,color .15s;
+  }
+  .nav-item.active{background:var(--accent);color:#fff;}
+
+  #printArea{display:none;}
+  #copyReport.copied{color:var(--ok);border-color:var(--ok);}
+
+  @media print{
+    body{background:#fff !important;padding:0;}
+    .frame{display:none !important;}
+    #printArea{
+      display:block;background:#fff;color:#000;font-family:'Vazirmatn',sans-serif;
+      max-width:100%;
+    }
+    .official-page{padding:14px 16px;page-break-after:always;}
+    .official-page:last-child{page-break-after:auto;}
+
+    .official-letterhead{
+      display:flex;align-items:stretch;border:2px solid #000;margin-bottom:14px;
+    }
+    .lh-box{
+      border-inline-start:1.5px solid #000;padding:8px 12px;font-size:10.5px;line-height:2;
+      flex-shrink:0;min-width:150px;
+    }
+    .lh-title{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      font-size:15px;font-weight:800;padding:8px 10px;text-align:center;
+    }
+    .lh-logo{
+      border-inline-end:1.5px solid #000;flex-shrink:0;width:110px;
+      display:flex;align-items:center;justify-content:center;padding:6px;
+    }
+    .lh-logo img{max-width:100%;max-height:52px;object-fit:contain;}
+
+    .official-table{width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:6px;table-layout:fixed;}
+    .official-table th, .official-table td{border:1px solid #000;padding:6px 3px;text-align:center;word-break:break-word;}
+    .official-table th{background:#eee;font-weight:700;font-size:9px;}
+
+    .official-sign{font-size:11.5px;padding:8px 4px 22px;border-bottom:1px solid #999;margin-bottom:16px;}
+    .official-page .official-sign:last-of-type{border-bottom:none;}
+  }
+</style>
+<link rel="stylesheet" href="foodlab-theme.css">
+<link rel="stylesheet" href="foodlab-design-system.css">
+<link rel="stylesheet" href="foodlab-operations-ui.css">
+<link rel="stylesheet" href="foodlab-polish-phaseH.css">
+</head>
+<body class="foodlab-orders-page">
+<div class="frame">
+
+  <div class="top-title">آمار صادرات</div>
+
+  <div class="hero-panel">
+    <div class="hero-top">
+      <div class="hero-avatar">🥛</div>
+      <div>
+        <div class="hero-greet">سلام، واحد کنترل کیفیت 👋</div>
+        <div class="hero-sub">محاسبه بطری و پالت محصول صادراتی</div>
+      </div>
+    </div>
+    <div class="stat-pills">
+      <div class="stat-pill">
+        <div class="pill-chip">📦</div>
+        <div>
+          <div class="pill-num" id="heroOrderCount">۰</div>
+          <div class="pill-label">سفارش ثبت‌شده</div>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <div class="pill-chip">🧴</div>
+        <div>
+          <div class="pill-num" id="heroProductCount">۰</div>
+          <div class="pill-label">محصول متفاوت</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">تنظیمات</div>
+  <div class="settings-list">
+    <details class="settings-row" id="paramsDetails">
+      <summary>
+        <div class="row-chip">⚙️</div>
+        <div class="row-body">
+          <div class="row-title">پارامترهای تبدیل</div>
+          <div class="row-sub" id="paramsPreview">—</div>
+        </div>
+        <span class="row-chev">›</span>
+      </summary>
+      <div class="params-body">
+        <div class="config-grid">
+          <div class="field">
+            <label>بطری در هر بسته</label>
+            <input type="number" step="1" id="perPack" value="12" min="1">
+          </div>
+          <div class="field">
+            <label>بطری در هر پالت (پیش‌فرض)</label>
+            <input type="number" step="1" id="perPallet" value="3168" min="1">
+          </div>
+        </div>
+      </div>
+    </details>
+    <div class="settings-row danger" id="clearAll">
+      <div class="row-chip">🗑</div>
+      <div class="row-body">
+        <div class="row-title">پاک‌کردن همه</div>
+        <div class="row-sub">حذف تمام سفارش‌های ثبت‌شده</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-card" id="ordersSection">
+    <h2>سفارش‌ها</h2>
+    <div id="orderRows"></div>
+    <div class="toolbar">
+      <button class="primary" id="addRow">+ افزودن سفارش</button>
+    </div>
+  </div>
+
+  <div class="panel-card" id="resultsSection">
+    <h2>نتیجه تجمیع</h2>
+    <div id="results"></div>
+    <div class="toolbar" id="exportToolbar" style="display:none;">
+      <button class="ghost" id="saveHistory">📌 ذخیره در تاریخچه</button>
+      <button class="ghost" id="copyReport">📋 کپی گزارش</button>
+      <button class="ghost" id="shareReport">↗️ اشتراک‌گذاری</button>
+      <button class="primary" id="printReport">🖨 چاپ فرم رسمی QC</button>
+    </div>
+  </div>
+
+  <div class="panel-card" id="historySection">
+    <h2>تاریخچه گزارش‌ها</h2>
+    <div id="historyList"><div class="empty" style="padding:16px 4px;">هنوز گزارشی ذخیره نشده — بعد از محاسبه، دکمه «ذخیره در تاریخچه» رو بزن.</div></div>
+    <div class="merged-note" style="margin-top:10px;">تاریخچه روی همین مرورگر ذخیره می‌شود. برای جلوگیری از نابودی اطلاعات، از گزینه «پشتیبان‌گیری» در صفحه اصلی استفاده کن.</div>
+  </div>
+
+  <footer class="note">محاسبه پالت = کل بطری ÷ بطری در هر پالت — اگر باقیمانده داشته باشد، به‌صورت پالت ناقص هشدار داده می‌شود.</footer>
+
+  <div class="bottom-nav">
+    <a class="nav-item active" href="#" title="آمار">🏠</a>
+    <a class="nav-item" href="#ordersSection" title="سفارش‌ها">🧾</a>
+    <a class="nav-item" href="#resultsSection" title="نتیجه">📊</a>
+    <a class="nav-item" href="#paramsDetails" title="تنظیمات">⚙️</a>
+  </div>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+// ============ haptic feedback on every tap ============
+document.addEventListener('click', () => {
+  if (navigator.vibrate) navigator.vibrate(8);
+}, { capture: true });
+
+// ============ dark mode (follows the main app; also togglable standalone) ============
+const THEME_KEY = 'qc-theme';
+function applyTheme(mode){ document.documentElement.setAttribute('data-theme', mode); }
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'qc-theme') {
+    applyTheme(e.data.mode);
+    localStorage.setItem(THEME_KEY, e.data.mode);
+  }
+});
+
+const rowsBody = document.getElementById('orderRows');
+// Coalesce bursts of edits into at most one calculation per animation frame.
+// Critical actions call runCalcNow() to flush pending work synchronously.
+let pendingCalcFrame = null;
+function scheduleCalc() {
+  if (pendingCalcFrame !== null) return;
+  if (typeof window.requestAnimationFrame !== 'function') { calc(); return; }
+  pendingCalcFrame = window.requestAnimationFrame(() => {
+    pendingCalcFrame = null;
+    calc();
+  });
+}
+function runCalcNow() {
+  if (pendingCalcFrame !== null) {
+    window.cancelAnimationFrame(pendingCalcFrame);
+    pendingCalcFrame = null;
+  }
+  calc();
+}
+// Delegate row events once instead of attaching several handlers to every field.
+// This keeps listener count nearly constant as the order list grows.
+rowsBody.addEventListener('click', (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  if (!target) return;
+  const deleteButton = target.closest('.row-del');
+  if (deleteButton && rowsBody.contains(deleteButton)) {
+    event.preventDefault();
+    const card = deleteButton.closest('.order-card');
+    if (card) { card.remove(); reindexRows(); runCalcNow(); }
+    return;
+  }
+  if (target.matches('.order-card input, .order-card select')) event.stopPropagation();
+});
+rowsBody.addEventListener('input', (event) => {
+  const target = event.target;
+  if (target instanceof HTMLInputElement && target.matches('.order-card input:not([type="checkbox"]):not([type="date"])')) scheduleCalc();
+});
+rowsBody.addEventListener('change', (event) => {
+  const target = event.target;
+  if (target instanceof Element && target.matches('.order-card select, .order-card input[type="checkbox"], .order-card input[type="date"]')) scheduleCalc();
+});
+const resultsEl = document.getElementById('results');
+const perPackEl = document.getElementById('perPack');
+const perPalletEl = document.getElementById('perPallet');
+const perPalletOverrides = {};
+const EXPORT_HISTORY_KEY = 'qc-export-history-v2';
+function restoreExportHistory(){
+  try {
+    const saved=JSON.parse(localStorage.getItem(EXPORT_HISTORY_KEY)||'[]');
+    if(!Array.isArray(saved)) return [];
+    return saved.filter(x=>x && Array.isArray(x.groupList) && Number.isFinite(Date.parse(x.timestamp)))
+      .slice(-150).map(x=>({...x,timestamp:new Date(x.timestamp)}));
+  }catch(e){return [];}
+}
+const historyList = restoreExportHistory();
+function persistExportHistory(){
+  try { localStorage.setItem(EXPORT_HISTORY_KEY, JSON.stringify(historyList.slice(-150))); return true; }
+  catch(e){ alert('فضای ذخیره مرورگر کافی نیست؛ گزارش جدید ذخیره نشد. لطفاً نسخه پشتیبان بگیر.'); return false; }
+}
+function validPositiveInteger(v){return v!=='' && Number.isSafeInteger(Number(v)) && Number(v)>0;}
+function validNonnegativeInteger(v){return v!=='' && Number.isSafeInteger(Number(v)) && Number(v)>=0;}
+function getPerPallet(product){
+  return Object.hasOwn(perPalletOverrides,product) ? perPalletOverrides[product] : Number(perPalletEl.value);
+}
+const heroOrderCountEl = document.getElementById('heroOrderCount');
+const heroProductCountEl = document.getElementById('heroProductCount');
+
+const PRODUCTS = [
+  'شیر پرچرب ۲۰۰',
+  'شیر کم‌چرب ۲۰۰',
+  'شیر موز ۲۰۰',
+  'شیر کاکائو ۲۰۰',
+  'شیر قهوه ۲۰۰',
+  'شیر نارگیل ۲۰۰',
+  'شیر پرچرب ۱۰۰۰',
+  'شیر کم‌چرب ۱۰۰۰',
+  'شیر موز ۱۰۰۰',
+  'شیر کاکائو ۱۰۰۰',
+  'شیر نارگیل ۱۰۰۰',
+];
+const LOGO_URL = new URL('./qc-brand-logo.webp', window.location.href).href;
+
+function toFaDigits(str){
+  const fa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return String(str).replace(/[0-9]/g, d => fa[d]);
+}
+function fmt(n){
+  return toFaDigits(Number(n).toLocaleString('en-US'));
+}
+
+function makeRow(data={}){
+  const card = document.createElement('div');
+  card.className = 'order-card';
+  card.innerHTML = `
+    <div class="order-card-head">
+      <span class="order-index"></span>
+      <button class="row-del" title="حذف">✕</button>
+    </div>
+    <div class="order-fields">
+      <div class="field">
+        <label>محصول</label>
+        <select class="f-product">
+          <option value="" disabled ${!data.product ? 'selected' : ''}>انتخاب کن...</option>
+          ${PRODUCTS.map(p => `<option value="${p}" ${data.product===p ? 'selected' : ''}>${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>تعداد بسته</label>
+        <input type="number" class="f-qty qty-input" placeholder="تعداد" min="0" step="1" value="${data.qty??''}">
+      </div>
+    </div>
+    <details class="qc-details">
+      <summary>جزئیات فرم کنترل کیفیت <span class="row-chev">›</span></summary>
+      <div class="order-fields qc-fields">
+        <div class="field">
+          <label>نام کشور</label>
+          <input type="text" class="f-country" placeholder="مثلاً عراق">
+        </div>
+        <div class="field">
+          <label>سایز</label>
+          <input type="text" class="f-size" placeholder="مثلاً ۲۰۰ سی‌سی">
+        </div>
+        <div class="field">
+          <label>لیبل/اسلیو</label>
+          <select class="f-label">
+            <option value="لیبل فارسی">لیبل فارسی</option>
+            <option value="لیبل عربی">لیبل عربی</option>
+            <option value="اسلیو فارسی">اسلیو فارسی</option>
+            <option value="اسلیو عربی">اسلیو عربی</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>نوع پالت</label>
+          <select class="f-palletmat">
+            <option value="چوبی">چوبی</option>
+            <option value="پلاستیکی">پلاستیکی</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>تاریخ تولید</label>
+          <input type="date" class="f-proddate">
+        </div>
+        <div class="field">
+          <label>مدت ماندگاری</label>
+          <input type="text" class="f-shelflife" placeholder="مثلاً ۶ ماه">
+        </div>
+        <div class="field">
+          <label>تاریخ انقضاء</label>
+          <input type="date" class="f-expdate">
+        </div>
+        <div class="field">
+          <label>نام کارشناس</label>
+          <input type="text" class="f-expert" placeholder="نام کارشناس کنترل کیفیت">
+        </div>
+        <div class="field">
+          <label>تعداد نمونه آزمایشگاه</label>
+          <input type="number" class="f-labsample" placeholder="مثلاً ۲" min="0" step="1">
+        </div>
+        <div class="field wide qc-checks">
+          <label class="check-label"><input type="checkbox" class="f-forexport"> درج عبارت for export</label>
+        </div>
+        <div class="field wide">
+          <label>توضیحات</label>
+          <input type="text" class="f-notes" placeholder="توضیحات تکمیلی">
+        </div>
+      </div>
+    </details>
+  `;
+  rowsBody.appendChild(card);
+  reindexRows();
+}
+
+function reindexRows(){
+  [...rowsBody.querySelectorAll('.order-card')].forEach((card, i) => {
+    card.querySelector('.order-index').textContent = 'سفارش ' + toFaDigits(i + 1);
+  });
+}
+
+function addEmptyRow(){ makeRow(); runCalcNow(); }
+
+function clearAll(){
+  rowsBody.innerHTML = '';
+  addEmptyRow();
+}
+
+function calc(){
+  const packRaw=perPackEl.value.trim(), palletRaw=perPalletEl.value.trim();
+  const perPack=Number(packRaw);
+  const cards=Array.from(rowsBody.querySelectorAll('.order-card'));
+  let invalid='';
+  if(!validPositiveInteger(packRaw)) invalid='تعداد بطری در هر بسته باید عدد صحیح مثبت باشد.';
+  else if(!validPositiveInteger(palletRaw)) invalid='ظرفیت پیش‌فرض پالت باید عدد صحیح مثبت باشد.';
+
+  // Read each row's controls once; reuse this snapshot for validation, totals and print data.
+  let entries=[];
+  if(!invalid){
+    entries=cards.map(card => {
+      const qtyRaw=card.querySelector('.f-qty').value.trim();
+      const labSample=card.querySelector('.f-labsample').value.trim();
+      return {
+        product: card.querySelector('.f-product').value.trim(),
+        qty: Number(qtyRaw) || 0,
+        qtyRaw,
+        country: card.querySelector('.f-country').value.trim(),
+        size: card.querySelector('.f-size').value.trim(),
+        label: card.querySelector('.f-label').value,
+        palletmat: card.querySelector('.f-palletmat').value,
+        prodDate: card.querySelector('.f-proddate').value.trim(),
+        shelfLife: card.querySelector('.f-shelflife').value.trim(),
+        expDate: card.querySelector('.f-expdate').value.trim(),
+        expert: card.querySelector('.f-expert').value.trim(),
+        labSample,
+        forExport: card.querySelector('.f-forexport').checked,
+        notes: card.querySelector('.f-notes').value.trim(),
+      };
+    });
+    for(let i=0; i<entries.length && !invalid; i++){
+      const entry=entries[i];
+      if(entry.qtyRaw!=='' && !validNonnegativeInteger(entry.qtyRaw)) invalid='تعداد بسته باید عدد صحیح نامنفی باشد.';
+      if(!invalid && Number(entry.qtyRaw)>0 && !entry.product) invalid='برای هر سفارش با تعداد مثبت، محصول را انتخاب کن.';
+      if(!invalid && entry.labSample!=='' && !validNonnegativeInteger(entry.labSample)) invalid='تعداد نمونه آزمایشگاه باید عدد صحیح نامنفی باشد.';
+      if(!invalid && Number(entry.qtyRaw)>0 && !Number.isSafeInteger(Number(entry.qtyRaw)*perPack)) invalid='تعداد کل بطری‌ها از ظرفیت دقیق محاسبات بیشتر است.';
+      if(!invalid && entry.prodDate && entry.expDate && entry.expDate<entry.prodDate) invalid='تاریخ انقضا نمی‌تواند قبل از تاریخ تولید باشد.';
+    }
+  }
+  if(!invalid && Object.values(perPalletOverrides).some(x=>!Number.isSafeInteger(x)||x<=0))invalid='ظرفیت اختصاصی پالت نامعتبر است.';
+  if(invalid){
+    window.__lastReport=null;
+    heroOrderCountEl.textContent='—';heroProductCountEl.textContent='—';
+    document.getElementById('exportToolbar').style.display='none';
+    document.getElementById('printArea').innerHTML='';
+    resultsEl.innerHTML='<div class="empty" role="alert" style="color:#a83e26;">⚠ '+invalid+'</div>';
+    return;
+  }
+
+  const activeEntries=entries.filter(o => o.qty > 0 && o.product);
+  const orders=activeEntries.map(o => ({product:o.product, qty:o.qty}));
+  const rawOrders=activeEntries.map(o => ({
+    product:o.product, qty:o.qty, country:o.country, size:o.size, label:o.label,
+    palletmat:o.palletmat, prodDate:o.prodDate, shelfLife:o.shelfLife, expDate:o.expDate,
+    expert:o.expert, labSample:o.labSample, forExport:o.forExport, notes:o.notes,
+  }));
+
+  heroOrderCountEl.textContent = fmt(orders.length);
+
+  if(orders.length === 0){
+    window.__lastReport=null;
+    heroProductCountEl.textContent = fmt(0);
+    document.getElementById('exportToolbar').style.display = 'none';
+    document.getElementById('printArea').innerHTML = '';
+    resultsEl.innerHTML = `<div class="empty"><div class="icon">📦</div>هنوز سفارشی با نام محصول و تعداد وارد نشده است.</div>`;
+    return;
+  }
+
+  const groups = {};
+  orders.forEach(o => {
+    const key = o.product.toLowerCase();
+    if(!groups[key]) groups[key] = { ...o, qty:0 };
+    groups[key].qty += o.qty;
+  });
+
+  const groupList = Object.values(groups);
+  if(groupList.some(g=>!Number.isSafeInteger(g.qty) || !Number.isSafeInteger(g.qty*perPack))){
+    window.__lastReport=null;
+    document.getElementById('exportToolbar').style.display='none';
+    resultsEl.innerHTML='<div class="empty" role="alert">⚠ مجموع سفارش‌ها از ظرفیت دقیق محاسبات بیشتر است.</div>';
+    return;
+  }
+  heroProductCountEl.textContent = fmt(groupList.length);
+
+  const exportToolbar = document.getElementById('exportToolbar');
+  exportToolbar.style.display = 'flex';
+  window.__lastReport = { groupList, perPack, perPalletOverrides: {...perPalletOverrides}, defaultPerPallet: Number(perPalletEl.value) };
+  buildPrintArea(rawOrders, perPack);
+
+  const grandQty = groupList.reduce((sum,g) => sum + g.qty, 0);
+  const grandBottles = grandQty * perPack;
+  const grandPallets = groupList.reduce((sum,g) => {
+    const perPallet = getPerPallet(g.product);
+    return sum + Math.ceil((g.qty * perPack) / perPallet);
+  }, 0);
+
+  const summary = groupList.length > 1 ? `
+    <div class="summary-strip">
+      <div class="stat">
+        <div class="k">جمع کل بسته</div>
+        <div class="v">${fmt(grandQty)}</div>
+      </div>
+      <div class="stat">
+        <div class="k">جمع کل بطری</div>
+        <div class="v">${fmt(grandBottles)}</div>
+      </div>
+      <div class="stat highlight">
+        <div class="k">جمع کل پالت (فیزیکی)</div>
+        <div class="v">${fmt(grandPallets)}</div>
+      </div>
+    </div>` : '';
+
+  resultsEl.innerHTML = summary + groupList.map(g => {
+    const perPallet = getPerPallet(g.product);
+    const bottles = g.qty * perPack;
+    const fullPallets = Math.floor(bottles / perPallet);
+    const remainder = bottles - fullPallets * perPallet;
+    const isExact = remainder === 0;
+    const fillPct = Math.min(100, (remainder / perPallet) * 100);
+
+    return `
+      <div class="group">
+        <div class="group-head">
+          <div class="group-title">${g.product || 'بدون نام محصول'}</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="k">تعداد بسته (جمع)</div>
+            <div class="v">${fmt(g.qty)}</div>
+          </div>
+          <div class="stat">
+            <div class="k">تعداد بطری</div>
+            <div class="v">${fmt(bottles)}</div>
+          </div>
+          <div class="stat highlight">
+            <div class="k">تعداد پالت</div>
+            <div class="v">
+              ${isExact ? fmt(fullPallets) : fmt(fullPallets) + ' <small>+ ' + fmt(remainder) + ' بطری اضافه</small>'}
+            </div>
+          </div>
+        </div>
+        ${!isExact ? `
+          <div class="pallet-bar"><div class="pallet-bar-fill" style="width:${fillPct}%"></div></div>
+          <div class="merged-note pallet-warn">⚠ آخرین پالت کامل نیست — ${fmt(remainder)} بطری مازاد بر ${fmt(fullPallets)} پالت کامل باقی می‌ماند.</div>
+        ` : ''}
+        <div class="pallet-override">
+          <label>ظرفیت پالت این محصول (بطری)</label>
+          <input type="number" class="pallet-override-input" min="1" step="1" value="${perPallet}" data-product="${g.product}">
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  resultsEl.querySelectorAll('.pallet-override-input').forEach(inp => {
+    // Apply after the user finishes editing to avoid losing focus on every digit.
+    inp.addEventListener('change', () => {
+      const raw=inp.value.trim();
+      if(!validPositiveInteger(raw)){
+        window.__lastReport=null;document.getElementById('exportToolbar').style.display='none';
+        inp.setCustomValidity('ظرفیت پالت باید عدد صحیح مثبت باشد');inp.reportValidity();return;
+      }
+      inp.setCustomValidity('');
+      const val=Number(raw), product=inp.dataset.product;
+      if(val===Number(perPalletEl.value)) delete perPalletOverrides[product];
+      else perPalletOverrides[product]=val;
+      runCalcNow();
+    });
+    inp.addEventListener('click', e => e.stopPropagation());
+  });
+}
+
+function updateParamsPreview(){
+  const preview = document.getElementById('paramsPreview');
+  preview.textContent = `${toFaDigits(perPackEl.value || 0)} در بسته · ${toFaDigits(perPalletEl.value || 0)} در پالت`;
+}
+
+function computePalletInfo(qty, perPack, perPallet){
+  const bottles = qty * perPack;
+  const fullPallets = Math.floor(bottles / perPallet);
+  const remainder = bottles - fullPallets * perPallet;
+  return { bottles, fullPallets, remainder };
+}
+
+function buildReportText(groupList, perPack, resolvePerPallet, fixedDate){
+  resolvePerPallet = resolvePerPallet || (g => getPerPallet(g.product));
+  const dateStr = (fixedDate || new Date()).toLocaleDateString('fa-IR');
+  let lines = [];
+  lines.push('گزارش آمار محصول صادراتی');
+  lines.push('تاریخ: ' + dateStr);
+  lines.push('');
+  groupList.forEach(g => {
+    const perPallet = resolvePerPallet(g);
+    const { bottles, fullPallets, remainder } = computePalletInfo(g.qty, perPack, perPallet);
+    lines.push('محصول: ' + (g.product || 'بدون نام'));
+    lines.push('تعداد بسته: ' + fmt(g.qty));
+    lines.push('تعداد بطری: ' + fmt(bottles));
+    lines.push('ظرفیت پالت: ' + fmt(perPallet) + ' بطری');
+    lines.push('تعداد پالت: ' + (remainder === 0 ? fmt(fullPallets) : fmt(fullPallets) + ' + ' + fmt(remainder) + ' بطری اضافه'));
+    lines.push('');
+  });
+  if(groupList.length > 1){
+    const grandQty = groupList.reduce((s,g) => s + g.qty, 0);
+    const grandBottles = grandQty * perPack;
+    const grandPallets = groupList.reduce((s,g) => s + Math.ceil((g.qty * perPack) / resolvePerPallet(g)), 0);
+    lines.push('— جمع کل —');
+    lines.push('تعداد بسته: ' + fmt(grandQty));
+    lines.push('تعداد بطری: ' + fmt(grandBottles));
+    lines.push('تعداد پالت (فیزیکی): ' + fmt(grandPallets));
+  }
+  return lines.join('\n');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function officialLetterhead(){
+  return `
+    <div class="official-letterhead">
+      <div class="lh-logo"><img src="${LOGO_URL}" alt="Alis"></div>
+      <div class="lh-title">فرم اطلاعات مورد نیاز کنترل کیفیت جهت تولید محصول صادراتی</div>
+      <div class="lh-box">
+        <div class="lh-code">کد مدرک: Alis-FO-QA25</div>
+        <div class="lh-rev">شماره بازنگری: ۲</div>
+        <div class="lh-rev">تاریخ بازنگری: ۱۴۰۳/۰۸/۱۲</div>
+      </div>
+    </div>
+  `;
+}
+
+function formatDateDisplay(dateStr){
+  if(!dateStr) return '';
+  return dateStr.replace(/-/g, '/');
+}
+
+function buildPrintArea(rawOrders, perPack){
+  if(!rawOrders || rawOrders.length === 0){
+    document.getElementById('printArea').innerHTML = '';
+    return;
+  }
+  const headers = ['نام کشور','نام محصول','سایز','لیبل/اسلیو','نوع پالت','تعداد پالت','تعداد بسته','تعداد بطری','تاریخ تولید','تاریخ انقضاء','مدت ماندگاری','نمونه آزمایشگاه','for export','توضیحات'];
+
+  const chunks = [];
+  for(let i = 0; i < rawOrders.length; i += 3) chunks.push(rawOrders.slice(i, i + 3));
+
+  const pagesHtml = chunks.map(chunk => {
+    const blocksHtml = chunk.map((o, idxInChunk) => {
+      const perPallet = getPerPallet(o.product);
+      const { bottles, fullPallets, remainder } = computePalletInfo(o.qty, perPack, perPallet);
+      const palletText = remainder === 0 ? fmt(fullPallets) : fmt(fullPallets) + ' + ' + fmt(remainder) + ' بطری';
+      const isLastOfPage = idxInChunk === chunk.length - 1;
+      const prodDateDisp = formatDateDisplay(o.prodDate);
+      const expDateDisp = formatDateDisplay(o.expDate);
+      const cells = [
+        escapeHtml(o.country) || '—',
+        escapeHtml(o.product) || '—',
+        escapeHtml(o.size) || '—',
+        escapeHtml(o.label) || '—',
+        escapeHtml(o.palletmat) || '—',
+        palletText,
+        fmt(o.qty),
+        fmt(bottles),
+        escapeHtml(prodDateDisp) || '—',
+        escapeHtml(expDateDisp) || '—',
+        escapeHtml(o.shelfLife) || '—',
+        o.labSample ? fmt(o.labSample) : '—',
+        o.forExport ? 'دارد' : 'ندارد',
+        escapeHtml(o.notes) || '—',
+      ];
+      return `
+        <table class="official-table">
+          <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+          <tbody><tr>${cells.map(c => `<td>${c}</td>`).join('')}</tr></tbody>
+        </table>
+        <div class="official-sign">
+          این محصول در تاریخ ${prodDateDisp ? '<b>' + escapeHtml(prodDateDisp) + '</b>' : '......................'} تولید شد.
+          &nbsp;&nbsp; ${isLastOfPage ? 'نام و امضا کارشناس' : 'نام کارشناس'}: ${o.expert ? '<b>' + escapeHtml(o.expert) + '</b>' : '......................'}
+        </div>
+      `;
+    }).join('');
+
+    return `<div class="official-page">${officialLetterhead()}${blocksHtml}</div>`;
+  }).join('');
+
+  document.getElementById('printArea').innerHTML = pagesHtml;
+}
+
+document.getElementById('copyReport').addEventListener('click', async () => {
+  runCalcNow();
+  if(!window.__lastReport) return;
+  const { groupList, perPack } = window.__lastReport;
+  const text = buildReportText(groupList, perPack);
+  const btn = document.getElementById('copyReport');
+  try{
+    await navigator.clipboard.writeText(text);
+    btn.textContent = '✓ کپی شد';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 کپی گزارش'; btn.classList.remove('copied'); }, 1800);
+  }catch(err){
+    btn.textContent = '⚠ کپی نشد';
+    setTimeout(() => { btn.textContent = '📋 کپی گزارش'; }, 1800);
+  }
+});
+
+document.getElementById('shareReport').addEventListener('click', async () => {
+  runCalcNow();
+  if(!window.__lastReport) return;
+  const { groupList, perPack } = window.__lastReport;
+  const text = buildReportText(groupList, perPack);
+  if(navigator.share){
+    try{ await navigator.share({ title: 'گزارش آمار محصول صادراتی', text }); }
+    catch(err){ /* user cancelled share — no action needed */ }
+  }else{
+    try{
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('shareReport');
+      btn.textContent = '📋 کپی شد (اشتراک‌گذاری مستقیم پشتیبانی نشد)';
+      setTimeout(() => { btn.textContent = '↗️ اشتراک‌گذاری'; }, 2400);
+    }catch(err){ /* clipboard unavailable — nothing further to do */ }
+  }
+});
+
+document.getElementById('printReport').addEventListener('click', () => {
+  runCalcNow();
+  window.print();
+});
+
+function renderHistory(){
+  const el = document.getElementById('historyList');
+  if(historyList.length === 0){
+    el.innerHTML = `<div class="empty" style="padding:16px 4px;">هنوز گزارشی ذخیره نشده — بعد از محاسبه، دکمه «ذخیره در تاریخچه» رو بزن.</div>`;
+    return;
+  }
+  el.innerHTML = [...historyList].reverse().map(entry => {
+    const grandQty = entry.groupList.reduce((s,g) => s + g.qty, 0);
+    const grandPallets = entry.groupList.reduce((s,g) => s + Math.ceil((g.qty * entry.perPack) / g.resolvedPerPallet), 0);
+    const lines = entry.groupList.map(g =>
+      `${escapeHtml(g.product)}: ${fmt(g.qty)} بسته → ${fmt(Math.ceil((g.qty*entry.perPack)/g.resolvedPerPallet))} پالت`
+    ).join('<br>');
+    return `
+      <div class="history-entry" data-id="${entry.id}">
+        <div class="history-head">
+          <span class="history-time">${entry.timestamp.toLocaleDateString('fa-IR')} — ${entry.timestamp.toLocaleTimeString('fa-IR')}</span>
+          <div class="history-actions">
+            <button class="hist-copy" data-id="${entry.id}">کپی</button>
+            <button class="hist-del" data-id="${entry.id}">حذف</button>
+          </div>
+        </div>
+        <div class="history-lines">${lines}${entry.groupList.length > 1 ? `<br><span class="hl-total">جمع کل: ${fmt(grandQty)} بسته — ${fmt(grandPallets)} پالت</span>` : ''}</div>
+      </div>
+    `;
+  }).join('');
+
+  // History actions are handled by one delegated listener below.
+}
+
+
+// Delegate history actions once instead of attaching up to 300 listeners on every render.
+document.getElementById('historyList').addEventListener('click', async (event) => {
+  const target = event.target instanceof Element ? event.target.closest('.hist-copy, .hist-del') : null;
+  if (!target || !event.currentTarget.contains(target)) return;
+  const id = Number(target.dataset.id);
+  if (target.classList.contains('hist-copy')) {
+    const entry = historyList.find(h => h.id === id);
+    if (!entry) return;
+    const text = buildReportText(entry.groupList, entry.perPack, g => g.resolvedPerPallet, entry.timestamp);
+    try {
+      await navigator.clipboard.writeText(text);
+      target.textContent = '✓ کپی شد';
+      target.classList.add('copied');
+      setTimeout(() => { target.textContent = 'کپی'; target.classList.remove('copied'); }, 1600);
+    } catch (err) { /* clipboard unavailable */ }
+    return;
+  }
+  const idx = historyList.findIndex(h => h.id === id);
+  if (idx < 0 || !confirm('این گزارش از تاریخچه حذف شود؟')) return;
+  const removed = historyList.splice(idx, 1)[0];
+  if (!persistExportHistory()) { historyList.splice(idx, 0, removed); return; }
+  renderHistory();
+});
+
+document.getElementById('saveHistory').addEventListener('click', () => {
+  runCalcNow();
+  if(!window.__lastReport) return;
+  const { groupList, perPack } = window.__lastReport;
+  const snapshot = {
+    id: Date.now(),
+    timestamp: new Date(),
+    perPack,
+    groupList: groupList.map(g => ({ ...g, resolvedPerPallet: getPerPallet(g.product) })),
+  };
+  if(historyList.some(h => h.perPack === snapshot.perPack && JSON.stringify(h.groupList) === JSON.stringify(snapshot.groupList) && Date.now()-h.timestamp.getTime()<60000)){
+    alert('این گزارش در یک دقیقه گذشته ذخیره شده است.');return;
+  }
+  historyList.push(snapshot);
+  if(!persistExportHistory()){historyList.pop();return;}
+  renderHistory();
+  const btn = document.getElementById('saveHistory');
+  btn.textContent = '✓ ذخیره شد';
+  setTimeout(() => { btn.textContent = '📌 ذخیره در تاریخچه'; }, 1400);
+});
+
+document.getElementById('addRow').addEventListener('click', addEmptyRow);
+document.getElementById('clearAll').addEventListener('click', clearAll);
+perPackEl.addEventListener('input', () => { scheduleCalc(); updateParamsPreview(); });
+perPalletEl.addEventListener('input', () => { scheduleCalc(); updateParamsPreview(); });
+perPackEl.addEventListener('click', e => e.stopPropagation());
+perPalletEl.addEventListener('click', e => e.stopPropagation());
+
+// smooth in-frame scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const targetId = a.getAttribute('href').slice(1);
+    const target = document.getElementById(targetId);
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({behavior:'smooth', block:'start'});
+      if(targetId === 'paramsDetails') target.open = true;
+    }
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if(a.classList.contains('nav-item')) a.classList.add('active');
+  });
+});
+
+// init
+addEmptyRow();
+updateParamsPreview();
+renderHistory();
+</script>
+</body>
+</html>

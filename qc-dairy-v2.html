@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مرکز محاسبه تاریخ تولید و انقضا</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://ubrydkyqmradyuiinjla.supabase.co" crossorigin>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Lalezar&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efdf;
+    --surface:#fffdf6;
+    --surface-2:#eee7d2;
+    --border:#18140d;
+    --border-soft:rgba(24,20,13,.16);
+    --text:#18140d;
+    --text-soft:#756b57;
+    --text-faint:#8c8064;
+    --teal:#2fbf9e;
+    --teal-deep:#1c8a6f;
+    --teal-bg:#dff5ee;
+    --green:#1f7a34;
+    --amber:#b5790a;
+    --amber-bg:#fbf1d6;
+    --border-w:2.5px solid var(--border);
+    --shadow:6px 6px 0 var(--border);
+    --shadow-sm:4px 4px 0 var(--border);
+    --glow:rgba(47,191,158,.16);
+  }
+  :root[data-theme="dark"]{
+    --bg:#171310;
+    --surface:#211b14;
+    --surface-2:#291f16;
+    --border:#5f5646;
+    --border-soft:rgba(236,230,214,.12);
+    --text:#ece6d6;
+    --text-soft:#c9bfa8;
+    --text-faint:#a8987d;
+    --teal:#237a64;
+    --glow:rgba(47,191,158,.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 12% -6%, var(--glow), transparent 55%),
+      var(--bg);
+    font-family:'Vazirmatn', sans-serif;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    transition:background-color .2s ease, color .2s ease;
+  }
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px 14px 36px;
+  }
+  .wrap{
+    width:100%;
+    max-width:460px;
+  }
+
+  .header-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:16px;
+    gap:10px;
+    padding-right:64px;
+  }
+  .page-title{
+    font-size:22px;
+    font-weight:800;
+    color:var(--text);
+    margin-bottom:4px;
+  }
+  .page-subtitle{
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-soft);
+    max-width:280px;
+  }
+  .status-pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    background:var(--surface);
+    border:2px solid var(--border);
+    color:var(--green);
+    font-size:12px;
+    font-weight:700;
+    padding:7px 12px;
+    border-radius:999px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .status-pill .dot{
+    width:7px;height:7px;
+    border-radius:50%;
+    background:var(--green);
+  }
+
+  .controls{
+    background:var(--surface);
+    border:var(--border-w);
+    box-shadow:var(--shadow-sm);
+    border-radius:16px;
+    padding:12px 14px;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:0;
+  }
+  .field{
+    flex:1;
+    padding:0 12px;
+    min-width:0;
+  }
+  .field + .field{
+    border-right:2px solid var(--border-soft);
+  }
+  .field label{
+    display:block;
+    font-size:11px;
+    font-weight:700;
+    color:var(--text-faint);
+    margin-bottom:5px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  .field input,
+  .field select{
+    width:100%;
+    border:none;
+    background:transparent;
+    padding:0;
+    font-family:'Vazirmatn', sans-serif;
+    font-size:15px;
+    font-weight:700;
+    color:var(--text);
+  }
+  .field input::placeholder{color:var(--text-faint); font-weight:600;}
+  .field select{
+    appearance:none;
+    -webkit-appearance:none;
+    background-image:linear-gradient(45deg, transparent 50%, var(--teal-deep) 50%), linear-gradient(135deg, var(--teal-deep) 50%, transparent 50%);
+    background-position: calc(1em) center, calc(1em + 5px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat:no-repeat;
+    padding-left:16px;
+    cursor:pointer;
+  }
+  .field input:focus,
+  .field select:focus{
+    outline:2px solid var(--teal-deep);
+    outline-offset:2px;
+    border-radius:6px;
+  }
+
+  .hero{
+    position:relative;
+    background:var(--teal);
+    border:var(--border-w);
+    box-shadow:var(--shadow);
+    border-radius:22px;
+    padding:24px 22px 20px;
+    margin-bottom:14px;
+    overflow:hidden;
+    animation:rise .4s ease both;
+  }
+  @keyframes rise{
+    from{opacity:0; transform:translateY(8px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .hero-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    position:relative;
+    z-index:1;
+    gap:14px;
+  }
+  .hero-eyebrow{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12px;
+    font-weight:800;
+    color:#04231f;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:10px;
+  }
+  .date-block-label.amber{ color:#5c3d00; }
+  .hero-divider{
+    height:2px;
+    background:rgba(4,35,31,.18);
+    margin:14px 0;
+  }
+  .hero-headline{
+    font-family:'Lalezar', 'Vazirmatn', sans-serif;
+    font-size:36px;
+    font-weight:400;
+    color:#04231f;
+    line-height:1.25;
+    margin-bottom:6px;
+    letter-spacing:.01em;
+  }
+  .hero-headline.amber{
+    font-size:28px;
+    color:#5c3d00;
+    margin-bottom:4px;
+  }
+  .hero-sub{
+    font-size:13px;
+    font-weight:600;
+    color:rgba(4,35,31,.75);
+  }
+
+  .hero-price-row{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .hero-price-col{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    background:#fffdf6;
+    border:2px solid var(--border);
+    border-radius:10px;
+    padding:10px 14px;
+  }
+  .hero-price-value{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(16px, 5vw, 24px);
+    font-weight:700;
+    color:var(--teal-deep);
+    line-height:1.2;
+    white-space:nowrap;
+  }
+  .hero-price-value.pending{
+    font-family:'Vazirmatn', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-faint);
+  }
+  .hero-price-value .unit{
+    font-family:'Vazirmatn', sans-serif;
+    font-size:11px;
+    font-weight:700;
+    color:var(--text-soft);
+    margin-right:4px;
+  }
+  .hero-price-label{
+    font-size:11px;
+    font-weight:800;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  .badge-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    flex-shrink:0;
+  }
+  .badge-glow{
+    position:relative;
+    width:74px;height:74px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .badge-ring{
+    position:absolute;
+    border-radius:50%;
+    border:1.5px solid rgba(4,35,31,.25);
+  }
+  .badge-ring.r1{ inset:0; }
+  .badge-ring.r2{ inset:10px; border-color:rgba(4,35,31,.16); }
+  .badge-core{
+    position:relative;
+    width:44px;height:44px;
+    border-radius:50%;
+    background:#fffdf6;
+    border:2.5px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+    color:#04231f;
+  }
+  .badge-label{
+    font-size:10px;
+    font-weight:800;
+    color:#04231f;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+
+  .hero-batch{
+    margin-top:16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:#04231f;
+    background:#fffdf6;
+    border:2px solid var(--border);
+    display:inline-block;
+    padding:5px 12px;
+    border-radius:8px;
+    font-weight:700;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    position:relative;
+    z-index:1;
+  }
+
+  .hero-wave{ display:none; }
+
+  .hero-actions{
+    position:relative;
+    z-index:1;
+    display:flex;
+    gap:8px;
+    margin-top:18px;
+  }
+  .hero-actions button{
+    border:2.5px solid var(--border);
+    background:#fffdf6;
+    color:var(--text);
+    font-family:'Vazirmatn', sans-serif;
+    font-size:15px;
+    font-weight:800;
+    padding:14px 16px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+    min-height:52px;
+    box-shadow:var(--shadow-sm);
+  }
+  .hero-actions button:active{ transform:translate(2px,2px); box-shadow:none; }
+  .hero-actions button#prodToday{
+    flex:1;
+    background:#04231f;
+    color:#fffdf6;
+    text-align:center;
+  }
+  .hero-actions button#prodPrev,
+  .hero-actions button#prodNext{
+    width:52px;
+    text-align:center;
+    font-size:20px;
+  }
+
+  .stat-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .stat-card{
+    background:var(--surface);
+    border:var(--border-w);
+    box-shadow:var(--shadow-sm);
+    border-radius:16px;
+    padding:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::before{
+    content:'';
+    position:absolute;
+    top:0; right:0; left:0;
+    height:4px;
+    background:var(--border);
+  }
+  .stat-card.teal::before{ background:var(--teal-deep); }
+  .stat-card.amber::before{ background:var(--amber); }
+  .stat-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .stat-icon{
+    width:26px;height:26px;
+    border-radius:8px;
+    border:2px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    background:var(--teal-bg);
+    flex-shrink:0;
+  }
+  .stat-card.amber .stat-icon{ background:var(--amber-bg); }
+  .stat-label{
+    font-size:12px;
+    font-weight:800;
+    color:var(--text-soft);
+    text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+  .stat-value{
+    font-family:'JetBrains Mono', monospace;
+    font-size:25px;
+    font-weight:700;
+    color:var(--text);
+  }
+  .stat-card.amber .stat-value{ color:var(--amber); }
+  .stat-card.teal .stat-value{ color:var(--teal-deep); }
+  .stat-value .unit{
+    font-family:'Vazirmatn', sans-serif;
+    font-size:11px;
+    font-weight:600;
+    color:var(--text-faint);
+    margin-right:4px;
+  }
+  .stat-value.pending{
+    font-family:'Vazirmatn', sans-serif;
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-faint);
+  }
+  .stat-sub{
+    font-size:11px;
+    font-weight:600;
+    color:var(--text-faint);
+    margin-top:4px;
+  }
+
+  .checklist-card{
+    background:var(--surface);
+    border:var(--border-w);
+    box-shadow:var(--shadow-sm);
+    border-radius:16px;
+    padding:16px 18px;
+    margin-bottom:14px;
+  }
+  .checklist-head{
+    margin-bottom:14px;
+  }
+  .checklist-title{
+    font-size:14px;
+    font-weight:800;
+    color:var(--text);
+    margin-bottom:10px;
+  }
+  .checklist-head-actions{
+    display:flex;
+    gap:8px;
+  }
+  .checklist-head-actions button{
+    flex:1;
+    font-family:'Vazirmatn', sans-serif;
+    font-size:13px;
+    font-weight:800;
+    padding:12px 10px;
+    border-radius:12px;
+    cursor:pointer;
+    min-height:44px;
+    border:2px solid var(--border);
+  }
+  .checklist-checkall{
+    background:var(--teal);
+    color:#04231f;
+  }
+  #checklistReset{
+    background:var(--surface-2);
+    color:var(--text);
+  }
+  .checklist-progress{
+    height:8px;
+    border-radius:999px;
+    background:var(--surface-2);
+    border:1.5px solid var(--border);
+    overflow:hidden;
+    margin-bottom:8px;
+  }
+  .checklist-progress-bar{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:var(--teal-deep);
+    transition:width .25s ease;
+  }
+  .checklist-progress-text{
+    font-size:11px;
+    color:var(--text-faint);
+    margin-bottom:12px;
+    font-weight:700;
+  }
+  .checklist-progress-text.done{ color:var(--teal-deep); font-weight:800; }
+  .check-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 6px;
+    cursor:pointer;
+    position:relative;
+    min-height:44px;
+  }
+  .check-item + .check-item{
+    border-top:2px solid var(--border-soft);
+  }
+  .check-input{
+    position:absolute;
+    opacity:0;
+    width:34px;height:34px;
+    margin:0;
+    cursor:pointer;
+  }
+  .check-box{
+    width:32px;height:32px;
+    border-radius:9px;
+    border:2.5px solid var(--border);
+    background:var(--surface-2);
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .15s, border-color .15s;
+  }
+  .check-box::after{
+    content:'';
+    width:9px;height:16px;
+    border-right:3px solid #04231f;
+    border-bottom:3px solid #04231f;
+    transform:rotate(45deg) translate(-2px,-2px);
+    opacity:0;
+    transition:opacity .1s;
+  }
+  .check-input:checked + .check-box{
+    background:var(--teal);
+    border-color:var(--border);
+  }
+  .check-input:checked + .check-box::after{ opacity:1; }
+  .check-text{
+    font-size:15px;
+    color:var(--text);
+    font-weight:700;
+    transition:color .15s;
+  }
+  .check-input:checked ~ .check-text{
+    color:var(--text-soft);
+    text-decoration:line-through;
+    text-decoration-color:var(--text-faint);
+  }
+
+  .activity-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--surface);
+    border:var(--border-w);
+    box-shadow:var(--shadow-sm);
+    border-radius:14px;
+    padding:12px 16px;
+  }
+  .activity-icon{
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--teal-bg);
+    border:1.5px solid var(--border);
+    color:var(--green);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    flex-shrink:0;
+  }
+  .activity-text{
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-soft);
+  }
+  .activity-text strong{
+    color:var(--text);
+    font-weight:800;
+  }
+
+  /* ===== hamburger + drawer ===== */
+  .menu-btn{
+    position:fixed;
+    top:16px; right:16px;
+    z-index:60;
+    width:50px;height:50px;
+    border-radius:14px;
+    background:var(--surface);
+    border:var(--border-w);
+    box-shadow:var(--shadow-sm);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    cursor:pointer;
+    transition:opacity .2s ease;
+  }
+  .menu-btn span{
+    width:22px;height:3px;
+    border-radius:2px;
+    background:var(--text);
+    transition:transform .2s ease, opacity .2s ease;
+  }
+  .menu-btn.open{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .drawer-overlay{
+    position:fixed; inset:0;
+    background:rgba(24,20,13,.55);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+    z-index:55;
+  }
+  .drawer-overlay.open{ opacity:1; pointer-events:auto; }
+
+  .drawer{
+    position:fixed;
+    top:0; right:0;
+    height:100vh;
+    width:min(300px, 84vw);
+    background:var(--surface);
+    border-left:var(--border-w);
+    box-shadow:-6px 0 0 var(--border);
+    z-index:56;
+    transform:translateX(100%);
+    transition:transform .3s ease;
+    display:flex;
+    flex-direction:column;
+    padding:18px;
+    overflow-y:auto;
+  }
+  .drawer.open{ transform:translateX(0); }
+
+  .drawer-section-label{
+    font-size:12px;
+    font-weight:800;
+    color:var(--text-faint);
+    margin:4px 0 10px;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+  .drawer-note{
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-soft);
+    line-height:1.9;
+    background:var(--surface-2);
+    border:2px solid var(--border-soft);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:16px;
+  }
+
+  .drawer-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .drawer-title{
+    font-size:16px;
+    font-weight:800;
+    color:var(--text);
+  }
+  .drawer-close{
+    width:40px;height:40px;
+    border-radius:10px;
+    border:2px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text);
+    font-size:19px;
+    line-height:1;
+    cursor:pointer;
+  }
+
+  .drawer-add{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .drawer-add input{
+    flex:1;
+    min-width:0;
+    border:2.5px solid var(--border);
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:12px 12px;
+    font-family:'Vazirmatn', sans-serif;
+    font-size:15px;
+    font-weight:700;
+    color:var(--text);
+    min-height:44px;
+  }
+  .drawer-add input::placeholder{ color:var(--text-faint); }
+  .drawer-add input:focus{ outline:none; background:var(--surface); }
+  .drawer-add button{
+    border:2.5px solid var(--border);
+    background:var(--teal);
+    color:#04231f;
+    font-family:'Vazirmatn', sans-serif;
+    font-size:14px;
+    font-weight:800;
+    padding:0 16px;
+    border-radius:10px;
+    cursor:pointer;
+    flex-shrink:0;
+    min-height:44px;
+  }
+
+  .drawer-list{
+    flex:1;
+    overflow-y:auto;
+  }
+  .drawer-empty{
+    font-size:12px;
+    color:var(--text-faint);
+    text-align:center;
+    padding:24px 0;
+  }
+  .drawer-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 2px;
+    min-height:44px;
+  }
+  .drawer-item + .drawer-item{
+    border-top:2px solid var(--border-soft);
+  }
+  .drawer-item .check-box{
+    width:28px;height:28px;
+    border-radius:8px;
+  }
+  .drawer-item .check-box::after{
+    width:8px;height:14px;
+  }
+  .drawer-item-text{
+    flex:1;
+    font-size:14px;
+    color:var(--text);
+    font-weight:600;
+    word-break:break-word;
+  }
+  .drawer-item.done .drawer-item-text{
+    color:var(--text-faint);
+    text-decoration:line-through;
+  }
+  .drawer-item-del{
+    width:32px;height:32px;
+    border-radius:8px;
+    border:none;
+    background:transparent;
+    color:var(--text-soft);
+    font-size:19px;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .drawer-item-del:hover{ color:#c0392b; }
+
+  .admin-open-btn{
+    margin-top:14px;
+    width:100%;
+    border:2.5px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text-soft);
+    font-family:'Vazirmatn', sans-serif;
+    font-size:13px;
+    font-weight:700;
+    padding:12px;
+    border-radius:10px;
+    cursor:pointer;
+    min-height:44px;
+  }
+
+  /* ===== modals ===== */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(24,20,13,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:80;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal-box{
+    background:var(--surface);
+    border:var(--border-w);
+    box-shadow:var(--shadow);
+    border-radius:18px;
+    padding:22px;
+    width:100%;
+    max-width:320px;
+  }
+  .modal-box.wide{ max-width:400px; }
+  .modal-title{
+    font-size:16px;
+    font-weight:800;
+    color:var(--text);
+    margin-bottom:6px;
+  }
+  .modal-desc{
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-soft);
+    margin-bottom:16px;
+  }
+  .modal-input{
+    width:100%;
+    border:2.5px solid var(--border);
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:16px;
+    color:var(--text);
+    text-align:center;
+    letter-spacing:.2em;
+    min-height:48px;
+  }
+  .modal-input:focus{ outline:none; background:var(--surface); }
+  .modal-error{
+    font-size:12px;
+    font-weight:700;
+    color:#c0392b;
+    margin-top:8px;
+    display:none;
+  }
+  .modal-error.show{ display:block; }
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+  }
+  .modal-btn{
+    flex:1;
+    border:2.5px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    font-family:'Vazirmatn', sans-serif;
+    font-size:14px;
+    font-weight:800;
+    cursor:pointer;
+    min-height:46px;
+  }
+  .modal-btn.ghost{
+    background:var(--surface-2);
+    color:var(--text);
+  }
+  .modal-btn.primary{
+    background:var(--teal);
+    color:#04231f;
+  }
+
+  .admin-price-list{
+    max-height:50vh;
+    overflow-y:auto;
+    margin:-4px 0;
+  }
+  .admin-price-row{
+    padding:12px 2px;
+  }
+  .admin-price-row + .admin-price-row{
+    border-top:2px solid var(--border-soft);
+  }
+  .admin-price-name{
+    font-size:13px;
+    font-weight:800;
+    color:var(--text);
+    margin-bottom:8px;
+  }
+  .admin-price-fields{
+    display:flex;
+    gap:8px;
+  }
+  .admin-price-fields > div{ flex:1; }
+  .admin-price-fields label{
+    display:block;
+    font-size:10px;
+    font-weight:700;
+    color:var(--text-faint);
+    margin-bottom:4px;
+  }
+  .admin-price-fields input{
+    width:100%;
+    border:2px solid var(--border);
+    background:var(--surface-2);
+    border-radius:8px;
+    padding:8px 9px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--text);
+  }
+  .admin-price-fields input:focus{ outline:none; background:var(--surface); }
+
+  /* ===== compare-with-label full-screen mode ===== */
+  .compare-open-btn{
+    display:block;
+    width:100%;
+    margin-top:12px;
+    border:2.5px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text);
+    font-family:'Vazirmatn', sans-serif;
+    font-size:14px;
+    font-weight:800;
+    padding:12px;
+    border-radius:12px;
+    cursor:pointer;
+    min-height:46px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* compare-overlay + cap/body simulations intentionally stay dark:
+     they mimic a real ink-jet print on a bottle cap/body, not app UI. */
+  .compare-overlay{
+    position:fixed; inset:0;
+    background:#03080d;
+    z-index:100;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:24px;
+    padding:24px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .compare-overlay.open{ opacity:1; pointer-events:auto; }
+  .compare-close{
+    position:absolute;
+    top:20px; left:20px;
+    width:52px;height:52px;
+    border-radius:14px;
+    border:2px solid rgba(255,255,255,.2);
+    background:#0f1922;
+    color:#eef4f7;
+    font-size:24px;
+    line-height:1;
+    cursor:pointer;
+  }
+  .compare-hint{
+    font-size:12px;
+    font-weight:700;
+    color:#71858f;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    position:absolute;
+    top:26px;
+    right:0; left:0;
+    text-align:center;
+  }
+
+  .cap-simulation{
+    background:#0a1a10;
+    border:2px solid #1a3a22;
+    border-radius:16px;
+    padding:26px 32px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    min-width:260px;
+    box-shadow:0 0 40px rgba(0,255,80,.07), inset 0 0 20px rgba(0,0,0,.4);
+  }
+  .cap-line{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    direction:ltr;
+    text-align:left;
+  }
+  .cap-prefix{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(16px, 4vw, 22px);
+    font-weight:700;
+    color:#4ade80;
+    letter-spacing:.04em;
+    min-width:40px;
+    flex-shrink:0;
+  }
+  .cap-date{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(20px, 6vw, 38px);
+    font-weight:700;
+    color:#e8f5ea;
+    letter-spacing:.04em;
+    line-height:1.15;
+  }
+  .cap-batch{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(16px, 5vw, 30px);
+    font-weight:700;
+    color:#e8f5ea;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    line-height:1.15;
+  }
+
+  .body-simulation{
+    background:#0d1a0e;
+    border:2px solid #1a3a22;
+    border-radius:16px;
+    padding:22px 28px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-width:260px;
+    box-shadow:0 0 40px rgba(0,255,80,.07), inset 0 0 20px rgba(0,0,0,.4);
+    direction:ltr;
+    text-align:left;
+  }
+  .body-line{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .body-prefix{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(14px, 3.5vw, 20px);
+    font-weight:700;
+    color:#4ade80;
+    letter-spacing:.03em;
+    flex-shrink:0;
+  }
+  .body-price{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(18px, 5.5vw, 32px);
+    font-weight:700;
+    color:#e8f5ea;
+    letter-spacing:.03em;
+  }
+  .body-r{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(14px, 4vw, 24px);
+    font-weight:700;
+    color:#4ade80;
+    margin-right:2px;
+  }
+  .body-exempt{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(13px, 3.5vw, 20px);
+    font-weight:700;
+    color:#4ade80;
+    margin-top:4px;
+    padding-top:10px;
+    border-top:1px solid rgba(74,222,128,.2);
+    letter-spacing:.03em;
+    direction:rtl;
+    text-align:right;
+  }
+  .body-hint{
+    position:static;
+    margin-top:-12px;
+  }
+
+  /* ===== numeric keypad ===== */
+  .keypad-display{
+    background:var(--surface-2);
+    border:2.5px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:26px;
+    font-weight:700;
+    color:var(--teal-deep);
+    letter-spacing:.1em;
+    margin-bottom:16px;
+    min-height:56px;
+  }
+  .keypad-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+  }
+  .keypad-key{
+    border:2.5px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text);
+    font-family:'Vazirmatn', sans-serif;
+    font-size:20px;
+    font-weight:800;
+    border-radius:12px;
+    padding:16px 0;
+    cursor:pointer;
+    min-height:56px;
+  }
+  .keypad-key:active{ transform:scale(.95); background:var(--teal-bg); }
+  .keypad-clear, .keypad-back{ font-size:14px; color:var(--text-soft); }
+
+
+  /* ===== daily work report — fullscreen notepad ===== */
+  #reportOverlay.open{
+    z-index:110;
+    pointer-events:auto;
+    opacity:1;
+  }
+  .report-fullscreen{
+    position:fixed; inset:0;
+    display:flex;
+    flex-direction:column;
+    background:var(--surface);
+  }
+  .report-topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 16px;
+    border-bottom:2.5px solid var(--border);
+    gap:10px;
+    flex-shrink:0;
+  }
+  .report-topbar-info{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .report-topbar-date{
+    font-size:14px;
+    font-weight:800;
+    color:var(--text);
+  }
+  .report-topbar-time{
+    font-size:11px;
+    font-weight:600;
+    color:var(--text-faint);
+  }
+  .report-topbar-actions{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .report-saved{
+    font-size:11px;
+    font-weight:700;
+    color:var(--green);
+    background:var(--teal-bg);
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  .report-saved.show{ opacity:1; }
+  .report-icon-btn{
+    width:42px;height:42px;
+    border-radius:11px;
+    border:2px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text);
+    font-size:16px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .report-close-icon{ font-size:20px; }
+  .report-notepad{
+    flex:1;
+    width:100%;
+    border:none;
+    background:var(--surface);
+    padding:20px 18px;
+    font-family:'Vazirmatn', sans-serif;
+    font-size:16px;
+    line-height:2;
+    color:var(--text);
+    resize:none;
+    direction:rtl;
+  }
+  .report-notepad::placeholder{
+    color:var(--text-faint);
+    line-height:2;
+  }
+  .report-notepad:focus{ outline:none; }
+</style>
+<link rel="stylesheet" href="foodlab-theme.css">
+<link rel="stylesheet" href="foodlab-design-system.css">
+<link rel="stylesheet" href="foodlab-uiux-phaseB.css">
+<link rel="stylesheet" href="foodlab-polish-phaseH.css">
+
+</head>
+<body class="foodlab-production-page">
+  <button type="button" id="menuBtn" class="menu-btn" aria-label="باز کردن منو">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div id="drawerOverlay" class="drawer-overlay"></div>
+  <aside id="drawer" class="drawer">
+    <div class="drawer-head">
+      <div class="drawer-title">منو</div>
+      <button type="button" id="drawerClose" class="drawer-close" aria-label="بستن منو">×</button>
+    </div>
+
+    <div class="drawer-note">چک‌لیست‌های بازرسی و شخصی به ابزار جداگانه‌ی «چک‌لیست‌ها» منتقل شدن — از صفحه اصلی اپ در دسترسن.</div>
+
+    <button type="button" id="reportOpenBtn" class="admin-open-btn">📝 گزارش کار روزانه</button>
+  </aside>
+
+  <!-- daily work report -->
+  <div class="modal-overlay" id="reportOverlay">
+    <div class="report-fullscreen">
+      <div class="report-topbar">
+        <div class="report-topbar-info">
+          <div class="report-topbar-date" id="reportDateLabel">—</div>
+          <div class="report-topbar-time" id="reportTimeLabel">—</div>
+        </div>
+        <div class="report-topbar-actions">
+          <div class="report-saved" id="reportSaved">✓ ذخیره شد</div>
+          <button type="button" id="reportShare" class="report-icon-btn" title="اشتراک‌گذاری">↗</button>
+          <button type="button" id="reportPrint" class="report-icon-btn" title="پرینت">🖨</button>
+          <button type="button" id="reportClose" class="report-icon-btn report-close-icon" title="بستن">×</button>
+        </div>
+      </div>
+      <textarea id="reportText" class="report-notepad" placeholder="گزارش امروز رو اینجا بنویس...&#10;&#10;مثلاً:&#10;— بازرسی خط تولید شیر پرچرب ۲۰۰&#10;— مغایرت در قیمت بچ ۵ZD31G1 — اعاده به خط&#10;— اطلاع به سرپرست داده شد"></textarea>
+    </div>
+  </div>
+
+  <!-- numeric keypad for batch sequence entry -->
+  <div class="modal-overlay" id="keypadOverlay">
+    <div class="modal-box">
+      <div class="modal-title">شماره بچ تولیدی</div>
+      <div class="keypad-display" id="keypadDisplay">—</div>
+      <div class="keypad-grid">
+        <button type="button" class="keypad-key" data-digit="1">۱</button>
+        <button type="button" class="keypad-key" data-digit="2">۲</button>
+        <button type="button" class="keypad-key" data-digit="3">۳</button>
+        <button type="button" class="keypad-key" data-digit="4">۴</button>
+        <button type="button" class="keypad-key" data-digit="5">۵</button>
+        <button type="button" class="keypad-key" data-digit="6">۶</button>
+        <button type="button" class="keypad-key" data-digit="7">۷</button>
+        <button type="button" class="keypad-key" data-digit="8">۸</button>
+        <button type="button" class="keypad-key" data-digit="9">۹</button>
+        <button type="button" class="keypad-key keypad-clear" id="keypadClear">پاک</button>
+        <button type="button" class="keypad-key" data-digit="0">۰</button>
+        <button type="button" class="keypad-key keypad-back" id="keypadBack">⌫</button>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="keypadCancel" class="modal-btn ghost">انصراف</button>
+        <button type="button" id="keypadDone" class="modal-btn primary">تأیید</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- compare-with-physical-label full-screen mode -->
+  <div class="compare-overlay" id="compareOverlay">
+    <button type="button" id="compareCloseBtn" class="compare-close" aria-label="بستن حالت مقایسه">×</button>
+
+    <div class="compare-hint">مقایسه با چاپ روی درب بطری</div>
+
+    <div class="cap-simulation">
+      <div class="cap-line">
+        <span class="cap-prefix">P:</span>
+        <span class="cap-date" id="compareProdDate">—</span>
+      </div>
+      <div class="cap-line">
+        <span class="cap-prefix">E:</span>
+        <span class="cap-date" id="compareExpDate">—</span>
+      </div>
+      <div class="cap-line">
+        <span class="cap-prefix">Bn:</span>
+        <span class="cap-batch" id="compareBatch">—</span>
+      </div>
+    </div>
+
+    <div class="compare-hint body-hint">چاپ روی بدنه بطری</div>
+    <div class="body-simulation">
+      <div class="body-line">
+        <span class="body-prefix">ق.ت:</span>
+        <span class="body-price" id="compareProducerPrice">—</span>
+        <span class="body-r">R</span>
+      </div>
+      <div class="body-line">
+        <span class="body-prefix">ق.م:</span>
+        <span class="body-price" id="compareConsumerPrice">—</span>
+        <span class="body-r">R</span>
+      </div>
+      <div class="body-exempt">معاف از ارزش افزوده</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="header-row">
+      <div>
+        <div class="page-title">مرکز محاسبه تاریخ</div>
+        <div class="page-subtitle">موتور محاسبه تاریخ تولید و انقضا، بر پایه تقویم شمسی، همراه با کد بچ و قیمت‌گذاری</div>
+      </div>
+      <div class="status-pill"><span class="dot"></span> فعال</div>
+    </div>
+
+    <div class="controls">
+      <div class="field">
+        <label for="productName">نام محصول</label>
+        <select id="productName">
+          <option value="" selected>— انتخاب کنید —</option>
+          <option value="شیر پرچرب ۲۰۰">شیر پرچرب ۲۰۰</option>
+          <option value="شیر کم‌چرب ۲۰۰">شیر کم‌چرب ۲۰۰</option>
+          <option value="شیر موز ۲۰۰">شیر موز ۲۰۰</option>
+          <option value="شیر کاکائو ۲۰۰">شیر کاکائو ۲۰۰</option>
+          <option value="شیر قهوه ۲۰۰">شیر قهوه ۲۰۰</option>
+          <option value="شیر نارگیل ۲۰۰">شیر نارگیل ۲۰۰</option>
+          <option value="شیر پرچرب ۱۰۰۰">شیر پرچرب ۱۰۰۰</option>
+          <option value="شیر کم‌چرب ۱۰۰۰">شیر کم‌چرب ۱۰۰۰</option>
+          <option value="شیر موز ۱۰۰۰">شیر موز ۱۰۰۰</option>
+          <option value="شیر کاکائو ۱۰۰۰">شیر کاکائو ۱۰۰۰</option>
+          <option value="شیر نارگیل ۱۰۰۰">شیر نارگیل ۱۰۰۰</option>
+        </select>
+      </div>
+      <div class="field" style="flex:.6;">
+        <label for="shelfMonths">ماندگاری</label>
+        <input id="shelfMonths" type="number" min="1" max="36" step="1" value="6">
+      </div>
+      <div class="field" style="flex:.7;">
+        <label for="batchSeq">شماره بچ</label>
+        <input id="batchSeq" type="text" maxlength="6" placeholder="مثال: 1" inputmode="numeric" readonly style="cursor:pointer;">
+      </div>
+    </div>
+
+    <div id="shelfError" role="alert" style="display:none;color:#a83e26;font-size:12px;font-weight:700;padding:0 8px 12px;"></div>
+    <div class="production-note">⚠ ماندگاری و ساختار بچ باید طبق دستورالعمل مصوب هر محصول تأیید شوند؛ تاریخ از ساعت همین دستگاه گرفته می‌شود. <span id="priceSyncInfo">قیمت‌ها: مرجع داخلی؛ وضعیت دریافت از سرور نامشخص</span></div>
+    <div class="hero">
+      <svg class="hero-wave" viewBox="0 0 460 56" preserveAspectRatio="none">
+        <path d="M0,40 C60,10 120,55 180,30 C240,8 300,50 360,28 C400,14 430,34 460,24" fill="none" stroke="#2fbf71" stroke-width="1.4" opacity="0.35"/>
+        <path d="M0,50 C60,25 120,58 180,42 C240,26 300,56 360,40 C400,30 430,46 460,38" fill="none" stroke="#2fbf71" stroke-width="1" opacity="0.2"/>
+      </svg>
+      <div class="hero-top">
+        <div style="flex:1;min-width:0;">
+          <div class="hero-eyebrow">🔒 <span id="nameDisplay"><span class="placeholder">نام محصول را انتخاب کنید</span></span></div>
+
+          <div class="date-block-label">تاریخ تولید</div>
+          <div class="hero-headline" id="prodDate">—</div>
+          <div class="hero-sub" id="prodDateSub">امروز، به‌صورت خودکار</div>
+
+          <div class="hero-divider"></div>
+
+          <div class="date-block-label amber">تاریخ انقضا</div>
+          <div class="hero-headline amber" id="expDate">—</div>
+          <div class="hero-sub" id="shelfNote">تولید + ۶ ماه</div>
+
+          <div class="hero-divider"></div>
+
+          <div class="hero-price-row">
+            <div class="hero-price-col">
+              <div class="date-block-label" style="margin-bottom:0;">ق.ت — تولیدکننده</div>
+              <div class="hero-price-value" id="producerPrice">—</div>
+            </div>
+            <div class="hero-price-col">
+              <div class="date-block-label" style="margin-bottom:0;">ق.م — مصرف‌کننده</div>
+              <div class="hero-price-value" id="consumerPrice">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="badge-col" id="qualityStatus" data-state="waiting" role="status" aria-live="polite">
+          <div class="badge-glow">
+            <div class="badge-ring r1"></div>
+            <div class="badge-ring r2"></div>
+            <div class="badge-core" id="qualityStatusIcon" aria-hidden="true">—</div>
+          </div>
+          <div class="badge-label" id="qualityStatusLabel">انتخاب محصول</div>
+        </div>
+      </div>
+      <div class="hero-batch" id="batchCode">کد بچ: —</div>
+      <button type="button" id="compareOpenBtn" class="compare-open-btn">🔍 حالت مقایسه با برچسب</button>
+      <div class="print-actions-row">
+        <select id="officialPrintShift" aria-label="شیفت کاری فرم رسمی" style="flex:0 0 102px;min-width:0;background:var(--surface);color:var(--text);border:2px solid var(--border);border-radius:12px;font-family:inherit;font-weight:800;padding:9px;">
+          <option value="">شیفت...</option>
+          <option value="1">شیفت ۱</option>
+          <option value="2">شیفت ۲</option>
+          <option value="3">شیفت ۳</option>
+        </select>
+        <button type="button" id="officialPrintOpen" class="compare-open-btn" style="margin:0;flex:1;background:#fffdf6;color:#18140d;">🖨 فرم رسمی چاپ</button>
+      </div>
+      <div class="print-note">خروجی دقیقاً روی قالب Alis-FO-QA15 (سایز A5) قرار می‌گیرد؛ قبل از چاپ، شیفت را تعیین کنید.</div>
+      <div class="hero-actions">
+        <button type="button" id="prodPrev" title="یک روز عقب">−</button>
+        <button type="button" id="prodToday">بازگشت به امروز</button>
+        <button type="button" id="prodNext" title="یک روز جلو">+</button>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <span id="dayCount" style="display:none;"></span>
+      <span id="shelfLabel" style="display:none;"></span>
+    </div>
+
+    <div class="activity-bar" id="workflowStatusBar" data-state="waiting" role="status" aria-live="polite">
+      <div class="activity-icon" id="workflowStatusIcon" aria-hidden="true">i</div>
+      <div class="activity-text">وضعیت فرم: <strong id="workflowStatusText">ابتدا محصول را انتخاب کنید تا قیمت و کد بچ نمایش داده شود.</strong></div>
+    </div>
+
+  </div>
+
+<script>
+// ============ haptic feedback on every tap ============
+document.addEventListener('click', () => {
+  if (navigator.vibrate) navigator.vibrate(8);
+}, { capture: true });
+
+// ============ dark mode (follows the main app; also togglable standalone) ============
+const THEME_KEY = 'qc-theme';
+function applyTheme(mode){ document.documentElement.setAttribute('data-theme', mode); }
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'qc-theme') {
+    applyTheme(e.data.mode);
+    localStorage.setItem(THEME_KEY, e.data.mode);
+  }
+});
+
+// ---- Jalali (Persian) calendar conversion — standard algorithm ----
+function div(a, b) { return Math.trunc(a / b); }
+function mod(a, b) { return a - div(a, b) * b; }
+
+function g2d(gy, gm, gd) {
+  let d = div((gy + div(gm - 8, 6) + 100100) * 1461, 4)
+    + div(153 * mod(gm + 9, 12) + 2, 5)
+    + gd - 34840408;
+  d = d - div(div(gy + 100100 + div(gm - 8, 6), 100) * 3, 4) + 752;
+  return d;
+}
+
+function jalCal(jy) {
+  const breaks = [-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];
+  let bl = breaks.length, gy = jy + 621, leapJ = -14, jp = breaks[0], jm, jump, leap, n, i, leapG, march;
+  if (jy < jp || jy >= breaks[bl-1]) throw new Error('Invalid Jalaali year ' + jy);
+  for (i = 1; i < bl; i += 1) {
+    jm = breaks[i];
+    jump = jm - jp;
+    if (jy < jm) break;
+    leapJ = leapJ + div(jump, 33) * 8 + div(mod(jump, 33), 4);
+    jp = jm;
+  }
+  n = jy - jp;
+  leapJ = leapJ + div(n, 33) * 8 + div(mod(n, 33) + 3, 4);
+  if (mod(jump, 33) === 4 && jump - n === 4) leapJ += 1;
+  leapG = div(gy, 4) - div((div(gy, 100) + 1) * 3, 4) - 150;
+  march = 20 + leapJ - leapG;
+  if (jump - n < 6) n = n - jump + div(jump, 33) * 33;
+  leap = mod(mod(n + 1, 33) - 1, 4);
+  if (leap === -1) leap = 4;
+  return { leap: leap, gy: gy, march: march };
+}
+
+function d2g(jdn) {
+  let j, i, gd, gm, gy;
+  j = 4 * jdn + 139361631;
+  j = j + div(div(4 * jdn + 183187720, 146097) * 3, 4) * 4 - 3908;
+  i = div(mod(j, 1461), 4) * 5 + 308;
+  gd = div(mod(i, 153), 5) + 1;
+  gm = mod(div(i, 153), 12) + 1;
+  gy = div(j, 1461) - 100100 + div(8 - gm, 6);
+  return [gy, gm, gd];
+}
+
+function d2j(jdn) {
+  let gy = d2g(jdn)[0], jy = gy - 621, r = jalCal(jy), jdn1f = g2d(gy, 3, r.march);
+  let jd, jm, k;
+  k = jdn - jdn1f;
+  if (k >= 0) {
+    if (k <= 185) {
+      jm = 1 + div(k, 31);
+      jd = mod(k, 31) + 1;
+      return [jy, jm, jd];
+    } else {
+      k -= 186;
+    }
+  } else {
+    jy -= 1;
+    k += 179;
+    if (r.leap === 1) k += 1;
+  }
+  jm = 7 + div(k, 30);
+  jd = mod(k, 30) + 1;
+  return [jy, jm, jd];
+}
+
+function toJalali(gy, gm, gd) { return d2j(g2d(gy, gm, gd)); }
+function isLeapJalaaliYear(jy) { return jalCal(jy).leap === 0; }
+function jalaaliMonthLength(jy, jm) {
+  if (jm <= 6) return 31;
+  if (jm <= 11) return 30;
+  return isLeapJalaaliYear(jy) ? 30 : 29;
+}
+function validJalaliDate(jy, jm, jd) {
+  return Number.isInteger(jy) && Number.isInteger(jm) && Number.isInteger(jd)
+    && jy >= -61 && jy < 3178 && jm >= 1 && jm <= 12
+    && jd >= 1 && jd <= jalaaliMonthLength(jy, jm);
+}
+function validShelfMonths(value) {
+  return typeof value === 'string' && /^[0-9]+$/.test(value)
+    && Number.isInteger(Number(value)) && Number(value) >= 1 && Number(value) <= 36;
+}
+function addJalaliMonths(jy, jm, jd, monthsToAdd) {
+  if (!validJalaliDate(jy, jm, jd) || !Number.isInteger(monthsToAdd) || monthsToAdd < 1 || monthsToAdd > 36) {
+    throw new RangeError('Invalid production date or shelf life');
+  }
+  let totalMonths = (jm - 1) + monthsToAdd;
+  let newJy = jy + Math.floor(totalMonths / 12);
+  let newJm = (totalMonths % 12) + 1;
+  let maxDay = jalaaliMonthLength(newJy, newJm);
+  let newJd = Math.min(jd, maxDay);
+  return [newJy, newJm, newJd];
+}
+
+const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+function toPersianDigits(str) {
+  return String(str).replace(/[0-9]/g, d => persianDigits[d]);
+}
+
+const monthNames = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+
+// producer/consumer prices per product (rial). Add more as they're provided.
+const priceData = {
+  'شیر پرچرب ۲۰۰': { producer: 330850, consumer: 437500 },
+  'شیر کم‌چرب ۲۰۰': { producer: 317600, consumer: 420000 },
+  'شیر کاکائو ۲۰۰': { producer: 416000, consumer: 550000 },
+  'شیر قهوه ۲۰۰': { producer: 416000, consumer: 550000 },
+  'شیر نارگیل ۲۰۰': { producer: 416000, consumer: 550000 },
+  'شیر موز ۲۰۰': { producer: 392100, consumer: 518500 },
+  'شیر پرچرب ۱۰۰۰': { producer: 1011500, consumer: 1337500 },
+  'شیر کم‌چرب ۱۰۰۰': { producer: 971000, consumer: 1284000 },
+  'شیر کاکائو ۱۰۰۰': { producer: 1455700, consumer: 1925000 },
+  'شیر نارگیل ۱۰۰۰': { producer: 1455700, consumer: 1925000 },
+  'شیر موز ۱۰۰۰': { producer: 1389600, consumer: 1837500 },
+};
+
+// Manager-updated prices use exact numeric validation and carry a source timestamp.
+const factoryPriceDefaults=JSON.parse(JSON.stringify(priceData));
+function applyValidatedPriceOverrides(overrides){
+  Object.keys(factoryPriceDefaults).forEach(name=>{priceData[name]={...factoryPriceDefaults[name]};});
+  if(!overrides || typeof overrides!=='object'||Array.isArray(overrides))return;
+  Object.entries(overrides).forEach(([name,fields])=>{
+    if(!priceData[name]||!fields||typeof fields!=='object')return;
+    ['producer','consumer'].forEach(field=>{
+      const v=fields[field];
+      if(typeof v==='number'&&Number.isSafeInteger(v)&&v>=0) priceData[name][field]=v;
+    });
+  });
+}
+function markPriceSource(text){
+  const el=document.getElementById('priceSyncInfo');if(el)el.textContent=text;
+}
+// manager-updated prices (persisted locally) override the defaults above
+(function applyPriceOverrides() {
+  try {
+    const raw = localStorage.getItem('qc-price-overrides');
+    if (!raw) return;
+    const overrides = JSON.parse(raw);
+    applyValidatedPriceOverrides(overrides);
+    const last=localStorage.getItem('qc-price-synced-at');
+    markPriceSource('قیمت‌ها: نسخه ذخیره‌شده '+(last?'· آخرین همگام‌سازی '+new Date(last).toLocaleString('fa-IR'):'· تاریخ نامشخص')+' · تأیید آنلاین نشده');
+  } catch (e) { markPriceSource('قیمت‌ها: مقادیر داخلی (تأیید آنلاین نشده)'); }
+})();
+
+// ---- cloud sync (Supabase): pulls manager-updated prices + announcements
+// shared across every device, cached to localStorage as an offline fallback ----
+const SUPABASE_URL = 'https://ubrydkyqmradyuiinjla.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVicnlka3lxbXJhZHl1aWluamxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMzcyNTgsImV4cCI6MjEwMTgxMzI1OH0.R7LF4uH7HGjqtkQEWs6zAdD2WgI9d2HRwMWXd1Xo2hc';
+let pricesVerifiedOnlineThisSession = false;
+let pricesVerifiedAt = null;
+let supabaseClient = null;
+let supabaseSdkPromise = null;
+const SUPABASE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+function loadSupabaseSdk() {
+  if (window.supabase?.createClient) return Promise.resolve(window.supabase);
+  if (!supabaseSdkPromise) {
+    supabaseSdkPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = SUPABASE_SDK_URL;
+      script.async = true;
+      script.onload = () => window.supabase?.createClient ? resolve(window.supabase) : reject(new Error('Supabase SDK unavailable'));
+      script.onerror = () => reject(new Error('Supabase SDK failed to load'));
+      document.head.appendChild(script);
+    }).catch(error => {
+      supabaseSdkPromise = null;
+      throw error;
+    });
+  }
+  return supabaseSdkPromise;
+}
+
+async function syncFromCloud() {
+  try {
+    if (!window.supabase?.createClient) await loadSupabaseSdk();
+    if (!supabaseClient) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { data, error } = await supabaseClient
+      .from('qc_settings')
+      .select('key,value')
+      .eq('key', 'prices');
+    if(error || !data){pricesVerifiedOnlineThisSession=false;markPriceSource('قیمت‌ها: آخرین نسخه محلی؛ دریافت از سرور ناموفق بود');return;}
+    const priceRow = data.find((r) => r.key === 'prices');
+    if (priceRow && priceRow.value && typeof priceRow.value === 'object') {
+      applyValidatedPriceOverrides(priceRow.value);
+      const syncedAt=new Date().toISOString();
+      localStorage.setItem('qc-price-overrides', JSON.stringify(priceRow.value));
+      localStorage.setItem('qc-price-synced-at',syncedAt);
+      pricesVerifiedOnlineThisSession=true;
+      pricesVerifiedAt=syncedAt;
+      markPriceSource('قیمت‌ها: دریافت از سرور · '+new Date(syncedAt).toLocaleString('fa-IR'));
+      if (typeof render === 'function') render();
+    }else {pricesVerifiedOnlineThisSession=false;markPriceSource('قیمت‌ها: مرجع داخلی؛ هنوز قیمت سرور ثبت نشده');}
+  } catch (e) { pricesVerifiedOnlineThisSession=false;markPriceSource('قیمت‌ها: آخرین نسخه محلی؛ اتصال اینترنت در دسترس نیست'); }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', syncFromCloud);
+} else {
+  syncFromCloud();
+}
+
+// digit -> letter cipher used in batch codes: 1=A .. 9=I, 0=Z
+const digitToLetter = ['Z','A','B','C','D','E','F','G','H','I'];
+
+// product letter used in batch codes.
+const productLetterMap = {
+  'شیر پرچرب ۲۰۰': 'D',
+  'شیر پرچرب ۱۰۰۰': 'D',
+  'شیر کم‌چرب ۲۰۰': 'E',
+  'شیر کم‌چرب ۱۰۰۰': 'E',
+  'شیر کاکائو ۲۰۰': 'F',
+  'شیر کاکائو ۱۰۰۰': 'F',
+  'شیر قهوه ۲۰۰': 'G',
+  'شیر نارگیل ۲۰۰': 'I',
+  'شیر نارگیل ۱۰۰۰': 'I',
+  'شیر موز ۲۰۰': 'J',
+  'شیر موز ۱۰۰۰': 'J',
+};
+
+function formatRial(n) {
+  return toPersianDigits(n.toLocaleString('en-US'));
+}
+
+function formatJalali([jy, jm, jd]) {
+  const numeric = toPersianDigits(String(jy) + '/' + String(jm).padStart(2,'0') + '/' + String(jd).padStart(2,'0'));
+  const readable = toPersianDigits(jd) + ' ' + monthNames[jm-1] + ' ' + toPersianDigits(jy);
+  return { numeric, readable };
+}
+
+// English-digit version for the jet-print compare view (matches actual printer output)
+function formatJalaliEn([jy, jm, jd]) {
+  return String(jy) + '/' + String(jm).padStart(2,'0') + '/' + String(jd).padStart(2,'0');
+}
+
+function generateBatchCode(jy, jm, jd, productName, seq) {
+  if (!validJalaliDate(jy, jm, jd)) return null;
+  const yearDigit = String(jy).slice(-1);
+  const monthTens = Math.floor(jm / 10);
+  const monthUnits = jm % 10;
+  const monthCode = digitToLetter[monthTens] + digitToLetter[monthUnits];
+  const dayCode = String(jd).padStart(2, '0');
+  const productLetter = productLetterMap[productName] || null;
+  if (!productLetter || !/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) return null;
+  return (yearDigit + monthCode + dayCode + productLetter + seq).toUpperCase();
+}
+
+function updateWorkflowStatus() {
+  const statusEl = document.getElementById('qualityStatus');
+  const statusIconEl = document.getElementById('qualityStatusIcon');
+  const statusLabelEl = document.getElementById('qualityStatusLabel');
+  const activityBar = document.getElementById('workflowStatusBar');
+  const activityIcon = document.getElementById('workflowStatusIcon');
+  const activityText = document.getElementById('workflowStatusText');
+  if (!statusEl || !statusIconEl || !statusLabelEl || !activityBar || !activityIcon || !activityText) return;
+
+  const product = document.getElementById('productName').value.trim();
+  const rawMonths = document.getElementById('shelfMonths').value.trim();
+  const seq = document.getElementById('batchSeq').value.trim();
+  const monthsValid = validShelfMonths(rawMonths);
+  const prices = product ? priceData[product] : null;
+  const pricesValid = !!prices && Number.isSafeInteger(prices.producer) && Number.isSafeInteger(prices.consumer) && prices.producer >= 0 && prices.consumer >= 0;
+
+  let state = 'waiting';
+  let glyph = '—';
+  let label = 'انتخاب محصول';
+  let activityGlyph = 'i';
+  let message = 'ابتدا محصول را انتخاب کنید تا قیمت و کد بچ نمایش داده شود.';
+
+  if (!monthsValid) {
+    state = 'invalid'; glyph = '!'; label = 'ماندگاری نامعتبر'; activityGlyph = '!';
+    message = 'ماندگاری باید عدد صحیح بین ۱ تا ۳۶ ماه باشد؛ تاریخ معتبر نیست.';
+  } else if (!product) {
+    state = 'waiting'; glyph = '—'; label = 'انتخاب محصول'; activityGlyph = 'i';
+    message = 'ابتدا محصول را انتخاب کنید تا قیمت و کد بچ نمایش داده شود.';
+  } else if (!productLetterMap[product]) {
+    state = 'warning'; glyph = '!'; label = 'کد بچ تعریف نشده'; activityGlyph = '!';
+    message = 'برای این محصول حرف اختصاصی کد بچ تعریف نشده است؛ پیش از استفاده با مدیر سیستم هماهنگ کنید.';
+  } else if (!/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) {
+    state = 'waiting'; glyph = '…'; label = 'شماره بچ لازم'; activityGlyph = 'i';
+    message = 'محصول انتخاب شد؛ شماره بچ را وارد کنید تا کد بچ کامل شود.';
+  } else if (!pricesValid) {
+    state = 'warning'; glyph = '!'; label = 'قیمت نامعتبر'; activityGlyph = '!';
+    message = 'قیمت معتبر برای این محصول موجود نیست؛ پیش از چاپ نرخ مصوب کارخانه را بررسی کنید.';
+  } else if (!pricesVerifiedOnlineThisSession) {
+    state = 'warning'; glyph = '!'; label = 'تطبیق قیمت'; activityGlyph = '!';
+    message = 'اطلاعات فرم وارد شده، اما قیمت‌ها در این نشست از سرور تأیید نشده‌اند؛ پیش از چاپ نرخ مصوب را تطبیق دهید.';
+  } else {
+    state = 'ready'; glyph = '✓'; label = 'اطلاعات کامل'; activityGlyph = '✓';
+    message = 'اطلاعات محصول، ماندگاری و شماره بچ کامل است؛ پیش از چاپ، قیمت مصوب و مشخصات روی برچسب را بررسی کنید.';
+  }
+
+  statusEl.dataset.state = state;
+  statusIconEl.textContent = glyph;
+  statusLabelEl.textContent = label;
+  activityBar.dataset.state = state;
+  activityIcon.textContent = activityGlyph;
+  activityText.textContent = message;
+}
+
+function render() {
+  const now = new Date();
+  now.setDate(now.getDate() + dayOffset);
+  const gy = now.getFullYear(), gm = now.getMonth() + 1, gd = now.getDate();
+  const [jy, jm, jd] = toJalali(gy, gm, gd);
+
+  const prodSubEl = document.getElementById('prodDateSub');
+  if (dayOffset === 0) {
+    prodSubEl.textContent = 'امروز، به‌صورت خودکار';
+  } else if (dayOffset > 0) {
+    prodSubEl.textContent = toPersianDigits(dayOffset) + ' روز جلوتر از امروز';
+  } else {
+    prodSubEl.textContent = toPersianDigits(Math.abs(dayOffset)) + ' روز قبل از امروز';
+  }
+
+  // Keep product, batch and price displays in sync even when shelf-life input is invalid.
+  const nameVal = document.getElementById('productName').value.trim();
+  document.getElementById('nameDisplay').textContent = nameVal || 'نام محصول را انتخاب کنید';
+
+  const seqVal = document.getElementById('batchSeq').value.trim();
+  const batchEl = document.getElementById('batchCode');
+  const compareBatchEl = document.getElementById('compareBatch');
+  if (!nameVal) {
+    batchEl.textContent = 'کد بچ: —';
+    compareBatchEl.textContent = '—';
+  } else if (!productLetterMap[nameVal]) {
+    batchEl.textContent = 'کد بچ: حرف اختصاصی این محصول هنوز ثبت نشده';
+    compareBatchEl.textContent = '—';
+  } else if (!seqVal || !/^[0-9]{1,6}$/.test(seqVal) || Number(seqVal) === 0) {
+    batchEl.textContent = 'کد بچ: شماره بچ تولیدی را وارد کنید';
+    compareBatchEl.textContent = '—';
+  } else {
+    const code = generateBatchCode(jy, jm, jd, nameVal, seqVal);
+    batchEl.textContent = code ? 'کد بچ: ' + code : 'کد بچ: نامعتبر';
+    compareBatchEl.textContent = code || '—';
+  }
+
+  const producerEl = document.getElementById('producerPrice');
+  const consumerEl = document.getElementById('consumerPrice');
+  const compareProducerEl = document.getElementById('compareProducerPrice');
+  const compareConsumerEl = document.getElementById('compareConsumerPrice');
+  const prices = nameVal ? priceData[nameVal] : null;
+  const pricesValid = !!prices && Number.isSafeInteger(prices.producer) && Number.isSafeInteger(prices.consumer) && prices.producer >= 0 && prices.consumer >= 0;
+  if (pricesValid) {
+    producerEl.className = 'hero-price-value';
+    consumerEl.className = 'hero-price-value';
+    producerEl.innerHTML = formatRial(prices.producer) + '<span class="unit">ریال</span>';
+    consumerEl.innerHTML = formatRial(prices.consumer) + '<span class="unit">ریال</span>';
+    // compare overlay: English digits to match physical jet-print output
+    compareProducerEl.textContent = prices.producer.toLocaleString('en-US');
+    compareConsumerEl.textContent = prices.consumer.toLocaleString('en-US');
+  } else {
+    producerEl.className = 'hero-price-value pending';
+    consumerEl.className = 'hero-price-value pending';
+    producerEl.textContent = nameVal ? 'ثبت نشده' : '—';
+    consumerEl.textContent = nameVal ? 'ثبت نشده' : '—';
+    compareProducerEl.textContent = '—';
+    compareConsumerEl.textContent = '—';
+  }
+  updateWorkflowStatus();
+
+  const monthsRaw=document.getElementById('shelfMonths').value.trim();
+  const months=Number(monthsRaw);
+  const monthsValid=validShelfMonths(monthsRaw);
+  const shelfError=document.getElementById('shelfError');
+  shelfError.style.display=monthsValid?'none':'block';
+  shelfError.textContent=monthsValid?'':'⚠ ماندگاری باید عدد صحیح بین ۱ تا ۳۶ ماه باشد؛ نتیجه تاریخ معتبر نیست.';
+  if(!monthsValid){
+    document.getElementById('expDate').textContent='—';
+    document.getElementById('compareExpDate').textContent='—';
+    document.getElementById('dayCount').textContent='—';
+    document.getElementById('shelfNote').textContent='ماندگاری نامعتبر';
+    document.getElementById('shelfLabel').textContent='—';
+    document.getElementById('prodDate').textContent=formatJalali([jy,jm,jd]).numeric;
+    document.getElementById('compareProdDate').textContent=formatJalaliEn([jy,jm,jd]);
+    document.getElementById('batchCode').textContent='کد بچ: ابتدا ماندگاری را اصلاح کنید';
+    document.getElementById('compareBatch').textContent='—';
+    return;
+  }
+  const [ey, em, ed] = addJalaliMonths(jy, jm, jd, months);
+
+  const prod = formatJalali([jy, jm, jd]);
+  const exp = formatJalali([ey, em, ed]);
+
+  document.getElementById('prodDate').textContent = prod.numeric;
+  document.getElementById('expDate').textContent = exp.numeric;
+  document.getElementById('shelfNote').textContent = 'تولید + ' + toPersianDigits(months) + ' ماه';
+  document.getElementById('shelfLabel').textContent = toPersianDigits(months) + ' ماه';
+  document.getElementById('compareProdDate').textContent = formatJalaliEn([jy, jm, jd]);
+  document.getElementById('compareExpDate').textContent = formatJalaliEn([ey, em, ed]);
+
+  // day count between the two dates using julian day numbers
+  const prodJdn = g2d(gy, gm, gd);
+  const expGreg = d2g(j2dSafe(ey, em, ed));
+  document.getElementById('dayCount').textContent = toPersianDigits(diffDays(jy, jm, jd, ey, em, ed)) + ' روز';
+
+}
+
+// helper: jalali -> julian day number (mirrors j2d from the standard algorithm)
+function j2dSafe(jy, jm, jd) {
+  const r = jalCal(jy);
+  return g2d(r.gy, 3, r.march) + (jm - 1) * 31 - div(jm, 7) * (jm - 7) + jd - 1;
+}
+function diffDays(jy1, jm1, jd1, jy2, jm2, jd2) {
+  return j2dSafe(jy2, jm2, jd2) - j2dSafe(jy1, jm1, jd1);
+}
+
+let dayOffset = 0;
+
+document.getElementById('productName').addEventListener('change', render);
+document.getElementById('shelfMonths').addEventListener('input', render);
+document.getElementById('batchSeq').addEventListener('input', (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0,6);
+  render();
+});
+document.getElementById('prodPrev').addEventListener('click', () => { dayOffset -= 1; render(); });
+document.getElementById('prodNext').addEventListener('click', () => { dayOffset += 1; render(); });
+document.getElementById('prodToday').addEventListener('click', () => { dayOffset = 0; render(); });
+
+// ---- numeric keypad for batch sequence ----
+const keypadOverlay = document.getElementById('keypadOverlay');
+const keypadDisplay = document.getElementById('keypadDisplay');
+const batchSeqInput = document.getElementById('batchSeq');
+let keypadBuffer = '';
+
+function refreshKeypadDisplay() {
+  keypadDisplay.textContent = keypadBuffer ? toPersianDigits(keypadBuffer) : '—';
+}
+function openKeypad() {
+  keypadBuffer = batchSeqInput.value.replace(/[^0-9]/g, '');
+  refreshKeypadDisplay();
+  keypadOverlay.classList.add('open');
+}
+function closeKeypad() { keypadOverlay.classList.remove('open'); }
+
+batchSeqInput.addEventListener('click', openKeypad);
+document.querySelectorAll('.keypad-key[data-digit]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    if (keypadBuffer.length >= 6) return; // keep batch numbers sane
+    keypadBuffer += btn.dataset.digit;
+    refreshKeypadDisplay();
+  });
+});
+document.getElementById('keypadBack').addEventListener('click', () => {
+  keypadBuffer = keypadBuffer.slice(0, -1);
+  refreshKeypadDisplay();
+});
+document.getElementById('keypadClear').addEventListener('click', () => {
+  keypadBuffer = '';
+  refreshKeypadDisplay();
+});
+document.getElementById('keypadCancel').addEventListener('click', closeKeypad);
+keypadOverlay.addEventListener('click', (e) => { if (e.target === keypadOverlay) closeKeypad(); });
+document.getElementById('keypadDone').addEventListener('click', () => {
+  batchSeqInput.value = keypadBuffer;
+  closeKeypad();
+  render();
+});
+
+// ---- official Alis-FO-QA15 printing: uses original form as an immutable image template ----
+document.getElementById('officialPrintOpen').addEventListener('click', () => {
+  const product=document.getElementById('productName').value.trim();
+  const seq=document.getElementById('batchSeq').value.trim();
+  const rawMonths=document.getElementById('shelfMonths').value.trim();
+  const months=Number(rawMonths);
+  if (!product || !productLetterMap[product]) { alert('ابتدا یک محصول معتبر را انتخاب کنید.'); return; }
+  if (!/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) { alert('شماره بچ باید عددی بین ۱ تا ۶ رقم و بزرگ‌تر از صفر باشد.'); return; }
+  if (!validShelfMonths(rawMonths)) { alert('ماندگاری محصول نامعتبر است.'); return; }
+  const prices=priceData[product];
+  if (!prices || !Number.isSafeInteger(prices.producer) || !Number.isSafeInteger(prices.consumer) || prices.producer<0 || prices.consumer<0) {
+    alert('قیمت محصول معتبر نیست؛ قبل از چاپ نرخ‌های مصوب را بررسی کنید.');return;
+  }
+  // Prevent silent official printing with unverified cached/default prices.
+  if (!pricesVerifiedOnlineThisSession) {
+    const last=localStorage.getItem('qc-price-synced-at');
+    const lastText=last && !Number.isNaN(Date.parse(last)) ? new Date(last).toLocaleString('fa-IR') : 'نامشخص';
+    const approved=window.confirm('هشدار: قیمت این محصول در این نوبت از سرور تأیید نشده است.\nآخرین همگام‌سازی: '+lastText+'\nقیمت تولیدکننده: '+prices.producer.toLocaleString('fa-IR')+' ریال\nقیمت مصرف‌کننده: '+prices.consumer.toLocaleString('fa-IR')+' ریال\n\nفقط پس از تطبیق با نرخ مصوب کارخانه، «تأیید» را انتخاب کنید. آیا قیمت‌ها را شخصاً بررسی کرده‌اید؟');
+    if (!approved) return;
+  }
+  const shiftEn=document.getElementById('officialPrintShift').value;
+  if(!/^[123]$/.test(shiftEn)){alert('ابتدا شیفت کاری ۱، ۲ یا ۳ را انتخاب کنید.');return;}
+  const date=new Date();date.setDate(date.getDate()+dayOffset);
+  const [jy,jm,jd]=toJalali(date.getFullYear(),date.getMonth()+1,date.getDate());
+  const [ey,em,ed]=addJalaliMonths(jy,jm,jd,months);
+  const batch=generateBatchCode(jy,jm,jd,product,seq);
+  if(!batch){alert('کد بچ نامعتبر است.');return;}
+  const size=product.includes('۱۰۰۰')?'1000':product.includes('۲۰۰')?'200':null;
+  if(!size){alert('حجم محصول مشخص نیست.');return;}
+  const params=new URLSearchParams({
+    prod:formatJalaliEn([jy,jm,jd]),exp:formatJalaliEn([ey,em,ed]),
+    product,size,batch,shift:shiftEn,letter:productLetterMap[product],
+    producer:String(prices.producer),consumer:String(prices.consumer)
+  });
+  // Source values are captured together, so preview and current app values agree.
+  const url='alis-print.html?'+params.toString();
+  const win=window.open(url,'_blank');
+  if(!win) alert('لطفاً باز شدن صفحه جدید (Pop-up) را برای چاپ مجاز کنید.');
+});
+
+// ---- compare-with-physical-label full-screen mode ----
+const compareOverlay = document.getElementById('compareOverlay');
+document.getElementById('compareOpenBtn').addEventListener('click', () => {
+  compareOverlay.classList.add('open');
+});
+document.getElementById('compareCloseBtn').addEventListener('click', () => {
+  compareOverlay.classList.remove('open');
+});
+
+// ---- inspection checklist ----
+// ---- safe local persistence (degrades silently if storage is unavailable) ----
+function storageGet(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+function storageSet(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) { /* ignore — falls back to in-memory only for this session */ }
+}
+
+// ---- hamburger menu ----
+const menuBtn = document.getElementById('menuBtn');
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+const drawerClose = document.getElementById('drawerClose');
+
+function openDrawer() {
+  drawer.classList.add('open');
+  drawerOverlay.classList.add('open');
+  menuBtn.classList.add('open');
+}
+function closeDrawer() {
+  drawer.classList.remove('open');
+  drawerOverlay.classList.remove('open');
+  menuBtn.classList.remove('open');
+}
+menuBtn.addEventListener('click', () => {
+  if (drawer.classList.contains('open')) closeDrawer(); else openDrawer();
+});
+drawerClose.addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+
+// ---- daily work report — simple notepad ----
+const reportOverlay = document.getElementById('reportOverlay');
+const reportDateLabel = document.getElementById('reportDateLabel');
+const reportTimeLabel = document.getElementById('reportTimeLabel');
+const reportText = document.getElementById('reportText');
+const reportSaved = document.getElementById('reportSaved');
+let reportSaveTimer = null;
+
+function todayReportKey() {
+  const now = new Date();
+  const [jy, jm, jd] = toJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  return { key: 'qc-notepad-' + jy + '-' + jm + '-' + jd, jy, jm, jd };
+}
+
+function saveReport() {
+  storageSet(todayReportKey().key, reportText.value);
+  reportSaved.classList.add('show');
+  clearTimeout(reportSaveTimer);
+  reportSaveTimer = setTimeout(() => reportSaved.classList.remove('show'), 1200);
+}
+
+function openReport() {
+  closeDrawer();
+  const { key, jy, jm, jd } = todayReportKey();
+  const now = new Date();
+  reportDateLabel.textContent = 'گزارش کار — ' + formatJalali([jy, jm, jd]).readable;
+  reportTimeLabel.textContent = 'آخرین ذخیره: ' + now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
+  reportText.value = storageGet(key, '');
+  reportSaved.classList.remove('show');
+  reportOverlay.classList.add('open');
+  setTimeout(() => reportText.focus(), 80);
+}
+function closeReport() { reportOverlay.classList.remove('open'); }
+
+reportText.addEventListener('input', saveReport);
+document.getElementById('reportOpenBtn').addEventListener('click', openReport);
+document.getElementById('reportClose').addEventListener('click', closeReport);
+
+function reportFullText() {
+  const { jy, jm, jd } = todayReportKey();
+  return 'گزارش کار — ' + formatJalali([jy, jm, jd]).readable + '\n\n' + reportText.value;
+}
+
+const reportShareBtn = document.getElementById('reportShare');
+if (!navigator.share) {
+  reportShareBtn.style.display = 'none';
+} else {
+  reportShareBtn.addEventListener('click', () => {
+    navigator.share({ text: reportFullText() }).catch(() => {});
+  });
+}
+
+document.getElementById('reportPrint').addEventListener('click', () => {
+  const { jy, jm, jd } = todayReportKey();
+  const date = formatJalali([jy, jm, jd]).readable;
+  const esc = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  const body = esc(reportText.value || '—');
+
+  const html = `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>گزارش کار — ${date}</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  @page{ size:A4; margin:24mm 20mm; }
+  body{ font-family:'Vazirmatn',Tahoma,sans-serif; font-size:12pt; color:#111; background:#fff; direction:rtl; }
+  .page{ max-width:700px; margin:0 auto; }
+  .header{
+    display:flex; justify-content:space-between; align-items:center;
+    border-bottom:3px solid #0e7490; padding-bottom:14px; margin-bottom:24px;
+  }
+  .header-title{ font-size:18pt; font-weight:800; color:#083f52; }
+  .header-date{ font-size:10pt; color:#555; margin-top:4px; }
+  .header-logo{
+    width:54px; height:54px; border-radius:50%;
+    border:3px solid #0e7490;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20pt; font-weight:800; color:#0e7490;
+  }
+  .report-body{
+    border:1.5px solid #d0e8ef; border-radius:10px;
+    padding:20px 22px; min-height:480px;
+    font-size:12pt; line-height:2.2; color:#222;
+    background:#fafcfd;
+  }
+  .footer{
+    margin-top:32px; border-top:1.5px solid #d0e8ef;
+    padding-top:16px; display:flex; justify-content:space-between; align-items:flex-end;
+  }
+  .sig-box{ width:200px; border-bottom:1.5px solid #555; min-height:40px; }
+  .sig-label{ font-size:9pt; color:#888; margin-top:6px; }
+  .footer-note{ font-size:8pt; color:#aaa; }
+  .print-btn{
+    display:block; margin:20px auto 0;
+    padding:12px 32px; font-family:'Vazirmatn',sans-serif;
+    font-size:13pt; font-weight:700; background:#0e7490;
+    color:#fff; border:none; border-radius:10px; cursor:pointer;
+  }
+  @media print{ .no-print{ display:none; } body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="header-title">گزارش کار روزانه</div>
+      <div class="header-date">واحد کنترل کیفیت — ${date}</div>
+    </div>
+    <div class="header-logo">QC</div>
+  </div>
+  <div class="report-body">${body}</div>
+  <div class="footer">
+    <div>
+      <div class="sig-box"></div>
+      <div class="sig-label">امضا / مهر کارشناس</div>
+    </div>
+    <div class="footer-note">تاریخ چاپ: ${new Date().toLocaleDateString('fa-IR')}</div>
+  </div>
+</div>
+<button class="print-btn no-print" onclick="window.print();window.close();">🖨 چاپ</button>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank', 'width=800,height=900');
+  if (!win) { alert('لطفاً pop-up را در مرورگر مجاز کنید'); return; }
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => win.print();
+});
+
+render();
+
+// The displayed default date only needs a refresh at the next local day boundary.
+// A minute-by-minute full render was unnecessary work on long-running mobile sessions.
+function scheduleNextLocalDayRefresh() {
+  const now = new Date();
+  const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
+  const delay = Math.max(1000, nextMidnight.getTime() - now.getTime());
+  window.setTimeout(() => {
+    if (dayOffset === 0) render();
+    scheduleNextLocalDayRefresh();
+  }, delay);
+}
+scheduleNextLocalDayRefresh();
+</script>
+</body>
+</html>

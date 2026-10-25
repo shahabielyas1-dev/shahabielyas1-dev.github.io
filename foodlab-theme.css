@@ -1,0 +1,112 @@
+/* FoodLab UI — visual layer only; business logic untouched */
+:root{--bg:#edf7fa!important;--bg-2:#e3f2f6!important;--ink:#18394a!important;--paper:#fff!important;--muted:#65818d!important;--green:#1aa89a!important;--green-deep:#087e83!important;--green-soft:#e0f6f1!important;--blue:#43b8ce!important;--blue-soft:#e2f5fa!important;--yellow:#f3bc56!important;--yellow-soft:#fff6e3!important;--teal:#20b8c2!important;--teal-soft:#e0f7f8!important;--coral:#e7787e!important;--line:#d6e9ed!important;--glow:rgba(32,184,194,.14)!important;--border:1px solid #d6e9ed!important;--shadow:0 12px 30px rgba(23,91,110,.08)!important;--shadow-sm:0 5px 16px rgba(23,91,110,.06)!important}
+:root[data-theme="dark"]{--bg:#10252f!important;--bg-2:#19333e!important;--ink:#e6f4f7!important;--paper:#1b3640!important;--muted:#aac4cb!important;--line:#35545e!important;--green:#24a99d!important;--blue:#267e95!important;--teal:#1c8791!important;--coral:#b65c67!important}
+body{background:radial-gradient(circle at 8% 0%,rgba(45,193,205,.14),transparent 38%),var(--bg)!important;font-weight:600!important}
+.shell{max-width:1100px!important;padding:26px clamp(16px,4vw,42px) 55px!important}
+.topbar{background:var(--paper);padding:16px 20px;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-sm);margin-bottom:20px!important}
+.brand-title h1,.topbar h1{color:var(--ink);letter-spacing:-.025em}
+.icon-btn,.logo-badge,.badge{border:1px solid var(--line)!important;box-shadow:none!important;border-radius:14px!important}
+.logo-badge,.logo-mark{background:#12aab4!important}
+.info-pill,.today-strip,.panel,.gate-box{border:1px solid var(--line)!important;box-shadow:var(--shadow-sm)!important;border-radius:20px!important;background:var(--paper)!important}
+.info-strip{gap:14px!important;margin-bottom:16px!important}
+.info-pill{padding:17px!important;text-align:right!important}
+.info-pill .n{color:#0c9eaa;font-size:22px!important}
+.today-strip{padding:15px 18px!important;margin-bottom:18px!important}
+.section-label{font-size:15px!important;color:var(--ink)!important;margin:24px 4px 14px!important}
+.card{border:1px solid var(--line)!important;background:var(--paper)!important;color:var(--ink)!important;box-shadow:var(--shadow)!important;border-radius:22px!important;min-height:190px!important;padding:23px!important;margin-bottom:14px!important;transition:transform .18s ease,box-shadow .18s ease!important}
+.card:hover{transform:translateY(-3px);box-shadow:0 17px 32px rgba(23,91,110,.12)!important}
+.card:active{transform:scale(.99)!important}
+.card h2{font-size:21px!important;color:var(--ink)!important}
+.card p,.card.blue p,.card.coral p{color:var(--muted)!important;font-size:13px!important;max-width:100%!important}
+.card-arrow{width:44px!important;height:44px!important;background:#e2f7f8!important;color:#078b98!important;border:0!important;border-radius:14px!important}
+.card-tag{background:#eff9fb!important;border:0!important;color:#138d99!important;top:20px!important;left:20px!important}
+.card.green{border-top:4px solid #1ba998!important}.card.blue{border-top:4px solid #42b6d0!important}.card.yellow{border-top:4px solid #efbc5c!important}.card.coral{border-top:4px solid #e77f8a!important}
+button,.save-btn{box-shadow:none!important}button:focus-visible,[role="button"]:focus-visible{outline:3px solid #1aa9b8!important;outline-offset:3px}
+@media(min-width:720px){#homeScreen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}#homeScreen>.topbar,#homeScreen>.info-strip,#homeScreen>.today-strip,#homeScreen>.announcement,#homeScreen>.section-label,#homeScreen>footer,#homeScreen>.copyright{grid-column:1/-1}#homeScreen>.card{margin-bottom:18px!important}}
+@media(max-width:520px){.shell{padding:14px 14px 35px!important}.topbar{padding:12px!important}.card{min-height:158px!important}.card h2{font-size:19px!important}.info-pill .n{font-size:18px!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* Phase 2: shared application surfaces; no modifications to calculation logic */
+@media screen {
+  html {scroll-behavior:smooth}
+  body {color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif}
+  input:not([type=checkbox]):not([type=radio]),select,textarea {border-radius:12px;accent-color:#0fa9b5}
+  input:focus-visible,select:focus-visible,textarea:focus-visible {outline:2px solid #20b8c2;outline-offset:2px}
+  button,a,[role=button]{-webkit-tap-highlight-color:transparent}
+  button{transition:filter .15s ease,transform .15s ease}
+  button:hover{filter:brightness(1.035)}
+  button:disabled{opacity:.6;cursor:not-allowed}
+  table{border-collapse:separate;border-spacing:0}
+  th{color:var(--ink)}
+  td{border-color:var(--line)}
+  ::selection{background:#b6e9ee;color:#143947}
+}
+@media(max-width:600px){input,select,textarea{font-size:16px}button{min-height:40px}}
+@media print{body{background:white!important} .no-print{display:none!important}}
+
+
+/* FoodLab Phase 3 — internal layouts and touch ergonomics (screen only) */
+@media screen {
+  body{line-height:1.65}
+  .shell{width:min(100%,1180px);margin-inline:auto;box-sizing:border-box}
+  .view .back-row,.back-row{display:flex;align-items:center;gap:12px;margin-block:0 20px}
+  .view .card,.view .panel,.view .panel-card,.panel-card,.entry-card,.result-card{
+    border:1px solid var(--line,#d6e9ed)!important;border-radius:20px!important;
+    box-shadow:0 8px 24px rgba(23,91,110,.065)!important;
+  }
+  .view .card,.panel-card{background:var(--paper,#fff)!important;padding:clamp(16px,2.5vw,26px)!important;margin-bottom:16px}
+  .card-label,.view-title{font-weight:800;letter-spacing:-.02em}
+  .view .card-label{display:flex;align-items:center;gap:9px;margin-bottom:15px}
+  .view .card-label:before{content:'';display:inline-block;width:5px;height:19px;background:#20b8c2;border-radius:8px;flex:none}
+  .field-row{gap:8px;min-width:0}
+  .field-input-wrap{min-width:0}
+  input:not([type=checkbox]):not([type=radio]),select,textarea{max-width:100%;box-sizing:border-box;min-height:44px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-block:16px 22px}
+  .toolbar>button{flex:1 1 155px;min-height:46px;border-radius:13px}
+  .result-card{padding:clamp(20px,3vw,30px)!important;background:linear-gradient(135deg,#e9fafb,#fff)!important;border-color:#bde7eb!important}
+  .result-value{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+  .entry-card{background:#fff!important;padding:18px!important;transition:box-shadow .2s ease,transform .2s ease}
+  .entry-card:focus-visible{outline:3px solid #20b8c2;outline-offset:3px}
+  .entry-icon{background:#e2f5fa;border-radius:16px}
+  .progress-bar{overflow:hidden;border-radius:100px}
+  .progress-fill{background:linear-gradient(90deg,#14a8b4,#52cbbb)}
+  .back-btn,[data-back]{cursor:pointer}
+  table{max-width:100%}
+  .view :where(h1,h2,h3),.panel-card :where(h1,h2,h3){overflow-wrap:anywhere}
+}
+@media screen and (min-width:850px){
+  #testView{max-width:900px;margin-inline:auto}
+  #dailyView,#templatesView,#templateView{max-width:900px;margin-inline:auto}
+}
+@media screen and (max-width:640px){
+  .shell{padding-inline:12px!important}
+  .view .card,.panel-card{padding:16px!important;border-radius:17px!important}
+  .entry-card{padding:14px!important}
+  .toolbar{gap:8px}
+  .toolbar>button{flex:1 1 100%;min-height:48px}
+  .result-card{padding:18px!important}
+  .back-row{gap:8px}
+}
+@media print{.result-card,.panel-card,.view .card{box-shadow:none!important}}
+
+/* FoodLab Phase 4 — mobile-only usability safeguards; screen only */
+@media screen and (max-width: 640px) {
+  html { -webkit-text-size-adjust: 100%; }
+  body { min-width: 0; }
+  :where(.shell,.view,.panel,.panel-card,.card,.field-row,.field-input-wrap,.toolbar,.result-card,.entry-card) { min-width: 0; max-width: 100%; box-sizing: border-box; }
+  :where(.shell,.view,.panel,.panel-card,.card,.entry-card) { overflow-wrap: break-word; }
+  :where(input:not([type=checkbox]):not([type=radio]),select,textarea) { width: 100%; max-width: 100%; min-width: 0; font-size: 16px !important; }
+  :where(button,.primary,.ghost,.save-btn,[role=button]) { min-height: 44px; touch-action: manipulation; }
+  :where(.toolbar,.action-row,.button-row) { flex-wrap: wrap; }
+  :where(.toolbar>button,.toolbar>a) { min-width: 0; }
+  :where(table) { max-width: 100%; }
+  :where(.table-wrap,.table-wrapper,.table-container,.history-table,.data-table-wrap) { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  :where(.modal-box,[role=dialog]) { max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; box-sizing: border-box; }
+  :where(.result-value,.result-sec-value,.history-entry) { overflow-wrap: anywhere; }
+}
+@media screen and (max-width: 380px) {
+  .shell { padding-inline: 10px !important; }
+  .topbar { gap: 8px; }
+  .view .card,.panel-card { padding: 14px !important; }
+}
+@media screen and (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

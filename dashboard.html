@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#3d6ce0">
+<link rel="manifest" href="dashboard-manifest.json">
+<link rel="icon" href="dashboard-icon-192.png">
+<link rel="apple-touch-icon" href="dashboard-icon-192.png">
+<title>داشبورد مدیریت — جعبه ابزار QC</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://ubrydkyqmradyuiinjla.supabase.co" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efdf; --ink:#18140d; --paper:#fffdf6; --muted:#756b57;
+    --green:#37b34a; --green-deep:#1f7a34; --green-soft:#e2f3e1;
+    --blue:#3d6ce0; --yellow:#f2c33e;
+    --border:3px solid var(--ink);
+    --shadow:6px 6px 0 var(--ink);
+    --shadow-sm:4px 4px 0 var(--ink);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);min-height:100vh;
+    font-family:'Vazirmatn',sans-serif;font-weight:700;color:var(--ink);
+  }
+  .shell{max-width:520px;margin:0 auto;padding:24px 16px 60px;}
+
+  /* pin gate */
+  #gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .gate-box{
+    background:var(--paper);border:var(--border);border-radius:24px;box-shadow:var(--shadow);
+    padding:28px 24px;max-width:340px;width:100%;text-align:center;
+  }
+  .gate-box .ic{width:60px;height:60px;border-radius:50%;background:var(--green);border:var(--border);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px;color:#fff;}
+  .gate-box h2{font-size:19px;margin:0 0 6px;}
+  .gate-box p{font-size:13px;color:var(--muted);margin:0 0 18px;}
+  .gate-box input{
+    width:100%;text-align:center;letter-spacing:6px;font-size:20px;font-family:'JetBrains Mono',monospace;
+    padding:12px;border:var(--border);border-radius:14px;margin-bottom:12px;background:var(--bg);color:var(--ink);
+  }
+  .gate-box button{
+    width:100%;padding:13px;border:var(--border);border-radius:14px;background:var(--green);color:#fff;
+    font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;box-shadow:var(--shadow-sm);
+  }
+  .gate-box button:active{transform:translate(2px,2px);box-shadow:none;}
+  .gate-err{color:#c0392b;font-size:12.5px;margin-top:10px;display:none;}
+  .gate-err.show{display:block;}
+
+  /* main dashboard */
+  #dash{display:none;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:20px;margin:0;}
+  .topbar p{font-size:12px;color:var(--muted);margin:2px 0 0;}
+  .badge{
+    width:46px;height:46px;border-radius:14px;background:var(--green);border:var(--border);
+    display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;
+  }
+
+  .panel{
+    background:var(--paper);border:var(--border);border-radius:22px;box-shadow:var(--shadow);
+    padding:18px 18px 20px;margin-bottom:20px;
+  }
+  .panel h3{font-size:15px;margin:0 0 4px;}
+  .panel .sub{font-size:12px;color:var(--muted);font-weight:600;margin:0 0 14px;}
+
+  textarea#annText{
+    width:100%;min-height:70px;border:2px solid var(--ink);border-radius:12px;padding:10px;
+    font-family:inherit;font-size:13.5px;font-weight:600;resize:vertical;background:var(--bg);color:var(--ink);
+  }
+  .toggle-row{display:flex;align-items:center;gap:10px;margin-top:10px;}
+  .toggle-row label{font-size:13px;}
+  .switch{position:relative;width:46px;height:26px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider{position:absolute;inset:0;background:#ddd4bd;border:2px solid var(--ink);border-radius:999px;cursor:pointer;transition:.15s;}
+  .slider:before{content:"";position:absolute;width:18px;height:18px;left:2px;top:1px;background:#fff;border:2px solid var(--ink);border-radius:50%;transition:.15s;}
+  input:checked + .slider{background:var(--green);}
+  input:checked + .slider:before{transform:translateX(20px);}
+
+  .price-row{border-top:2px dashed #d8d0b8;padding:12px 0;}
+  .price-row:first-of-type{border-top:none;padding-top:4px;}
+  .price-row .name{font-size:13.5px;margin-bottom:8px;}
+  .price-fields{display:flex;gap:10px;}
+  .price-fields div{flex:1;}
+  .price-fields label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;}
+  .price-fields input{
+    width:100%;border:2px solid var(--ink);border-radius:10px;padding:8px;
+    font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--bg);color:var(--ink);
+  }
+
+  .save-btn{
+    width:100%;padding:14px;border:var(--border);border-radius:16px;background:var(--blue);color:#fff;
+    font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;box-shadow:var(--shadow-sm);margin-top:6px;
+  }
+  .save-btn:active{transform:translate(2px,2px);box-shadow:none;}
+
+  .collapsible-header{
+    width:100%;background:none;border:none;padding:0;margin:0;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    cursor:pointer;text-align:right;font-family:inherit;color:inherit;
+  }
+  .collapsible-header .chevron{
+    font-size:22px;font-weight:800;flex-shrink:0;
+    transition:transform .2s ease;color:var(--muted);
+  }
+  .collapsible-header.open .chevron{transform:rotate(90deg);}
+  .collapsible-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .collapsible-body.open{max-height:2400px;}
+  .collapsible-body-inner{padding-top:14px;}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--green);color:#fff;border:var(--border);border-radius:14px;
+    padding:10px 18px;font-size:13px;font-weight:700;box-shadow:var(--shadow-sm);
+    opacity:0;pointer-events:none;transition:.2s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(20,17,11,.55);
+    display:none;align-items:center;justify-content:center;
+    padding:20px;z-index:70;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--paper);border:var(--border);border-radius:24px;box-shadow:var(--shadow);
+    padding:24px 22px;max-width:360px;width:100%;text-align:center;
+  }
+  .modal-box h3{font-size:17px;font-weight:800;margin:0 0 10px;}
+  .modal-box p{font-size:13px;line-height:2;color:var(--muted);font-weight:600;margin:0 0 18px;}
+  .modal-close{
+    width:100%;padding:13px;border:var(--border);border-radius:14px;
+    background:var(--blue);color:#fff;font-family:inherit;font-weight:800;font-size:14.5px;
+    cursor:pointer;box-shadow:var(--shadow-sm);
+  }
+  .modal-close:active{transform:translate(2px,2px);box-shadow:none;}
+  .modal-secondary{background:var(--bg);color:var(--ink);margin-top:10px;}
+</style>
+<link rel="stylesheet" href="foodlab-theme.css">
+<link rel="stylesheet" href="foodlab-design-system.css">
+<link rel="stylesheet" href="foodlab-polish-phaseH.css">
+
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <div class="ic">🔒</div>
+    <h2>ورود مدیر</h2>
+    <p>ورود امن مدیر با حساب ثبت‌شده در Supabase</p>
+    <input type="email" id="adminEmail" autocomplete="username" inputmode="email" placeholder="ایمیل مدیر" style="font-family:inherit;letter-spacing:normal;font-size:15px;direction:ltr;">
+    <input type="password" id="adminPassword" autocomplete="current-password" placeholder="رمز حساب" style="font-family:inherit;letter-spacing:normal;font-size:15px;direction:ltr;">
+    <button id="loginBtn" type="button">ورود امن</button>
+    <div class="gate-err" id="gateErr" role="alert">—</div>
+  </div>
+</div>
+
+<div id="dash" class="shell">
+  <div class="topbar">
+    <div>
+      <h1>داشبورد مدیریت</h1>
+      <p>جعبه ابزار QC — تغییرات این‌جا برای همه‌ی کاربرها نمایش داده می‌شه</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;"><button id="logoutBtn" class="modal-close" style="width:auto;padding:8px;font-size:12px;background:var(--paper);color:var(--ink);">خروج</button><div class="badge">⚙️</div></div>
+  </div>
+
+  <div class="panel">
+    <h3>📌 اعلان بالای برنامه</h3>
+    <p class="sub">این پیام به‌صورت یک نوار زرد بالای صفحه‌ی اصلی جعبه ابزار QC به همه نشون داده می‌شه</p>
+    <textarea id="annText" placeholder="مثلاً: امروز خط ۲ به دلیل تعمیرات تعطیله"></textarea>
+    <div class="toggle-row">
+      <label class="switch">
+        <input type="checkbox" id="annActive">
+        <span class="slider"></span>
+      </label>
+      <label for="annActive">نمایش اعلان فعال باشه</label>
+    </div>
+    <button class="save-btn" id="saveAnn">ذخیره اعلان</button>
+  </div>
+
+  <div class="panel">
+    <button type="button" class="collapsible-header" id="priceToggle">
+      <div>
+        <h3>💰 قیمت محصولات</h3>
+        <p class="sub" style="margin-bottom:0;">برای دیدن و ویرایش لیست، بازش کن — قیمت‌ها به ریال</p>
+      </div>
+      <span class="chevron">›</span>
+    </button>
+    <div class="collapsible-body" id="priceBody">
+      <div class="collapsible-body-inner">
+        <div id="priceList"></div>
+        <button class="save-btn" id="savePrices" style="background:var(--green);">ذخیره قیمت‌ها</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">ذخیره شد ✓</div>
+
+<div class="modal-overlay" id="installOverlay">
+  <div class="modal-box">
+    <h3>نصب داشبورد مدیریت 📲</h3>
+    <p>این پنل رو می‌تونی جدا از خود اپ، مثل یک اپ کوچیک روی صفحه اصلی گوشیت نصب کنی؛ برای دسترسی سریع‌تر هروقت خواستی قیمت یا اعلان رو عوض کنی.</p>
+    <button class="modal-close" id="installBtn">نصب داشبورد</button>
+    <button class="modal-close modal-secondary" id="installLater">فعلاً نه</button>
+  </div>
+</div>
+
+<script>
+  // haptic feedback on every tap
+  document.addEventListener('click', () => {
+    if (navigator.vibrate) navigator.vibrate(8);
+  }, { capture: true });
+
+  const SUPABASE_URL = 'https://ubrydkyqmradyuiinjla.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVicnlka3lxbXJhZHl1aWluamxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMzcyNTgsImV4cCI6MjEwMTgxMzI1OH0.R7LF4uH7HGjqtkQEWs6zAdD2WgI9d2HRwMWXd1Xo2hc';
+  const SUPABASE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+  let supa = null;
+  let supabaseSdkPromise = null;
+  function ensureSupabaseClient() {
+    if (supa) return Promise.resolve(supa);
+    if (window.supabase?.createClient) {
+      supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      return Promise.resolve(supa);
+    }
+    if (!supabaseSdkPromise) {
+      supabaseSdkPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = SUPABASE_SDK_URL;
+        script.async = true;
+        script.onload = () => {
+          try {
+            if (!window.supabase?.createClient) throw new Error('Supabase SDK unavailable');
+            supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            resolve(supa);
+          } catch (error) { reject(error); }
+        };
+        script.onerror = () => reject(new Error('Supabase SDK failed to load'));
+        document.head.appendChild(script);
+      }).catch(error => {
+        supabaseSdkPromise = null;
+        throw error;
+      });
+    }
+    return supabaseSdkPromise;
+  }
+  let verifiedAdminId = null;
+  let startupSessionCheck = null;
+
+
+  // same defaults baked into the QC tool — dashboard shows/edits on top of these
+  const priceDefaults = {
+    'شیر پرچرب ۲۰۰': { producer: 330850, consumer: 437500 },
+    'شیر کم‌چرب ۲۰۰': { producer: 317600, consumer: 420000 },
+    'شیر کاکائو ۲۰۰': { producer: 416000, consumer: 550000 },
+    'شیر قهوه ۲۰۰': { producer: 416000, consumer: 550000 },
+    'شیر نارگیل ۲۰۰': { producer: 416000, consumer: 550000 },
+    'شیر موز ۲۰۰': { producer: 392100, consumer: 518500 },
+    'شیر پرچرب ۱۰۰۰': { producer: 1011500, consumer: 1337500 },
+    'شیر کم‌چرب ۱۰۰۰': { producer: 971000, consumer: 1284000 },
+    'شیر کاکائو ۱۰۰۰': { producer: 1455700, consumer: 1925000 },
+    'شیر نارگیل ۱۰۰۰': { producer: 1455700, consumer: 1925000 },
+    'شیر موز ۱۰۰۰': { producer: 1389600, consumer: 1837500 },
+  };
+
+  const gateError = document.getElementById('gateErr');
+  function showLoginError(message){ gateError.textContent = message; gateError.classList.add('show'); }
+  function showGate(){
+    verifiedAdminId = null;
+    document.getElementById('dash').style.display = 'none';
+    document.getElementById('gate').style.display = 'flex';
+  }
+  async function verifyAdminSession(){
+    try { await ensureSupabaseClient(); }
+    catch (e) { showGate(); showLoginError('کتابخانه اتصال بارگذاری نشد؛ اتصال اینترنت را بررسی کن.'); return false; }
+    const {data:{user}, error} = await supa.auth.getUser();
+    if(error || !user){ showGate(); return false; }
+    const {data, error:roleError} = await supa.from('qc_admins').select('user_id').eq('user_id',user.id).maybeSingle();
+    if(roleError || !data){ showGate(); showLoginError('این حساب مجوز مدیریت ندارد یا تنظیمات دسترسی سرور کامل نیست.'); return false; }
+    verifiedAdminId = user.id;
+    gateError.classList.remove('show');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('dash').style.display = 'block';
+    await loadData();
+    return true;
+  }
+  async function login(){
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true; btn.textContent = 'در حال بررسی…'; gateError.classList.remove('show');
+    try {
+      // Avoid racing the automatic session check when the SDK finishes loading.
+      if (startupSessionCheck) await startupSessionCheck;
+      await ensureSupabaseClient();
+      const {error} = await supa.auth.signInWithPassword({
+        email:document.getElementById('adminEmail').value.trim(),
+        password:document.getElementById('adminPassword').value
+      });
+      if(error) throw error;
+      await verifyAdminSession();
+    }catch(e){ showLoginError('ورود انجام نشد؛ ایمیل، رمز و اتصال را بررسی کن.'); }
+    finally{ btn.disabled=false;btn.textContent='ورود امن'; }
+  }
+  document.getElementById('loginBtn').addEventListener('click',login);
+  document.getElementById('adminPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+  document.getElementById('logoutBtn').addEventListener('click',async()=>{ if(supa) await supa.auth.signOut(); showGate(); });
+  startupSessionCheck = verifyAdminSession().catch(() => { showGate(); return false; });
+
+  const priceToggle = document.getElementById('priceToggle');
+  const priceBody = document.getElementById('priceBody');
+  priceToggle.addEventListener('click', () => {
+    const willOpen = !priceBody.classList.contains('open');
+    priceBody.classList.toggle('open', willOpen);
+    priceToggle.classList.toggle('open', willOpen);
+  });
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function buildPriceList(effective){
+    const wrap = document.getElementById('priceList');
+    wrap.innerHTML = '';
+    Object.keys(priceDefaults).forEach(name => {
+      const vals = { ...priceDefaults[name], ...(effective[name] || {}) };
+      const row = document.createElement('div');
+      row.className = 'price-row';
+      row.innerHTML = `
+        <div class="name">${name}</div>
+        <div class="price-fields">
+          <div>
+            <label>قیمت تولیدکننده</label>
+            <input type="number" min="0" step="1" required data-product="${name}" data-field="producer" value="${vals.producer}">
+          </div>
+          <div>
+            <label>قیمت مصرف‌کننده</label>
+            <input type="number" min="0" step="1" required data-product="${name}" data-field="consumer" value="${vals.consumer}">
+          </div>
+        </div>`;
+      wrap.appendChild(row);
+    });
+  }
+
+  async function loadData(){
+    try {
+      const { data, error } = await supa.from('qc_settings').select('key,value').in('key', ['prices','announcement']);
+      if(error || !data) throw error || new Error('داده‌ای دریافت نشد');
+
+      const priceRow = data.find(r => r.key === 'prices');
+      buildPriceList(priceRow ? priceRow.value : {});
+
+      const annRow = data.find(r => r.key === 'announcement');
+      if(annRow && annRow.value){
+        document.getElementById('annText').value = annRow.value.text || '';
+        document.getElementById('annActive').checked = !!annRow.value.active;
+      }
+    } catch(e){
+      buildPriceList({});
+      showToast('دریافت اطلاعات ناموفق بود؛ ذخیره نکن');
+      document.getElementById('savePrices').disabled = true;
+      document.getElementById('saveAnn').disabled = true;
+      return;
+    }
+    document.getElementById('savePrices').disabled = false;
+    document.getElementById('saveAnn').disabled = false;
+  }
+
+  async function requireAdminForWrite(){
+    if(!verifiedAdminId) throw new Error('ورود مدیریت معتبر نیست');
+    const {data:{user},error} = await supa.auth.getUser();
+    if(error || !user || user.id !== verifiedAdminId){ showGate();throw new Error('نشست مدیریت منقضی شده است'); }
+  }
+
+  document.getElementById('saveAnn').addEventListener('click', async () => {
+    const value = {
+      text: document.getElementById('annText').value.trim(),
+      active: document.getElementById('annActive').checked
+    };
+    const btn = document.getElementById('saveAnn'); btn.disabled=true;
+    try {
+      await requireAdminForWrite();
+      const {error} = await supa.from('qc_settings').upsert({ key: 'announcement', value, updated_at: new Date().toISOString() });
+      if(error) throw error;
+      showToast('اعلان با موفقیت روی سرور ذخیره شد ✓');
+    } catch(e){ showToast('ذخیره نشد: ' + (e?.message || 'ارتباط یا مجوز را بررسی کن')); }
+    finally { btn.disabled=false; }
+  });
+
+  document.getElementById('savePrices').addEventListener('click', async () => {
+    const overrides = {};
+    for(const inp of document.querySelectorAll('#priceList input')){
+      const n = Number(inp.value);
+      if(inp.value.trim()==='' || !Number.isSafeInteger(n) || n<0){
+        inp.focus(); inp.setCustomValidity('قیمت باید عدد صحیح نامنفی باشد');inp.reportValidity();
+        showToast('قیمت نامعتبر؛ ذخیره انجام نشد');return;
+      }
+      inp.setCustomValidity('');
+      const name=inp.dataset.product, field=inp.dataset.field;
+      if(!overrides[name]) overrides[name]={};
+      overrides[name][field]=n;
+    }
+    const btn=document.getElementById('savePrices');btn.disabled=true;
+    try {
+      await requireAdminForWrite();
+      const {error} = await supa.from('qc_settings').upsert({ key: 'prices', value: overrides, updated_at: new Date().toISOString() });
+      if(error) throw error;
+      showToast('قیمت‌ها با موفقیت روی سرور ذخیره شد ✓');
+    } catch(e){ showToast('ذخیره نشد: ' + (e?.message || 'اتصال یا مجوز را بررسی کن')); }
+    finally {btn.disabled=false;}
+  });
+
+  /* ---------- PWA install prompt ---------- */
+  let deferredPrompt = null;
+  const installOverlay = document.getElementById('installOverlay');
+  const installBtn = document.getElementById('installBtn');
+  const installLater = document.getElementById('installLater');
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const dismissed = localStorage.getItem('qc-admin-install-dismissed');
+    if(!dismissed && !isStandalone){
+      installOverlay.classList.add('open');
+    }
+  });
+
+  installBtn.addEventListener('click', async () => {
+    installOverlay.classList.remove('open');
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+    }
+  });
+  installLater.addEventListener('click', () => {
+    installOverlay.classList.remove('open');
+    localStorage.setItem('qc-admin-install-dismissed', '1');
+  });
+  window.addEventListener('appinstalled', () => {
+    localStorage.setItem('qc-admin-install-dismissed', '1');
+  });
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چک‌لیست‌ها</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efdf;
+    --bg-2:#eee7d2;
+    --ink:#18140d;
+    --paper:#fffdf6;
+    --muted:#756b57;
+
+    --coral:#e85a3a;
+    --coral-deep:#a83e26;
+    --coral-soft:#fbe3dc;
+
+    --green:#37b34a;
+    --green-deep:#1f7a34;
+    --green-soft:#e2f3e1;
+
+    --line:var(--ink);
+    --glow:rgba(232,90,58,.16);
+    --border:3px solid var(--line);
+    --shadow:6px 6px 0 var(--line);
+    --shadow-sm:4px 4px 0 var(--line);
+  }
+  :root[data-theme="dark"]{
+    --bg:#171310;
+    --bg-2:#211b13;
+    --ink:#ece6d6;
+    --paper:#211b14;
+    --muted:#a99c85;
+    --line:#5f5646;
+    --glow:rgba(232,90,58,.07);
+
+    --coral:#b3492f;
+    --green:#2c9143;
+    --green-deep:#8fd6a0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:radial-gradient(circle at 88% -6%, var(--glow), transparent 55%), var(--bg);
+    min-height:100vh;
+    font-family:'Vazirmatn',sans-serif;font-weight:700;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    transition:background-color .2s ease, color .2s ease;
+  }
+  .shell{max-width:480px;margin:0 auto;min-height:100vh;padding:20px 16px 40px;}
+
+  /* ---------- header ---------- */
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .icon-badge{
+    width:52px;height:52px;flex-shrink:0;border:var(--border);border-radius:16px;
+    background:var(--coral);box-shadow:var(--shadow-sm);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+  }
+  .brand-title h1{font-size:20px;font-weight:800;margin:0 0 2px;line-height:1.25;}
+  .brand-title p{font-size:12px;font-weight:600;color:var(--muted);margin:0;line-height:1.7;}
+
+  /* ---------- home: two entry cards ---------- */
+  .view{display:none;}
+  .view.open{display:block;}
+  #homeScreen.hidden{display:none;}
+
+  .entry-card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--paper);border:var(--border);border-radius:22px;
+    padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm);cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .entry-card:active{transform:translate(3px,3px);box-shadow:none;}
+  .entry-icon{
+    width:50px;height:50px;flex-shrink:0;border:2.5px solid var(--line);border-radius:15px;
+    background:var(--coral-soft);display:flex;align-items:center;justify-content:center;font-size:23px;
+  }
+  .entry-body{flex:1;min-width:0;}
+  .entry-title{font-size:16px;font-weight:800;margin-bottom:3px;}
+  .entry-sub{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.6;}
+  .entry-arrow{
+    width:32px;height:32px;flex-shrink:0;border:2px solid var(--line);border-radius:50%;color:var(--ink);
+    background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;
+  }
+  .entry-count{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:var(--coral-deep);
+    background:var(--coral-soft);border:1.5px solid var(--line);border-radius:999px;padding:3px 10px;
+    display:inline-block;margin-top:6px;
+  }
+
+  /* ---------- shared: back row / card ---------- */
+  .back-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .back-btn{
+    width:44px;height:44px;flex-shrink:0;border:var(--border);border-radius:14px;
+    background:var(--paper);box-shadow:var(--shadow-sm);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;cursor:pointer;
+  }
+  .back-btn:active{transform:translate(2px,2px);box-shadow:none;}
+  .view-title{font-size:17px;font-weight:800;flex:1;}
+  .header-action{
+    width:44px;height:44px;flex-shrink:0;border:var(--border);border-radius:14px;
+    background:var(--paper);box-shadow:var(--shadow-sm);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;
+  }
+  .header-action:active{transform:translate(2px,2px);box-shadow:none;}
+
+  .card{
+    background:var(--paper);border:var(--border);border-radius:22px;
+    box-shadow:var(--shadow-sm);padding:16px 16px 18px;margin-bottom:14px;
+  }
+  .card-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:10px;}
+
+  /* ---------- add-item row ---------- */
+  .add-row{display:flex;gap:8px;}
+  .add-row input{
+    flex:1;min-width:0;background:var(--bg-2);border:2.5px solid var(--line);border-radius:12px;
+    padding:12px 14px;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;color:var(--ink);
+  }
+  .add-row input:focus{outline:none;background:var(--paper);}
+  .add-row input::placeholder{color:var(--muted);font-weight:600;}
+  .add-row button{
+    flex-shrink:0;border:var(--border);border-radius:12px;background:var(--coral);color:#fff;
+    font-family:inherit;font-size:20px;font-weight:800;width:48px;cursor:pointer;
+    box-shadow:var(--shadow-sm);
+  }
+  .add-row button:active{transform:translate(2px,2px);box-shadow:none;}
+
+  /* ---------- checklist items (shared: daily + template-run) ---------- */
+  .progress-wrap{margin-bottom:2px;}
+  .progress-bar{
+    height:9px;border-radius:999px;background:var(--bg-2);border:2px solid var(--line);overflow:hidden;margin-bottom:8px;
+  }
+  .progress-fill{height:100%;background:var(--green);width:0%;transition:width .25s ease;}
+  .progress-text{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:14px;}
+  .progress-text.done{color:var(--green-deep);}
+
+  .check-item{
+    display:flex;align-items:center;gap:12px;padding:13px 4px;position:relative;min-height:44px;
+  }
+  .check-item + .check-item{border-top:2px solid rgba(24,20,13,.1);}
+  :root[data-theme="dark"] .check-item + .check-item{border-top-color:rgba(236,230,214,.08);}
+  .check-input{position:absolute;opacity:0;width:30px;height:30px;margin:0;cursor:pointer;}
+  .check-box{
+    width:28px;height:28px;border-radius:9px;border:2.5px solid var(--line);background:var(--bg-2);
+    flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;
+  }
+  .check-box::after{
+    content:'';width:8px;height:14px;border-right:3px solid #fff;border-bottom:3px solid #fff;
+    transform:rotate(45deg) translate(-2px,-2px);opacity:0;transition:opacity .1s;
+  }
+  .check-input:checked + .check-box{background:var(--green);border-color:var(--line);}
+  .check-input:checked + .check-box::after{opacity:1;}
+  .check-text{flex:1;font-size:14.5px;color:var(--ink);font-weight:700;transition:color .15s;word-break:break-word;}
+  .check-input:checked ~ .check-text{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted);}
+  .item-del{
+    width:30px;height:30px;flex-shrink:0;border:none;background:transparent;color:var(--muted);
+    font-size:18px;line-height:1;cursor:pointer;
+  }
+  .item-del:active{color:var(--coral-deep);}
+
+  /* the whole label (checkbox + box + text) is one native tap target,
+     so a single touch always lands on it — no more missed taps */
+  .check-item-main{display:flex;align-items:center;gap:12px;flex:1;min-width:0;cursor:pointer;}
+
+  /* ---------- manual reorder buttons ---------- */
+  .order-controls{display:flex;flex-direction:column;gap:3px;flex-shrink:0;}
+  .order-btn{
+    width:26px;height:19px;border:2px solid var(--line);border-radius:6px;background:var(--bg-2);color:var(--ink);
+    font-size:10px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    font-family:inherit;font-weight:800;padding:0;transition:transform .1s ease;
+  }
+  .order-btn:active{transform:translate(1px,1px);}
+  .order-btn:disabled{opacity:.28;cursor:default;}
+
+  .empty-note{text-align:center;font-size:12.5px;color:var(--muted);font-weight:700;padding:22px 8px;}
+
+  .toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;}
+  button.primary,button.ghost,button.danger-ghost{
+    font-family:inherit;font-weight:800;font-size:13.5px;padding:11px 15px;border-radius:12px;
+    cursor:pointer;border:var(--border);box-shadow:var(--shadow-sm);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button.primary:active,button.ghost:active,button.danger-ghost:active{transform:translate(2px,2px);box-shadow:none;}
+  button.primary{background:var(--green);color:#fff;}
+  button.ghost{background:var(--paper);color:var(--ink);}
+  button.danger-ghost{background:var(--coral-soft);color:var(--coral-deep);}
+
+  /* ---------- templates list ---------- */
+  .tpl-card{
+    display:flex;align-items:center;gap:12px;
+    background:var(--paper);border:var(--border);border-radius:18px;
+    padding:14px 15px;margin-bottom:11px;box-shadow:var(--shadow-sm);cursor:pointer;
+  }
+  .tpl-card:active{transform:translate(3px,3px);box-shadow:none;}
+  .tpl-chip{
+    width:40px;height:40px;flex-shrink:0;border:2px solid var(--line);border-radius:12px;
+    background:var(--coral-soft);color:var(--coral-deep);display:flex;align-items:center;justify-content:center;font-size:18px;
+  }
+  .tpl-body{flex:1;min-width:0;}
+  .tpl-name{font-size:14.5px;font-weight:800;margin-bottom:2px;}
+  .tpl-sub{font-size:11.5px;color:var(--muted);font-weight:600;}
+  .new-tpl-btn{
+    width:100%;border:2.5px dashed var(--line);border-radius:18px;background:transparent;color:var(--muted);
+    font-family:inherit;font-weight:800;font-size:14px;padding:16px;cursor:pointer;text-align:center;margin-top:4px;
+  }
+  .new-tpl-btn:active{background:var(--bg-2);}
+
+  /* ---------- template editor ---------- */
+  .editor-item-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .editor-item-row input{
+    flex:1;min-width:0;background:var(--bg-2);border:2px solid var(--line);border-radius:10px;
+    padding:10px 12px;font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:700;color:var(--ink);
+  }
+  .editor-item-row input:focus{outline:none;background:var(--paper);}
+  .editor-item-row .item-del{width:32px;height:32px;}
+  .editor-name-input{
+    width:100%;background:var(--bg-2);border:2.5px solid var(--line);border-radius:12px;
+    padding:12px 14px;font-family:'Vazirmatn',sans-serif;font-size:16px;font-weight:800;color:var(--ink);
+    margin-bottom:14px;
+  }
+  .editor-name-input:focus{outline:none;background:var(--paper);}
+  .add-item-ghost{
+    width:100%;border:2px dashed var(--line);border-radius:10px;background:transparent;color:var(--muted);
+    font-family:inherit;font-weight:700;font-size:13px;padding:11px;cursor:pointer;margin-top:2px;
+  }
+  .add-item-ghost:active{background:var(--bg-2);}
+
+  .confirm-overlay{
+    position:fixed;inset:0;background:rgba(24,20,13,.55);display:none;
+    align-items:center;justify-content:center;padding:20px;z-index:60;
+  }
+  .confirm-overlay.open{display:flex;}
+  .confirm-box{
+    background:var(--paper);border:var(--border);border-radius:20px;box-shadow:var(--shadow);
+    padding:22px;max-width:320px;width:100%;text-align:center;
+  }
+  .confirm-box p{font-size:14px;font-weight:700;line-height:1.9;margin:0 0 18px;}
+  .confirm-actions{display:flex;gap:10px;}
+  .confirm-actions button{flex:1;}
+</style>
+<link rel="stylesheet" href="foodlab-theme.css">
+<link rel="stylesheet" href="foodlab-design-system.css">
+<link rel="stylesheet" href="foodlab-operations-ui.css">
+<link rel="stylesheet" href="foodlab-polish-phaseH.css">
+</head>
+<body class="foodlab-checklist-page">
+<div class="shell">
+
+  <div id="homeScreen">
+    <div class="topbar">
+      <div class="icon-badge">✅</div>
+      <div class="brand-title">
+        <h1>چک‌لیست‌ها</h1>
+        <p>چک‌لیست روزانه‌ی شخصی، یا قالب‌های آماده‌ای که خودت می‌سازی</p>
+      </div>
+    </div>
+
+    <div class="entry-card" id="openDaily" role="button" tabindex="0">
+      <div class="entry-icon">📝</div>
+      <div class="entry-body">
+        <div class="entry-title">چک‌لیست روزانه من</div>
+        <div class="entry-sub">لیست شخصی و آزاد — هرچی امروز باید انجام بشه</div>
+        <span class="entry-count" id="dailyCount">۰ مورد</span>
+      </div>
+      <div class="entry-arrow">‹</div>
+    </div>
+
+    <div class="entry-card" id="openTemplates" role="button" tabindex="0">
+      <div class="entry-icon">📋</div>
+      <div class="entry-body">
+        <div class="entry-title">چک‌لیست‌های آماده</div>
+        <div class="entry-sub">قالب‌هایی که خودت می‌سازی و هر بار دوباره استفاده می‌کنی</div>
+        <span class="entry-count" id="tplCount">۰ قالب</span>
+      </div>
+      <div class="entry-arrow">‹</div>
+    </div>
+  </div>
+
+  <!-- ===== daily personal checklist ===== -->
+  <div class="view" id="dailyView">
+    <div class="back-row">
+      <div class="back-btn" data-back="homeScreen">←</div>
+      <div class="view-title">چک‌لیست روزانه من</div>
+    </div>
+
+    <div class="card">
+      <div class="add-row">
+        <input type="text" id="dailyInput" placeholder="یه مورد اضافه کن...">
+        <button type="button" id="dailyAddBtn">+</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="dailyProgressFill"></div></div>
+        <div class="progress-text" id="dailyProgressText">۰ از ۰ مورد تکمیل شد</div>
+      </div>
+      <div id="dailyList"></div>
+      <div class="empty-note" id="dailyEmpty">هنوز موردی اضافه نکردی</div>
+    </div>
+
+    <div class="toolbar">
+      <button type="button" class="ghost" id="dailyClearDone">پاک‌کردن انجام‌شده‌ها</button>
+      <button type="button" class="danger-ghost" id="dailyNewDay">↺ شروع روز جدید</button>
+    </div>
+  </div>
+
+  <!-- ===== templates: list ===== -->
+  <div class="view" id="templatesListView">
+    <div class="back-row">
+      <div class="back-btn" data-back="homeScreen">←</div>
+      <div class="view-title">چک‌لیست‌های آماده</div>
+    </div>
+
+    <div id="tplListHost"></div>
+    <div class="empty-note" id="tplListEmpty" style="display:none;">هنوز قالبی نساختی</div>
+    <button type="button" class="new-tpl-btn" id="newTplBtn">+ ساخت چک‌لیست آماده جدید</button>
+  </div>
+
+  <!-- ===== templates: editor (create/edit) ===== -->
+  <div class="view" id="editorView">
+    <div class="back-row">
+      <div class="back-btn" data-back="templatesListView">←</div>
+      <div class="view-title" id="editorTitle">چک‌لیست جدید</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">اسم چک‌لیست</div>
+      <input type="text" class="editor-name-input" id="editorNameInput" placeholder="مثلاً: بازرسی بطری">
+    </div>
+
+    <div class="card">
+      <div class="card-label">موارد چک‌لیست</div>
+      <div id="editorItemsHost"></div>
+      <button type="button" class="add-item-ghost" id="editorAddItemBtn">+ افزودن مورد</button>
+    </div>
+
+    <div class="toolbar">
+      <button type="button" class="primary" id="editorSaveBtn">✓ ذخیره چک‌لیست</button>
+      <button type="button" class="danger-ghost" id="editorDeleteBtn" style="display:none;">حذف این قالب</button>
+    </div>
+  </div>
+
+  <!-- ===== templates: run (use a saved checklist) ===== -->
+  <div class="view" id="runView">
+    <div class="back-row">
+      <div class="back-btn" data-back="templatesListView">←</div>
+      <div class="view-title" id="runTitle">—</div>
+      <div class="header-action" id="runEditBtn" title="ویرایش">✎</div>
+    </div>
+
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="runProgressFill"></div></div>
+        <div class="progress-text" id="runProgressText">۰ از ۰ مورد تکمیل شد</div>
+      </div>
+      <div id="runListHost"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">ثبت بازرسی مستقل</div>
+      <div class="add-row" style="margin-bottom:10px;">
+        <input id="inspectionBatch" maxlength="100" placeholder="شماره بچ/خط یا نمونه" aria-label="شماره بچ">
+        <input id="inspectionInspector" maxlength="100" placeholder="نام بازرس" aria-label="نام بازرس">
+      </div>
+      <div class="add-row" style="margin-bottom:10px;">
+        <input id="inspectionNotes" maxlength="500" placeholder="توضیحات، اقدام اصلاحی (اختیاری)" aria-label="توضیحات">
+      </div>
+      <div style="font-size:12px;line-height:1.8;color:var(--muted);">هر مورد را «قبول»، «رد» یا «بررسی‌نشده» مشخص کن. ذخیره، یک رکورد مستقل با زمان و نسخه موارد ایجاد می‌کند؛ این رکورد محلی و بدون امضای دیجیتال است.</div>
+    </div>
+    <div class="toolbar">
+      <button type="button" class="primary" id="runSaveRecord">📌 ثبت این نوبت بازرسی</button>
+      <button type="button" class="ghost" id="runResetBtn">↺ ریست کردن تیک‌ها</button>
+    </div>
+    <div class="card">
+      <div class="card-label">سوابق این قالب در این مرورگر</div>
+      <div id="inspectionArchive"><div class="empty-note">هنوز سابقه‌ای ثبت نشده است.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <p id="confirmText">مطمئنی؟</p>
+    <div class="confirm-actions">
+      <button type="button" class="ghost" id="confirmCancel">انصراف</button>
+      <button type="button" class="danger-ghost" id="confirmOk">حذف کن</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ haptic feedback on every tap ============
+document.addEventListener('click', () => {
+  if (navigator.vibrate) navigator.vibrate(8);
+}, { capture: true });
+
+// ============ dark mode (follows the main app; also togglable standalone) ============
+const THEME_KEY = 'qc-theme';
+function applyTheme(mode){ document.documentElement.setAttribute('data-theme', mode); }
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'qc-theme') {
+    applyTheme(e.data.mode);
+    localStorage.setItem(THEME_KEY, e.data.mode);
+  }
+});
+
+// ============ persistence helpers ============
+function storageGet(key, fallback){
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch (e) { return fallback; }
+}
+function storageSet(key, value){
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { alert('ذخیره اطلاعات ناموفق بود؛ فضای مرورگر یا مجوز ذخیره‌سازی را بررسی کنید.'); return false; }
+}
+function toFa(str){
+  const d = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return String(str).replace(/[0-9]/g, x => d[x]);
+}
+
+// ============ manual item reordering (daily items + template items) ============
+function moveItem(list, idx, dir){
+  const j = idx + dir;
+  if (j < 0 || j >= list.length) return false;
+  const tmp = list[idx]; list[idx] = list[j]; list[j] = tmp;
+  return true;
+}
+// builds up/down buttons that move an item within `list` and call onMove() after
+function makeOrderControls(list, idx, onMove){
+  const wrap = document.createElement('div');
+  wrap.className = 'order-controls';
+
+  const up = document.createElement('button');
+  up.type = 'button';
+  up.className = 'order-btn';
+  up.textContent = '▲';
+  up.setAttribute('aria-label', 'انتقال به بالا');
+  up.disabled = idx === 0;
+  up.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    if (moveItem(list, idx, -1)) onMove();
+  });
+
+  const down = document.createElement('button');
+  down.type = 'button';
+  down.className = 'order-btn';
+  down.textContent = '▼';
+  down.setAttribute('aria-label', 'انتقال به پایین');
+  down.disabled = idx === list.length - 1;
+  down.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    if (moveItem(list, idx, 1)) onMove();
+  });
+
+  wrap.appendChild(up);
+  wrap.appendChild(down);
+  return wrap;
+}
+
+// ============ navigation ============
+const views = ['homeScreen','dailyView','templatesListView','editorView','runView'];
+function showView(key){
+  views.forEach(v => {
+    const el = document.getElementById(v);
+    if (v === 'homeScreen') el.classList.toggle('hidden', key !== 'homeScreen');
+    else el.classList.toggle('open', key === v);
+  });
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('[data-back]').forEach(btn => {
+  btn.addEventListener('click', () => showView(btn.dataset.back));
+});
+
+// ============================================================
+// DAILY PERSONAL CHECKLIST  (same storage key as the old tool-2 drawer list)
+// ============================================================
+const DAILY_KEY = 'qc-custom-checklist';
+let dailyItems = storageGet(DAILY_KEY, []);
+let dailyIdSeq = dailyItems.reduce((max, i) => Math.max(max, i.id), 0) + 1;
+
+function saveDaily(){ storageSet(DAILY_KEY, dailyItems); updateHomeCounts(); }
+
+function renderDaily(){
+  const host = document.getElementById('dailyList');
+  const empty = document.getElementById('dailyEmpty');
+  host.innerHTML = '';
+  empty.style.display = dailyItems.length ? 'none' : 'block';
+
+  dailyItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'check-item';
+
+    const main = document.createElement('label');
+    main.className = 'check-item-main';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.className = 'check-input';
+    input.checked = item.done;
+    input.addEventListener('change', () => {
+      item.done = input.checked;
+      saveDaily();
+      renderDaily();
+    });
+
+    const box = document.createElement('span');
+    box.className = 'check-box';
+
+    const text = document.createElement('span');
+    text.className = 'check-text';
+    text.textContent = item.text;
+
+    main.appendChild(input);
+    main.appendChild(box);
+    main.appendChild(text);
+
+    const order = makeOrderControls(dailyItems, idx, () => { saveDaily(); renderDaily(); });
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'item-del';
+    del.textContent = '×';
+    del.setAttribute('aria-label', 'حذف');
+    del.addEventListener('click', () => {
+      dailyItems = dailyItems.filter(i => i.id !== item.id);
+      saveDaily();
+      renderDaily();
+    });
+
+    row.appendChild(main);
+    row.appendChild(order);
+    row.appendChild(del);
+    host.appendChild(row);
+  });
+
+  const done = dailyItems.filter(i => i.done).length;
+  const total = dailyItems.length;
+  document.getElementById('dailyProgressText').textContent = toFa(done) + ' از ' + toFa(total) + ' مورد تکمیل شد';
+  document.getElementById('dailyProgressText').classList.toggle('done', total > 0 && done === total);
+  document.getElementById('dailyProgressFill').style.width = (total ? (done / total * 100) : 0) + '%';
+}
+
+function addDailyItem(){
+  const input = document.getElementById('dailyInput');
+  const val = input.value.trim();
+  if (!val) return;
+  dailyItems.push({ id: dailyIdSeq++, text: val, done: false });
+  input.value = '';
+  saveDaily();
+  renderDaily();
+  input.focus();
+}
+document.getElementById('dailyAddBtn').addEventListener('click', addDailyItem);
+document.getElementById('dailyInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDailyItem(); });
+
+document.getElementById('dailyClearDone').addEventListener('click', () => {
+  dailyItems = dailyItems.filter(i => !i.done);
+  saveDaily();
+  renderDaily();
+});
+document.getElementById('dailyNewDay').addEventListener('click', () => {
+  askConfirm('همه‌ی موارد چک‌لیست روزانه پاک بشن؟ این کار قابل بازگشت نیست.', () => {
+    dailyItems = [];
+    saveDaily();
+    renderDaily();
+  });
+});
+
+document.getElementById('openDaily').addEventListener('click', () => { renderDaily(); showView('dailyView'); });
+
+// ============================================================
+// TEMPLATES (ready-made, reusable checklists the user builds)
+// ============================================================
+const TPL_KEY = 'qc-checklist-templates';
+const TPL_PROGRESS_PREFIX = 'qc-checklist-progress:';
+
+function seedDefaultTemplateIfEmpty(){
+  let templates = storageGet(TPL_KEY, null);
+  if (templates === null) {
+    // first run: migrate the old bottle-inspection checklist as a starter template
+    templates = [{
+      id: 'tpl-1',
+      name: 'بازرسی بطری',
+      items: [
+        { id: 'i1', text: 'تاریخ تولید و انقضا درج شده است' },
+        { id: 'i2', text: 'شماره بچ درج شده است' },
+        { id: 'i3', text: 'ق.ت (قیمت تولیدکننده) درج شده است' },
+        { id: 'i4', text: 'ق.م (قیمت مصرف‌کننده) درج شده است' },
+        { id: 'i5', text: 'حرف R درج شده است' },
+        { id: 'i6', text: 'عبارت «معاف از ارزش افزوده» درج شده است' },
+      ],
+    }];
+    storageSet(TPL_KEY, templates);
+  }
+  return templates;
+}
+let templates = seedDefaultTemplateIfEmpty();
+function saveTemplates(){ storageSet(TPL_KEY, templates); updateHomeCounts(); }
+
+function updateHomeCounts(){
+  document.getElementById('dailyCount').textContent = toFa(dailyItems.length) + ' مورد';
+  document.getElementById('tplCount').textContent = toFa(templates.length) + ' قالب';
+}
+updateHomeCounts();
+
+function renderTemplatesList(){
+  const host = document.getElementById('tplListHost');
+  const empty = document.getElementById('tplListEmpty');
+  host.innerHTML = '';
+  empty.style.display = templates.length ? 'none' : 'block';
+
+  templates.forEach(tpl => {
+    const card = document.createElement('div');
+    card.className = 'tpl-card';
+    card.innerHTML = `
+      <div class="tpl-chip">📋</div>
+      <div class="tpl-body">
+        <div class="tpl-name">${tpl.name || '(بدون نام)'}</div>
+        <div class="tpl-sub">${toFa(tpl.items.length)} مورد</div>
+      </div>
+      <div class="entry-arrow">‹</div>
+    `;
+    card.addEventListener('click', () => openRun(tpl.id));
+    host.appendChild(card);
+  });
+}
+document.getElementById('openTemplates').addEventListener('click', () => { renderTemplatesList(); showView('templatesListView'); });
+document.getElementById('newTplBtn').addEventListener('click', () => openEditor(null));
+
+// ---- editor (create / edit a template) ----
+let editingId = null; // null = creating new
+let editorItems = []; // [{id, text}]
+let editorIdSeq = 1;
+
+function openEditor(tplId){
+  editingId = tplId;
+  const tpl = tplId ? templates.find(t => t.id === tplId) : null;
+  document.getElementById('editorTitle').textContent = tpl ? 'ویرایش چک‌لیست' : 'چک‌لیست جدید';
+  document.getElementById('editorNameInput').value = tpl ? tpl.name : '';
+  editorItems = tpl ? tpl.items.map(i => ({ ...i })) : [{ id: 'i' + (editorIdSeq++), text: '' }];
+  document.getElementById('editorDeleteBtn').style.display = tpl ? 'block' : 'none';
+  renderEditorItems();
+  showView('editorView');
+}
+
+function renderEditorItems(){
+  const host = document.getElementById('editorItemsHost');
+  host.innerHTML = '';
+  editorItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'editor-item-row';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'متن مورد چک‌لیست...';
+    input.value = item.text;
+    input.addEventListener('input', () => { item.text = input.value; });
+
+    const order = makeOrderControls(editorItems, idx, () => renderEditorItems());
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'item-del';
+    del.textContent = '×';
+    del.setAttribute('aria-label', 'حذف مورد');
+    del.addEventListener('click', () => {
+      editorItems.splice(idx, 1);
+      renderEditorItems();
+    });
+
+    row.appendChild(input);
+    row.appendChild(order);
+    row.appendChild(del);
+    host.appendChild(row);
+  });
+}
+document.getElementById('editorAddItemBtn').addEventListener('click', () => {
+  editorItems.push({ id: 'i' + (editorIdSeq++) + '-' + Date.now(), text: '' });
+  renderEditorItems();
+  const inputs = document.querySelectorAll('#editorItemsHost input');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+});
+
+document.getElementById('editorSaveBtn').addEventListener('click', () => {
+  const name = document.getElementById('editorNameInput').value.trim();
+  const items = editorItems.map(i => ({ id: i.id, text: i.text.trim() })).filter(i => i.text);
+  if (!name || !items.length) {
+    askConfirm('برای ذخیره، هم اسم و هم حداقل یک مورد لازم داره. برگردی و کامل کنی؟', () => {}, true);
+    return;
+  }
+  if (editingId) {
+    const tpl = templates.find(t => t.id === editingId);
+    tpl.name = name;
+    tpl.items = items;
+  } else {
+    templates.push({ id: 'tpl-' + Date.now(), name, items });
+  }
+  saveTemplates();
+  renderTemplatesList();
+  showView('templatesListView');
+});
+
+document.getElementById('editorDeleteBtn').addEventListener('click', () => {
+  askConfirm('این چک‌لیست کامل حذف بشه؟', () => {
+    templates = templates.filter(t => t.id !== editingId);
+    storageSet(TPL_PROGRESS_PREFIX + editingId, null);
+    try { localStorage.removeItem(TPL_PROGRESS_PREFIX + editingId); } catch (e) {}
+    saveTemplates();
+    renderTemplatesList();
+    showView('templatesListView');
+  });
+});
+
+// ---- run (use a saved template + track checked state) ----
+let runningId = null;
+const INSPECTION_ARCHIVE_KEY='qc-inspection-records-v1';
+function loadArchive(){
+  try{const data=JSON.parse(localStorage.getItem(INSPECTION_ARCHIVE_KEY)||'[]');return Array.isArray(data)?data.slice(-200):[];}
+  catch(e){return [];}
+}
+let inspectionArchive=loadArchive();
+function htmlEscape(value){const div=document.createElement('div');div.textContent=String(value??'');return div.innerHTML;}
+function writeArchive(){
+  try{localStorage.setItem(INSPECTION_ARCHIVE_KEY,JSON.stringify(inspectionArchive.slice(-200)));return true;}
+  catch(e){alert('ثبت انجام نشد؛ فضای ذخیره مرورگر را بررسی کن.');return false;}
+}
+function currentItemState(progress,id){
+  const v=progress[id];return v==='pass'||v==='fail'?v:(v===true?'pass':'pending');
+}
+function renderInspectionArchive(){
+  const host=document.getElementById('inspectionArchive');
+  const records=inspectionArchive.filter(r=>r.templateId===runningId).slice(-20).reverse();
+  host.innerHTML=records.length ? records.map(r=>{
+    const fails=r.items.filter(i=>i.status==='fail').length;
+    return `<div class="history-entry" style="border-top:2px solid var(--line);padding:12px 0;line-height:1.9;font-size:12px;">
+      <strong>${htmlEscape(r.batch)}</strong> — ${htmlEscape(r.inspector)}<div style="color:var(--muted);">${htmlEscape(new Date(r.timestamp).toLocaleString('fa-IR'))} · ${fails?'⚠ '+toFa(fails)+' مورد مردود':'✓ بدون مردودی'}</div>
+      <details><summary style="cursor:pointer">جزئیات رکورد</summary>
+        <div>${r.items.map(i=>`${htmlEscape(i.text)}: ${i.status==='pass'?'قبول':i.status==='fail'?'رد':'بررسی نشده'}`).join('<br>')}</div>
+        <div>${htmlEscape(r.notes||'')}</div>
+      </details></div>`;
+  }).join(''):'<div class="empty-note">هنوز سابقه‌ای برای این قالب ذخیره نشده است.</div>';
+}
+
+function openRun(tplId){
+  runningId = tplId;
+  const tpl = templates.find(t => t.id === tplId);
+  document.getElementById('runTitle').textContent = tpl.name;
+  renderRun();
+  renderInspectionArchive();
+  showView('runView');
+}
+
+function runProgressKey(){ return TPL_PROGRESS_PREFIX + runningId; }
+
+function renderRun(){
+  const tpl = templates.find(t => t.id === runningId);
+  if (!tpl) { showView('templatesListView'); return; }
+  const progress = storageGet(runProgressKey(), {});
+  const host = document.getElementById('runListHost');
+  host.innerHTML = '';
+
+  tpl.items.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'check-item';
+
+    const main = document.createElement('div');
+    main.className = 'check-item-main';
+    main.style.display='flex';main.style.flexDirection='column';main.style.alignItems='stretch';main.style.gap='5px';
+
+    const text = document.createElement('span');
+    text.className = 'check-text';
+    text.textContent = item.text;
+    const choice=document.createElement('select');
+    choice.setAttribute('aria-label','وضعیت: '+item.text);
+    choice.style.cssText='background:var(--bg-2);border:2px solid var(--line);border-radius:9px;padding:6px;color:var(--ink);font-family:inherit;font-weight:700;';
+    choice.innerHTML='<option value="pending">○ بررسی‌نشده</option><option value="pass">✓ قبول</option><option value="fail">✕ رد</option>';
+    choice.value=currentItemState(progress,item.id);
+    choice.addEventListener('change',()=>{
+      progress[item.id]=choice.value;
+      storageSet(runProgressKey(),progress);
+      updateRunProgress(tpl,progress);
+    });
+    main.appendChild(text);main.appendChild(choice);
+
+    const order = makeOrderControls(tpl.items, idx, () => { saveTemplates(); renderRun(); });
+
+    row.appendChild(main);
+    row.appendChild(order);
+    host.appendChild(row);
+  });
+
+  updateRunProgress(tpl, progress);
+}
+
+function updateRunProgress(tpl, progress){
+  const total = tpl.items.length;
+  const done = tpl.items.filter(i => currentItemState(progress,i.id)!=='pending').length;
+  const fail=tpl.items.filter(i=>currentItemState(progress,i.id)==='fail').length;
+  document.getElementById('runProgressText').textContent = toFa(done) + ' از ' + toFa(total) + ' بررسی شد' + (fail?' · '+toFa(fail)+' مورد مردود':'');
+  document.getElementById('runProgressText').classList.toggle('done', total > 0 && done === total);
+  document.getElementById('runProgressFill').style.width = (total ? (done / total * 100) : 0) + '%';
+}
+
+document.getElementById('runSaveRecord').addEventListener('click',()=>{
+  const tpl=templates.find(t=>t.id===runningId);
+  if(!tpl || !tpl.items.length)return;
+  const batch=document.getElementById('inspectionBatch').value.trim();
+  const inspector=document.getElementById('inspectionInspector').value.trim();
+  if(!batch||!inspector){alert('نام بازرس و شماره بچ/نمونه الزامی است.');return;}
+  const progress=storageGet(runProgressKey(),{});
+  const items=tpl.items.map(i=>({id:i.id,text:i.text,status:currentItemState(progress,i.id)}));
+  if(items.some(i=>i.status==='pending')){alert('تمام موارد باید بررسی شوند؛ وضعیت «بررسی‌نشده» هنوز وجود دارد.');return;}
+  const snapshot={id:crypto.randomUUID?.()||String(Date.now()),templateId:runningId,
+    templateName:tpl.name, timestamp:new Date().toISOString(),batch,inspector,
+    notes:document.getElementById('inspectionNotes').value.trim(), items};
+  if(inspectionArchive.some(r=>r.templateId===snapshot.templateId && r.batch===snapshot.batch && r.inspector===snapshot.inspector && JSON.stringify(r.items)===JSON.stringify(snapshot.items) && Date.now()-Date.parse(r.timestamp)<60000)){alert('این بازرسی در یک دقیقه گذشته ثبت شده است.');return;}
+  inspectionArchive.push(snapshot);
+  const older=inspectionArchive.length>200?inspectionArchive.shift():null;
+  if(!writeArchive()){inspectionArchive.pop();if(older)inspectionArchive.unshift(older);return;}
+  storageSet(runProgressKey(),{});
+  document.getElementById('inspectionBatch').value='';
+  document.getElementById('inspectionNotes').value='';
+  renderRun();renderInspectionArchive();alert('رکورد بازرسی در همین دستگاه ذخیره شد.');
+});
+
+document.getElementById('runResetBtn').addEventListener('click', () => {
+  askConfirm('تیک همه‌ی موارد این چک‌لیست پاک بشه؟', () => {
+    storageSet(runProgressKey(), {});
+    renderRun();
+  });
+});
+document.getElementById('runEditBtn').addEventListener('click', () => openEditor(runningId));
+
+// ============ confirm dialog (small reusable helper) ============
+const confirmOverlay = document.getElementById('confirmOverlay');
+let confirmAction = null;
+function askConfirm(text, onConfirm, infoOnly){
+  document.getElementById('confirmText').textContent = text;
+  document.getElementById('confirmOk').style.display = infoOnly ? 'none' : 'block';
+  document.getElementById('confirmCancel').textContent = infoOnly ? 'باشه' : 'انصراف';
+  confirmAction = onConfirm;
+  confirmOverlay.classList.add('open');
+}
+document.getElementById('confirmCancel').addEventListener('click', () => confirmOverlay.classList.remove('open'));
+document.getElementById('confirmOk').addEventListener('click', () => {
+  confirmOverlay.classList.remove('open');
+  if (confirmAction) confirmAction();
+});
+
+// ============ init ============
+showView('homeScreen');
+</script>
+</body>
+</html>
