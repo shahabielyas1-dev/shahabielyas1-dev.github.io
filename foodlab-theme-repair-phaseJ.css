@@ -1,0 +1,54 @@
+/* QC Toolbox Phase J: cross-page theme contrast repair. Screen UI only, never change printed A5 documents. */
+@media screen {
+  :root:not([data-theme="dark"]){
+    --fl-bg:#e6eef2; --fl-bg-soft:#dae6ec; --fl-surface:#f4f8fa; --fl-surface-soft:#eaf1f5;
+    --fl-ink:#18313e; --fl-muted:#49616c; --fl-line:#aebfc8; --fl-primary:#143c4d;
+    --fl-teal:#096b78; --fl-teal-deep:#075965; --fl-teal-soft:#d6e9eb;
+    --fl-blue-soft:#dce8f1;--fl-green-soft:#d9ece4;--fl-amber-soft:#f6ecd2;--fl-red-soft:#f3dfe2;
+    --fl-shadow:0 6px 22px rgba(18,43,56,.10);--fl-shadow-sm:0 3px 12px rgba(18,43,56,.08);
+  }
+  :root[data-theme="dark"]{
+    --fl-bg:#101922;--fl-bg-soft:#172633;--fl-surface:#20303d;--fl-surface-soft:#293c49;
+    --fl-ink:#edf4f7;--fl-muted:#c0d0d9;--fl-line:#516977;--fl-primary:#edf4f7;
+    --fl-teal:#188999;--fl-teal-deep:#81dae4;--fl-teal-soft:#254751;
+    --fl-blue-soft:#263e52;--fl-green-soft:#224536;--fl-amber-soft:#4a3c29;--fl-red-soft:#502e37;
+    --fl-shadow:0 8px 22px rgba(0,0,0,.3);--fl-shadow-sm:0 4px 12px rgba(0,0,0,.25);
+  }
+  html {color-scheme:light}
+  html[data-theme="dark"]{color-scheme:dark}
+  body:not(.print-preview-page){background:var(--fl-bg)!important;color:var(--fl-ink)!important}
+  /* Common light/bright panels in older tool-specific CSS. */
+  body:not(.print-preview-page) :is(.topbar,.panel,.panel-card,.card,.stat,.stat-card,.fl-stat-card,.fl-panel,.fl-tool-card,.info-pill,.today-strip,.entry-card,.result-card,.main-card,.form-card,.summary-card,.history-card,.history-entry,.calculator-card,.section-card,.modal-content,.modal-box,.confirm-box,.gate-box,.glass-card,.check-item,.fl-lab-history-section .history-entry,.fl-lab-history-section .history-empty,.fl-backup-panel){
+    background:var(--fl-surface)!important; background-image:none!important; color:var(--fl-ink)!important;
+    border-color:var(--fl-line)!important;box-shadow:var(--fl-shadow-sm)!important;
+  }
+  body:not(.print-preview-page) :is(.result-card,.fl-backup-panel,.fl-lab-result,.result-box){
+    background:var(--fl-teal-soft)!important;background-image:none!important;
+    color:var(--fl-ink)!important;border-color:var(--fl-line)!important;
+  }
+  body:not(.print-preview-page) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
+    background:var(--fl-surface-soft)!important;background-image:none!important;
+    color:var(--fl-ink)!important;-webkit-text-fill-color:var(--fl-ink)!important;
+    border:1px solid var(--fl-line)!important;
+  }
+  body:not(.print-preview-page) :is(input,textarea)::placeholder{color:var(--fl-muted)!important;opacity:1}
+  body:not(.print-preview-page) :is(.fl-lab-history-section .history-empty,.muted,.hint,.sub,.subtitle,.helper,.help-text,.fl-stat-label,.fl-tool-desc){color:var(--fl-muted)!important}
+  body:not(.print-preview-page) :is(.topbar,.panel,.panel-card,.card,.entry-card,.result-card,.main-card,.form-card,.summary-card,.history-card,.calculator-card,.section-card,.modal-content,.modal-box,.confirm-box,.gate-box,.check-item) :is(h1,h2,h3,h4,legend,label,strong){color:var(--fl-ink)!important}
+  body:not(.print-preview-page) table{color:var(--fl-ink)!important;border-color:var(--fl-line)!important}
+  body:not(.print-preview-page) :is(td,th){border-color:var(--fl-line)!important}
+  body:not(.print-preview-page) th{background:var(--fl-surface-soft)!important;color:var(--fl-ink)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.card-arrow,.card-tag,.entry-icon,.fl-tool-icon,.ghost,.modal-secondary,.fl-sidebar-footer){background:var(--fl-surface-soft)!important;color:var(--fl-ink)!important;border-color:var(--fl-line)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.fl-sidebar,.drawer,.app-view,.app-view-bar){background:#192b38!important;color:var(--fl-ink)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.primary,.save-btn,button.primary,button.save-btn,.fl-nav-item.active,.nav-item.active){background:#14788a!important;background-image:none!important;color:#fff!important;border-color:#3196a5!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.announcement){background:var(--fl-amber-soft)!important;color:#f5dbab!important;border-color:#8d784d!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(a:not(.primary),button:not(.primary):not(.save-btn)):focus-visible{outline:3px solid #64c9d4!important;outline-offset:2px}
+  /* Home cards: prevent low-contrast pale icon text and over-bright white surface. */
+  :root[data-theme="dark"] body.qc-is-index :is(.card,.info-pill,.today-strip,.topbar,.fl-panel,.fl-tool-card){background:var(--fl-surface)!important;color:var(--fl-ink)!important}
+  :root[data-theme="dark"] body.qc-is-index :is(.card p,.fl-tool-desc,.fl-stat-label){color:var(--fl-muted)!important}
+  :root[data-theme="dark"] body.qc-is-index :is(.card-arrow,.card-tag){background:#2a4c57!important;color:#b8edf1!important}
+  /* Maintain print controls on screen, but preserve the paper itself and print output. */
+  body.print-preview-page .qc-quick-actions {background:var(--fl-surface)!important}
+}
+@media print{
+  .qc-quick-actions{display:none!important}
+}

@@ -315,6 +315,7 @@
 <link rel="stylesheet" href="foodlab-polish-phaseH.css">
 
 <link rel="stylesheet" href="foodlab-accessibility-phaseI.css">
+<link rel="stylesheet" href="foodlab-theme-repair-phaseJ.css">
 <script defer src="foodlab-theme-controls-phaseI.js"></script>
 </head>
 <body class="qc-is-index">
@@ -568,6 +569,13 @@
   }
   let currentTheme = localStorage.getItem(THEME_KEY) || 'light';
   applyTheme(currentTheme);
+  window.addEventListener('storage', (event) => {
+    if (event.key === THEME_KEY) {
+      currentTheme = event.newValue === 'dark' ? 'dark' : 'light';
+      applyTheme(currentTheme);
+      broadcastTheme(currentTheme);
+    }
+  });
   document.getElementById('themeToggleBtn').addEventListener('click', () => {
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(currentTheme);
