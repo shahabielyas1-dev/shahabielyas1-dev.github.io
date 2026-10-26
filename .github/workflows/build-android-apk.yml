@@ -1,0 +1,369 @@
+name: Build QC Toolbox Android APK (one file)
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Generate Android project from workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname settings.gradle)"
+          cat > 'settings.gradle' <<'QC_PROJECT_FILE_0'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = 'QC_Toolbox_Android'
+          include ':app'
+          QC_PROJECT_FILE_0
+          mkdir -p "$(dirname build.gradle)"
+          cat > 'build.gradle' <<'QC_PROJECT_FILE_1'
+          plugins {
+              id 'com.android.application' version '8.7.3' apply false
+          }
+          QC_PROJECT_FILE_1
+          mkdir -p "$(dirname gradle.properties)"
+          cat > 'gradle.properties' <<'QC_PROJECT_FILE_2'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          QC_PROJECT_FILE_2
+          mkdir -p "$(dirname app/build.gradle)"
+          cat > 'app/build.gradle' <<'QC_PROJECT_FILE_3'
+          plugins {
+              id 'com.android.application'
+          }
+          
+          android {
+              namespace 'com.qctoolbox.foodlab'
+              compileSdk 35
+          
+              defaultConfig {
+                  applicationId 'com.qctoolbox.foodlab'
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0.0'
+              }
+          
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          QC_PROJECT_FILE_3
+          mkdir -p "$(dirname app/src/main/AndroidManifest.xml)"
+          cat > 'app/src/main/AndroidManifest.xml' <<'QC_PROJECT_FILE_4'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+              <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+              <application
+                  android:allowBackup="false"
+                  android:usesCleartextTraffic="false"
+                  android:label="QC Toolbox"
+                  android:icon="@drawable/qc_icon"
+                  android:roundIcon="@drawable/qc_icon"
+                  android:theme="@style/QCTheme">
+                  <activity android:name=".MainActivity" android:exported="true"
+                      android:configChanges="orientation|screenSize|keyboardHidden">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          QC_PROJECT_FILE_4
+          mkdir -p "$(dirname app/src/main/res/values/styles.xml)"
+          cat > 'app/src/main/res/values/styles.xml' <<'QC_PROJECT_FILE_5'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="QCTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+                  <item name="android:fontFamily">sans</item>
+                  <item name="android:colorAccent">#17B9B6</item>
+                  <item name="android:statusBarColor">#0D354B</item>
+                  <item name="android:navigationBarColor">#0D354B</item>
+                  <item name="android:windowLightStatusBar">false</item>
+                  <item name="android:windowActionModeOverlay">true</item>
+              </style>
+          </resources>
+          QC_PROJECT_FILE_5
+          mkdir -p "$(dirname app/src/main/java/com/qctoolbox/foodlab/MainActivity.java)"
+          cat > 'app/src/main/java/com/qctoolbox/foodlab/MainActivity.java' <<'QC_PROJECT_FILE_6'
+          package com.qctoolbox.foodlab;
+          
+          import android.app.Activity;
+          import android.app.DownloadManager;
+          import android.app.PrintManager;
+          import android.content.ActivityNotFoundException;
+          import android.content.Context;
+          import android.content.Intent;
+          import android.graphics.Color;
+          import android.net.Uri;
+          import android.os.Bundle;
+          import android.os.Environment;
+          import android.view.Gravity;
+          import android.view.View;
+          import android.webkit.CookieManager;
+          import android.webkit.DownloadListener;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceError;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import android.widget.Button;
+          import android.widget.FrameLayout;
+          import android.widget.LinearLayout;
+          import android.widget.ProgressBar;
+          import android.widget.TextView;
+          import android.widget.Toast;
+          
+          public class MainActivity extends Activity {
+              private static final String HOME_URL = "https://shahabielyas1-dev.github.io/";
+              private static final String ALLOWED_HOST = "shahabielyas1-dev.github.io";
+              private static final int FILE_REQUEST_CODE = 1305;
+              private WebView webView;
+              private View offlineView;
+              private ProgressBar progress;
+              private android.webkit.ValueCallback<Uri[]> uploadCallback;
+              private boolean mainFrameFailed = false;
+          
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  getWindow().setStatusBarColor(Color.rgb(13, 53, 75));
+                  getWindow().setNavigationBarColor(Color.rgb(13, 53, 75));
+          
+                  FrameLayout root = new FrameLayout(this);
+                  webView = new WebView(this);
+                  root.addView(webView, new FrameLayout.LayoutParams(-1, -1));
+          
+                  progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+                  progress.setMax(100);
+                  FrameLayout.LayoutParams progressParams = new FrameLayout.LayoutParams(-1, dp(3), Gravity.TOP);
+                  root.addView(progress, progressParams);
+          
+                  LinearLayout offline = new LinearLayout(this);
+                  offline.setOrientation(LinearLayout.VERTICAL);
+                  offline.setGravity(Gravity.CENTER);
+                  offline.setPadding(dp(24), dp(24), dp(24), dp(24));
+                  offline.setBackgroundColor(Color.rgb(13, 29, 42));
+                  TextView message = new TextView(this);
+                  message.setText("اتصال به QC Toolbox برقرار نشد.\nاین نسخه برای اجرا به اینترنت نیاز دارد.");
+                  message.setTextColor(Color.WHITE);
+                  message.setTextSize(18);
+                  message.setGravity(Gravity.CENTER);
+                  offline.addView(message);
+                  Button retry = new Button(this);
+                  retry.setText("تلاش دوباره");
+                  retry.setOnClickListener(v -> webView.loadUrl(HOME_URL));
+                  offline.addView(retry);
+                  offlineView = offline;
+                  offlineView.setVisibility(View.GONE);
+                  root.addView(offlineView, new FrameLayout.LayoutParams(-1, -1));
+                  setContentView(root);
+          
+                  WebSettings settings = webView.getSettings();
+                  settings.setJavaScriptEnabled(true);
+                  settings.setDomStorageEnabled(true);
+                  settings.setDatabaseEnabled(true);
+                  settings.setAllowFileAccess(false);
+                  settings.setAllowContentAccess(true);
+                  settings.setJavaScriptCanOpenWindowsAutomatically(false);
+                  settings.setSupportMultipleWindows(false);
+                  settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+                  settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+                  webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+                  CookieManager.getInstance().setAcceptCookie(true);
+                  CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false);
+          
+                  webView.setWebViewClient(new WebViewClient() {
+                      @Override
+                      public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                          return routeUrl(request.getUrl());
+                      }
+          
+                      @Override
+                      public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                          return routeUrl(Uri.parse(url));
+                      }
+          
+                      @Override
+                      public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                          mainFrameFailed = false;
+                          offlineView.setVisibility(View.GONE);
+                          progress.setVisibility(View.VISIBLE);
+                      }
+          
+                      @Override
+                      public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                          if (request.isForMainFrame()) {
+                              mainFrameFailed = true;
+                              offlineView.setVisibility(View.VISIBLE);
+                              progress.setVisibility(View.GONE);
+                          }
+                      }
+          
+                      @Override
+                      public void onPageFinished(WebView view, String url) {
+                          if (!mainFrameFailed) offlineView.setVisibility(View.GONE);
+                          progress.setVisibility(View.GONE);
+                          if (isAllowed(Uri.parse(url))) {
+                              // Route window.print() to Android's native print dialog.
+                              // No JavaScript bridge is exposed to web pages.
+                              view.evaluateJavascript(
+                                  "(function(){window.print=function(){location.href='qctoolbox-print://current';};})();",
+                                  null
+                              );
+                          }
+                      }
+                  });
+          
+                  webView.setWebChromeClient(new WebChromeClient() {
+                      @Override
+                      public void onProgressChanged(WebView view, int newProgress) {
+                          progress.setProgress(newProgress);
+                          if (newProgress >= 100) progress.setVisibility(View.GONE);
+                      }
+          
+                      @Override
+                      public boolean onShowFileChooser(WebView view,
+                              android.webkit.ValueCallback<Uri[]> filePathCallback,
+                              FileChooserParams fileChooserParams) {
+                          if (uploadCallback != null) uploadCallback.onReceiveValue(null);
+                          uploadCallback = filePathCallback;
+                          try {
+                              startActivityForResult(fileChooserParams.createIntent(), FILE_REQUEST_CODE);
+                              return true;
+                          } catch (ActivityNotFoundException e) {
+                              uploadCallback = null;
+                              Toast.makeText(MainActivity.this, "انتخاب فایل پشتیبانی نمی‌شود", Toast.LENGTH_LONG).show();
+                              return false;
+                          }
+                      }
+                  });
+          
+                  webView.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> {
+                      if (url.startsWith("blob:")) {
+                          Toast.makeText(this, "دانلود این فایل در نسخه فعلی پشتیبانی نمی‌شود؛ از سایت در Chrome استفاده کنید.", Toast.LENGTH_LONG).show();
+                          return;
+                      }
+                      Uri uri = Uri.parse(url);
+                      if (!"https".equalsIgnoreCase(uri.getScheme())) return;
+                      try {
+                          DownloadManager.Request request = new DownloadManager.Request(uri);
+                          request.setMimeType(mimeType);
+                          request.addRequestHeader("User-Agent", userAgent);
+                          String cookie = CookieManager.getInstance().getCookie(url);
+                          if (cookie != null) request.addRequestHeader("Cookie", cookie);
+                          request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                          request.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS,
+                                  android.webkit.URLUtil.guessFileName(url, contentDisposition, mimeType));
+                          ((DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE)).enqueue(request);
+                          Toast.makeText(this, "دانلود شروع شد", Toast.LENGTH_SHORT).show();
+                      } catch (Exception e) {
+                          Toast.makeText(this, "دانلود انجام نشد", Toast.LENGTH_LONG).show();
+                      }
+                  });
+          
+                  if (savedInstanceState == null) webView.loadUrl(HOME_URL);
+                  else webView.restoreState(savedInstanceState);
+              }
+          
+              private boolean isAllowed(Uri uri) {
+                  return "https".equalsIgnoreCase(uri.getScheme())
+                          && ALLOWED_HOST.equalsIgnoreCase(uri.getHost());
+              }
+          
+              private boolean routeUrl(Uri uri) {
+                  if ("qctoolbox-print".equalsIgnoreCase(uri.getScheme())) {
+                      startPrint();
+                      return true;
+                  }
+                  if (isAllowed(uri)) return false;
+                  try {
+                      Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                      startActivity(intent);
+                  } catch (Exception e) {
+                      Toast.makeText(this, "بازکردن لینک ممکن نیست", Toast.LENGTH_SHORT).show();
+                  }
+                  return true;
+              }
+          
+              private void startPrint() {
+                  try {
+                      PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+                      printManager.print("QC Toolbox", webView.createPrintDocumentAdapter("QC Toolbox"),
+                              new android.print.PrintAttributes.Builder().build());
+                  } catch (Exception e) {
+                      Toast.makeText(this, "چاپ در این دستگاه در دسترس نیست", Toast.LENGTH_LONG).show();
+                  }
+              }
+          
+              @Override
+              protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+                  super.onActivityResult(requestCode, resultCode, data);
+                  if (requestCode == FILE_REQUEST_CODE && uploadCallback != null) {
+                      uploadCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+                      uploadCallback = null;
+                  }
+              }
+          
+              @Override
+              public void onBackPressed() {
+                  if (webView.canGoBack()) webView.goBack();
+                  else super.onBackPressed();
+              }
+          
+              @Override
+              protected void onSaveInstanceState(Bundle outState) {
+                  webView.saveState(outState);
+                  super.onSaveInstanceState(outState);
+              }
+          
+              @Override
+              protected void onDestroy() {
+                  if (uploadCallback != null) uploadCallback.onReceiveValue(null);
+                  webView.destroy();
+                  super.onDestroy();
+              }
+          
+              private int dp(int value) {
+                  return Math.round(value * getResources().getDisplayMetrics().density);
+              }
+          }
+          QC_PROJECT_FILE_6
+          mkdir -p app/src/main/res/drawable-nodpi
+          cp icon-512.png app/src/main/res/drawable-nodpi/qc_icon.png
+      - name: Build debug APK
+        run: gradle --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QC-Toolbox-Android-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
