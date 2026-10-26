@@ -20,7 +20,7 @@
   document.addEventListener('DOMContentLoaded',function(){
     if(document.body.classList.contains('qc-is-index'))return;
     var bar=document.createElement('nav');bar.className='qc-quick-actions';bar.setAttribute('aria-label','ناوبری و تنظیم نمایش');
-    var home=document.createElement('a');home.href='./index.html';home.textContent='⌂ صفحه اصلی';home.setAttribute('aria-label','بازگشت به صفحه اصلی QC Toolbox');bar.appendChild(home);
+    var home=document.createElement('a');home.href='./index.html';home.innerHTML='<img src="qc-toolbox-logo-symbol.webp" alt="" class="qc-nav-brand-icon" width="32" height="24"> <span>صفحه اصلی</span>';home.setAttribute('aria-label','بازگشت به صفحه اصلی QC Toolbox');bar.appendChild(home);
     var btn=document.createElement('button');btn.type='button';btn.id='qcGlobalThemeToggle';btn.addEventListener('click',function(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark',true)});bar.appendChild(btn);
     document.body.insertBefore(bar,document.body.firstChild);
     setTheme(readTheme(),false);

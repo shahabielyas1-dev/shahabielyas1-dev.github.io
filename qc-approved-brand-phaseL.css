@@ -1,0 +1,9 @@
+/* Phase L — approved brand identity, no calculator or persistence changes. */
+.fl-brand-mark:has(.qc-approved-mark){background:#fff!important;border:1px solid #d6e8eb;box-shadow:0 4px 14px rgba(5,51,68,.10)!important;overflow:hidden;padding:4px}
+.fl-brand-mark .qc-approved-mark{display:block;width:100%;height:auto;max-height:100%;object-fit:contain}
+.qc-approved-signature{display:block;width:min(100%,295px);height:auto;max-height:215px;margin:0 auto 10px;object-fit:contain;border-radius:13px;background:#fff}
+.qc-quick-actions a:has(.qc-nav-brand-icon){display:inline-flex;align-items:center;gap:7px;min-height:40px}
+.qc-nav-brand-icon{display:block;width:35px;height:26px;object-fit:contain;background:#fff;border-radius:7px;padding:2px}
+.qc-admin-logo{background:#fff!important;border-color:#cfe2e8!important;overflow:hidden;padding:5px}
+.qc-admin-logo img{width:100%;height:auto;object-fit:contain}
+@media(max-width:500px){.qc-approved-signature{width:min(100%,225px)}.qc-nav-brand-icon{width:30px;height:23px}}

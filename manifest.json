@@ -1,13 +1,13 @@
 {
-  "name": "جعبه ابزار QC",
-  "short_name": "جعبه ابزار QC",
-  "description": "ابزارهای واحد کنترل کیفیت — آمار صادرات و تولید/انقضا",
+  "name": "QC Toolbox — FoodLab",
+  "short_name": "QC Toolbox",
+  "description": "جعبه ابزار کنترل کیفیت صنایع غذایی",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f1f8fb",
-  "theme_color": "#16b7c4",
+  "theme_color": "#063e62",
   "dir": "rtl",
   "lang": "fa",
   "icons": [
