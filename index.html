@@ -320,6 +320,7 @@
 <script defer src="foodlab-theme-controls-phaseI.js"></script>
 <link rel="stylesheet" href="qc-approved-brand-phaseL.css">
 <link rel="stylesheet" href="qc-readable-interface-phaseM.css">
+<link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
 </head>
 <body class="qc-is-index">
 <div class="fl-app-shell" id="homeScreen">
@@ -416,10 +417,10 @@
   </main>
 </div>
 
-<div class="app-view" id="view-order"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">آمار صادرات و سفارش‌ها</div></div><iframe id="frame-order" title="آمار صادرات و سفارش‌ها" loading="lazy"></iframe></div>
-<div class="app-view" id="view-qc"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">تولید و انقضا</div></div><iframe id="frame-qc" title="تولید و انقضا" loading="lazy"></iframe></div>
-<div class="app-view" id="view-lab"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">آزمایشگاه محاسبات</div></div><iframe id="frame-lab" title="آزمایشگاه محاسبات" loading="lazy"></iframe></div>
-<div class="app-view" id="view-checklist"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">چک‌لیست‌ها و بازرسی</div></div><iframe id="frame-checklist" title="چک‌لیست‌ها و بازرسی" loading="lazy"></iframe></div>
+<div class="app-view" id="view-order"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">آمار صادرات و سفارش‌ها</div><button type="button" class="qc-view-theme" data-qc-view-theme aria-label="تغییر حالت روشن و تیره" title="تغییر حالت روشن و تیره">☾</button></div><iframe id="frame-order" title="آمار صادرات و سفارش‌ها" loading="lazy"></iframe></div>
+<div class="app-view" id="view-qc"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">تولید و انقضا</div><button type="button" class="qc-view-theme" data-qc-view-theme aria-label="تغییر حالت روشن و تیره" title="تغییر حالت روشن و تیره">☾</button></div><iframe id="frame-qc" title="تولید و انقضا" loading="lazy"></iframe></div>
+<div class="app-view" id="view-lab"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">آزمایشگاه محاسبات</div><button type="button" class="qc-view-theme" data-qc-view-theme aria-label="تغییر حالت روشن و تیره" title="تغییر حالت روشن و تیره">☾</button></div><iframe id="frame-lab" title="آزمایشگاه محاسبات" loading="lazy"></iframe></div>
+<div class="app-view" id="view-checklist"><div class="app-view-bar"><button type="button" class="back-btn" data-nav="home" aria-label="بازگشت به داشبورد">→</button><div class="app-view-title">چک‌لیست‌ها و بازرسی</div><button type="button" class="qc-view-theme" data-qc-view-theme aria-label="تغییر حالت روشن و تیره" title="تغییر حالت روشن و تیره">☾</button></div><iframe id="frame-checklist" title="چک‌لیست‌ها و بازرسی" loading="lazy"></iframe></div>
 
 <div class="modal-overlay" id="aboutOverlay" role="dialog" aria-modal="true" aria-labelledby="aboutTitle"><div class="modal-box"><img class="qc-approved-signature" src="qc-toolbox-logo-approved.webp" alt="لوگوی QC Toolbox — Food Industry Quality Control" width="295" height="215" loading="lazy"><h3 id="aboutTitle">QC Toolbox · کنترل کیفیت صنایع غذایی</h3><p>این برنامه ابزارهای آمار صادرات، تولید و انقضا، محاسبات آزمایشگاهی و چک‌لیست‌های کنترل کیفیت را در یک فضای کاری جمع کرده است. سوابق برخی ابزارها روی همین مرورگر ذخیره می‌شوند؛ پیش از پاک‌کردن داده‌های مرورگر از آن‌ها پشتیبان بگیر.</p><button class="modal-close" id="aboutClose" type="button">متوجه شدم</button></div></div>
 <div class="modal-overlay" id="installOverlay" role="dialog" aria-modal="true" aria-labelledby="installTitle"><div class="modal-box"><h3 id="installTitle">نصب QC Toolbox روی دستگاه</h3><p>در صورت پشتیبانی مرورگر می‌توانی برنامه را روی صفحه اصلی گوشی نصب کنی و مانند یک اپ مستقل بازش کنی.</p><button class="modal-close" id="installBtn" type="button">نصب برنامه</button><button class="modal-close modal-secondary" id="installLater" type="button">فعلاً نه</button></div></div>
@@ -554,6 +555,7 @@
     document.documentElement.setAttribute('data-theme', mode);
     const btn = document.getElementById('themeToggleBtn');
     if (btn) { const icon = document.getElementById('themeIcon'); if (icon) icon.innerHTML = mode === 'dark' ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>' : '<path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/>'; btn.setAttribute('aria-label', mode === 'dark' ? 'فعال‌کردن حالت روشن' : 'فعال‌کردن حالت تیره'); }
+    document.querySelectorAll('[data-qc-view-theme]').forEach(el => { el.textContent = mode === 'dark' ? '☀' : '☾'; el.setAttribute('aria-label',mode === 'dark' ? 'فعال کردن حالت روشن' : 'فعال کردن حالت شب'); el.title = el.getAttribute('aria-label'); el.setAttribute('aria-pressed',String(mode === 'dark')); });
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', mode === 'dark' ? '#102631' : '#f1f8fb');
   }
@@ -581,6 +583,8 @@
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(currentTheme);
   });
+
+  document.querySelectorAll('[data-qc-view-theme]').forEach(btn => btn.addEventListener('click', () => { currentTheme = currentTheme === 'dark' ? 'light' : 'dark'; setTheme(currentTheme); }));
 
   const FRAME_SRC = { order: 'order-merge-v19.html', qc: 'qc-dairy-v2.html', lab: 'lab-calc-v1.html', checklist: 'checklist-hub.html' };
   const loaded = { order: false, qc: false, lab: false, checklist: false };

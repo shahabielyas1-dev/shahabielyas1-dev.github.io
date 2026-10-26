@@ -1,0 +1,20 @@
+/* Phase N – Approved transparent emblem and compact back/theme controls. */
+.fl-brand-mark:has(.qc-approved-mark){background:linear-gradient(145deg,#09415b,#082b43)!important;border:1px solid #245d70!important;box-shadow:0 4px 14px rgba(5,36,58,.17)!important;overflow:hidden;padding:2px!important}
+.fl-brand-mark .qc-approved-mark{display:block;width:100%;height:100%;object-fit:contain;max-height:100%;background:transparent!important}
+.qc-approved-signature{display:block;width:min(100%,240px);height:auto;max-height:240px;margin:0 auto 10px;object-fit:contain;border-radius:0;background:transparent!important}
+.qc-admin-logo{background:linear-gradient(145deg,#09415b,#082b43)!important;border-color:#245d70!important;overflow:hidden;padding:3px!important}
+.qc-admin-logo img{width:100%;height:100%;object-fit:contain;background:transparent}
+/* Previous large navigation bar removed – only 2 isolated square actions. */
+.qc-quick-actions{display:none!important}
+.qc-corner-actions{box-sizing:border-box;position:relative;z-index:15;width:min(100%,920px);margin:0 auto;min-height:54px;padding:8px 16px 2px;display:flex;justify-content:space-between;align-items:center;direction:rtl;background:transparent!important;border:0!important;box-shadow:none!important}
+.qc-corner-btn{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;border-radius:12px!important;border:1px solid var(--fl-line,#587080)!important;background:var(--fl-surface,#243b49)!important;color:var(--fl-ink,#eef4f7)!important;text-decoration:none!important;box-shadow:none!important;cursor:pointer;line-height:1!important;font-size:22px!important;font-family:Vazirmatn,Tahoma,sans-serif!important;font-weight:800!important}
+.qc-corner-btn:hover{background:var(--fl-teal-soft,#24505b)!important}
+.qc-corner-btn:focus-visible,.qc-view-theme:focus-visible{outline:3px solid #f3b651!important;outline-offset:3px}
+.qc-corner-btn[aria-pressed="true"]{border-color:var(--fl-teal,#11afb0)!important}
+.qc-corner-btn .qc-action-icon{display:block;line-height:1;text-align:center}
+.qc-view-theme{margin-inline-start:auto!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;border-radius:12px!important;border:1px solid var(--fl-line,#587080)!important;background:var(--fl-surface,#253b48)!important;color:var(--fl-ink,#eff4f7)!important;font-family:inherit!important;font-size:22px!important;font-weight:800!important;box-shadow:none!important;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.qc-view-theme:hover{background:var(--fl-teal-soft,#24505b)!important}
+body.qc-is-index .app-view-bar{gap:10px!important}
+/* standalone top corners should not appear in the embedded tool iframe */
+body.qc-embedded-tool>.qc-corner-actions{display:none!important}
+@media print{.qc-corner-actions,.qc-view-theme{display:none!important}}
