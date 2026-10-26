@@ -1,0 +1,69 @@
+/* QC Toolbox Phase I — consistent accessible light/dark palette, screen only. */
+@media screen {
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+    --fl-bg:#e8f0f3;--fl-bg-soft:#dce9ed;--fl-surface:#f7fafb;--fl-surface-soft:#eef5f7;
+    --fl-ink:#183540;--fl-muted:#496671;--fl-line:#b9cfd7;--fl-primary:#163f50;
+    --fl-teal:#087f8b;--fl-teal-deep:#076874;--fl-teal-soft:#d4ecee;
+    --bg:#e8f0f3!important;--bg-2:#dce9ed!important;--paper:#f7fafb!important;
+    --ink:#183540!important;--muted:#496671!important;--line:#b9cfd7!important;
+    --shadow:0 9px 24px rgba(18,55,70,.11)!important;
+    --shadow-sm:0 3px 12px rgba(18,55,70,.09)!important;
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --fl-bg:#101c25;--fl-bg-soft:#192b36;--fl-surface:#203340;--fl-surface-soft:#293e4b;
+    --fl-ink:#f0f6f8;--fl-muted:#bfd0d9;--fl-line:#4a6470;--fl-primary:#f0f8fa;
+    --fl-teal:#1b98a8;--fl-teal-deep:#8be7e7;--fl-teal-soft:#214955;
+    --fl-blue-soft:#263e56;--fl-green-soft:#214637;--fl-amber-soft:#463d26;--fl-red-soft:#482e36;
+    --bg:#101c25!important;--bg-2:#192b36!important;--paper:#203340!important;
+    --ink:#f0f6f8!important;--muted:#bfd0d9!important;--line:#4a6470!important;
+    --green-soft:#214637!important;--teal-soft:#214955!important;--blue-soft:#263e56!important;
+    --yellow-soft:#463d26!important;--shadow:0 12px 30px rgba(0,0,0,.3)!important;
+    --shadow-sm:0 4px 18px rgba(0,0,0,.22)!important;
+  }
+  html,body { color:var(--fl-ink); }
+  body:not(.print-preview-page) { background-color:var(--fl-bg)!important; }
+  /* Remove glaring white surfaces and preserve text contrast in both modes. */
+  body:not(.print-preview-page) :where(.card,.panel,.panel-card,.entry-card,.result-card,.stat,.stat-card,.fl-stat-card,.fl-tool-card,.fl-panel,.info-pill,.today-strip,.topbar,.gate-box,.modal-box,.confirm-box,.drawer,.fl-sidebar-footer,.history-entry,.check-item,.section-card,.calculator-card,.glass-card) {
+    border-color:var(--fl-line)!important;
+  }
+  body:not(.print-preview-page) :where(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
+    background:var(--fl-surface-soft)!important;color:var(--fl-ink)!important;border-color:var(--fl-line)!important;
+    -webkit-text-fill-color:var(--fl-ink);
+  }
+  body:not(.print-preview-page) :where(input,textarea)::placeholder {color:var(--fl-muted)!important;opacity:1}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.card,.panel,.panel-card,.entry-card,.result-card,.stat,.stat-card,.fl-stat-card,.fl-tool-card,.fl-panel,.info-pill,.today-strip,.topbar,.gate-box,.modal-box,.confirm-box,.drawer,.history-entry,.check-item,.section-card,.calculator-card,.glass-card,.backup-file-picker) {
+    background:var(--fl-surface)!important;color:var(--fl-ink)!important;
+  }
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.card,.panel,.panel-card,.entry-card,.result-card,.stat,.stat-card,.fl-tool-card,.fl-panel,.gate-box,.history-entry,.check-item,.section-card,.calculator-card) :where(h1,h2,h3,h4,p,span,label,strong,small) {color:inherit}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.muted,.sub,.hint,.subtitle,.helper,.help-text,.card p,.fl-tool-desc,.field label,.fl-stat-label,small){color:var(--fl-muted)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(table,tbody,tr,td,th){border-color:var(--fl-line)!important;color:var(--fl-ink)}
+  :root[data-theme="dark"] body:not(.print-preview-page) th{background:var(--fl-surface-soft)!important;color:var(--fl-ink)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.result-card,.entry-card,.fl-stat-card,.fl-tool-card,.check-item) {box-shadow:var(--fl-shadow-sm)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.fl-sidebar){background:#192c38!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.app-view,.app-view-bar){background:var(--fl-bg)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.fl-tool-card,.fl-tool-card:visited){color:var(--fl-ink)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.fl-tool-card .fl-tool-desc,.card p){color:var(--fl-muted)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.primary,.save-btn,.modal-close:not(.modal-secondary),.fl-nav-item.active){background:#126e7d!important;color:#fff!important;border-color:#258da0!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.ghost,.modal-secondary,.card-tag,.card-arrow,.entry-icon){background:var(--fl-surface-soft)!important;color:var(--fl-ink)!important;border-color:var(--fl-line)!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.announcement){background:var(--fl-amber-soft)!important;color:#fae4a7!important;border-color:#73633f!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.status-badge.pass,.badge.pass,.pass){background:var(--fl-green-soft)!important;color:#a4eac9!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.status-badge.fail,.badge.fail,.fail){background:var(--fl-red-soft)!important;color:#ffc4cb!important}
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.status-badge.pending,.pending){background:var(--fl-amber-soft)!important;color:#f4d493!important}
+  /* Legacy pages frequently use fixed white inline surfaces. Scope to page containers, not prints or color-coded buttons. */
+  :root[data-theme="dark"] body.foodlab-production-page :where(.main-card,.form-card,.summary-card,.result-box,.history-card,.modal-content,.hero-price,.stats-card),
+  :root[data-theme="dark"] body.foodlab-orders-page :where(.main-card,.form-card,.summary-card,.result-box,.history-card,.modal-content,.stat,.hero-card),
+  :root[data-theme="dark"] body.foodlab-checklist-page :where(.main-card,.form-card,.summary-card,.result-box,.history-card,.modal-content),
+  :root[data-theme="dark"] body.foodlab-backup-page main {background:var(--fl-surface)!important;color:var(--fl-ink)!important;border-color:var(--fl-line)!important}
+  :root[data-theme="dark"] body.foodlab-backup-page a {background:var(--fl-surface-soft)!important;color:var(--fl-ink)!important}
+  /* Readable controls for legacy surfaces (do not recolor buttons with semantic warning/error styles). */
+  :root[data-theme="dark"] body:not(.print-preview-page) :where(.info-pill,.today-strip,.panel,.card,.result-card,.entry-card) :where(.n,.v,.value,.result-value){color:var(--fl-ink)!important}
+  body:not(.print-preview-page) :where(a,button):focus-visible {outline:3px solid #0b8997!important;outline-offset:3px}
+  .qc-quick-actions {position:relative;z-index:50;display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;padding:9px clamp(12px,3vw,26px);background:var(--fl-surface);border-bottom:1px solid var(--fl-line);color:var(--fl-ink);font:700 13px/1.5 Vazirmatn,Tahoma,sans-serif;}
+  .qc-quick-actions a,.qc-quick-actions button {min-height:40px!important;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;border-radius:11px!important;border:1px solid var(--fl-line)!important;background:var(--fl-surface-soft)!important;color:var(--fl-ink)!important;padding:7px 14px!important;box-shadow:none!important;font:700 13px/1.5 Vazirmatn,Tahoma,sans-serif!important;cursor:pointer}
+  .qc-quick-actions a:hover,.qc-quick-actions button:hover {background:var(--fl-teal-soft)!important}
+  .qc-quick-actions button[aria-pressed="true"]{border-color:var(--fl-teal)!important}
+  @media(max-width:520px){.qc-quick-actions{padding:7px 10px}.qc-quick-actions a,.qc-quick-actions button{min-height:42px!important}}
+}
+@media print {.qc-quick-actions{display:none!important}}
