@@ -1,0 +1,177 @@
+/* QC Toolbox / FoodLab — Phase M: safety-first legibility audit.
+   UI-only; screen-only. Preserve official print A5, calculations, data and API calls.
+   Scale: primary text 16px+, labels 16px, notes 14-15px,
+   inputs and critical results 18px+. No transformations of numeric content. */
+@media screen {
+  :root { --qc-font-body: 16px; --qc-font-label: 16px; --qc-font-input: 18px; --qc-font-note: 15px; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body:not(.print-preview-page) {
+    font-family: Vazirmatn, Tahoma, Arial, sans-serif !important;
+    font-size: var(--qc-font-body) !important;
+    line-height: 1.78 !important;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body:not(.print-preview-page) :is(main,section,article,div,form,aside) { min-width:0; }
+  body:not(.print-preview-page) :is(p,li,td,th,summary) { line-height:1.85; }
+  body:not(.print-preview-page) :is(input:not([type=checkbox]):not([type=radio]),textarea,select){
+    font-size:18px !important; line-height:1.55 !important;
+    min-height:50px; font-weight:700; border-width:1.5px !important;
+    font-family:Vazirmatn,Tahoma,Arial,sans-serif;
+  }
+  body:not(.print-preview-page) :is(input[type=number],input[inputmode=numeric],input[inputmode=decimal]) {
+    font-family:'JetBrains Mono',Vazirmatn,Tahoma,sans-serif !important;
+    font-variant-numeric:tabular-nums; font-size:19px !important; font-weight:800 !important;
+  }
+  body:not(.print-preview-page) :is(input,textarea)::placeholder { opacity:1; }
+  body:not(.print-preview-page) :is(label,.field label,.field-row label,.order-fields label,.fl-lab-fields .field-row label) {
+    font-size:16px !important; line-height:1.7 !important; font-weight:800 !important;
+  }
+  body:not(.print-preview-page) :is(button,.primary,.ghost,.save-btn,[role=button]) {
+    font-family:Vazirmatn,Tahoma,Arial,sans-serif;
+    font-size:16px !important; font-weight:800;
+    line-height:1.55; min-height:46px;
+  }
+  body:not(.print-preview-page) :is(button,a,[role=button],input,select,textarea):focus-visible {
+    outline:3px solid #0d8e9a!important; outline-offset:3px!important;
+  }
+  body:not(.print-preview-page) :is(h1,h2,h3,h4) { line-height:1.5; text-wrap:pretty; }
+  body:not(.print-preview-page) h1 { font-size:clamp(24px,3vw,31px) !important; font-weight:900; }
+  body:not(.print-preview-page) h2 { font-size:clamp(20px,2.5vw,25px) !important; font-weight:900; }
+  body:not(.print-preview-page) h3 { font-size:clamp(18px,2.2vw,22px) !important; font-weight:850; }
+  body:not(.print-preview-page) :is(.muted,.subtitle,.sub,.hint,.helper,.help-text,.caption,.field-hint) {
+    font-size:15px !important; line-height:1.85!important;
+  }
+  body:not(.print-preview-page) small {font-size:14px!important;line-height:1.8!important;}
+  body:not(.print-preview-page) :is(.qc-quick-actions,.qc-quick-actions a,.qc-quick-actions button) {font-size:15px!important;}
+  body:not(.print-preview-page) .qc-quick-actions a,
+  body:not(.print-preview-page) .qc-quick-actions button {min-height:46px!important;padding:9px 14px!important;}
+
+  /* Homepage: legible navigation, descriptions and KPIs without cramped 9px captions. */
+  #homeScreen.fl-app-shell :is(.fl-nav-item,.fl-tool-foot span,.fl-tool-desc,.fl-welcome p,
+    .fl-stat-label,.fl-section-hint,.fl-activity-time,.fl-panel-subtitle) {
+    font-size:15px!important;line-height:1.8!important;
+  }
+  #homeScreen.fl-app-shell .fl-tool-title {font-size:19px!important;line-height:1.65!important;font-weight:900!important;}
+  #homeScreen.fl-app-shell .fl-stat-value {font-size:clamp(23px,3vw,31px)!important;font-variant-numeric:tabular-nums;}
+  #homeScreen.fl-app-shell .fl-nav-item {min-height:48px!important;padding:10px 13px!important;}
+  #homeScreen.fl-app-shell .fl-tool-card {padding:clamp(16px,2.4vw,23px)!important;min-height:0!important;}
+  #homeScreen.fl-app-shell .fl-tool-desc {min-height:0!important;display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important;}
+  #homeScreen.fl-app-shell .fl-stat-card {padding:16px!important;}
+  #homeScreen.fl-app-shell .fl-welcome p {display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important;}
+  /* Duplicated instructional micro-label, not a function or measurement. */
+  #homeScreen.fl-app-shell .fl-section-hint {display:none!important;}
+
+  /* LAB: high-visibility test selection, mandatory numeric data, calculated output. */
+  .fl-lab-hero {gap:16px!important;margin-bottom:20px!important;padding:18px!important;}
+  .fl-lab-hero p,.fl-lab-section-heading p,
+  .fl-lab-detail-heading .test-desc,.fl-lab-card-heading p {
+    font-size:16px!important;line-height:1.85!important;
+  }
+  .fl-lab-section-heading h2 {font-size:23px!important;}
+  .fl-lab-test-grid .test-name {font-size:19px!important;line-height:1.6!important;}
+  .fl-lab-test-grid .test-summary {font-size:15px!important;line-height:1.8!important;margin-top:6px!important;}
+  .fl-lab-test-grid .test-tag {font-size:14px!important;padding:4px 9px!important;}
+  .fl-lab-count {font-size:15px!important;}
+  .fl-lab-count strong {font-size:18px!important;}
+  .fl-lab-test-grid .test-card {min-height:0!important;}
+  .fl-lab-detail-heading .view-title {font-size:clamp(22px,3vw,27px)!important;}
+  .fl-lab-section {padding:clamp(18px,2.8vw,26px)!important;}
+  .fl-lab-card-heading h2 {font-size:21px!important;}
+  .fl-lab-fields {gap:17px 18px!important;}
+  .fl-lab-fields .field-row {gap:9px!important;margin-bottom:0!important;}
+  .fl-lab-fields .field-row label {font-size:17px!important;color:var(--fl-ink)!important;}
+  .fl-lab-fields .field-input-wrap {min-height:56px!important;padding:3px 14px!important;border-width:2px!important;}
+  .fl-lab-fields .field-input-wrap input {min-height:52px!important;font-size:20px!important;letter-spacing:.01em;}
+  .fl-lab-fields .field-unit {font-size:15px!important;white-space:nowrap;}
+  .fl-lab-constant-note,.fl-lab-sop-note {font-size:15px!important;line-height:1.9!important;}
+  .fl-lab-result-section {padding:clamp(19px,3vw,28px)!important;}
+  .fl-lab-result-head .result-label {font-size:17px!important;}
+  .fl-lab-result-main .result-value {font-size:clamp(36px,6vw,50px)!important;line-height:1.4!important;}
+  .fl-lab-result-main .result-value.pending {font-size:17px!important;}
+  .fl-lab-result-main .result-value .unit {font-size:20px!important;}
+  .fl-lab-inline-status {font-size:16px!important;line-height:1.85!important;}
+  .fl-lab-result-section .result-sec-label {font-size:15px!important;}
+  .fl-lab-result-section .result-sec-value {font-size:20px!important;line-height:1.65!important;font-variant-numeric:tabular-nums;}
+  .fl-lab-result-section .result-sec-item {padding:15px!important;}
+  .fl-lab-range-copy strong {font-size:17px!important;}
+  .fl-lab-range-copy small,.fl-lab-range-hint {font-size:15px!important;}
+  .fl-lab-actions button {min-height:52px!important;padding:12px 16px!important;font-size:16px!important;}
+  .fl-lab-history-section .history-entry {font-size:16px!important;line-height:1.9!important;}
+  .fl-lab-history-section .history-time {font-size:14px!important;}
+  .fl-lab-footnote strong {font-size:16px!important;}
+  .fl-lab-footnote p {font-size:15px!important;line-height:1.9!important;}
+  /* Remove English decoration and redundant status chips; retain SOP warning and all measurements. */
+  .fl-lab-eyebrow,.fl-lab-hero-chip,.fl-lab-ready-chip,.fl-lab-step {display:none!important;}
+
+  /* Production: batch, price and expiration fields readable on bright monitors. */
+  body.foodlab-production-page :is(.page-subtitle,.hero-sub,.production-note,.activity-text,.pill-label) {font-size:15px!important;line-height:1.85!important;}
+  body.foodlab-production-page :is(.hero-price-label,.badge-label,.hero-batch,.field-unit) {font-size:15px!important;line-height:1.65!important;}
+  body.foodlab-production-page .hero-price-value {font-size:clamp(19px,3vw,26px)!important;line-height:1.55!important;overflow-wrap:anywhere;}
+  body.foodlab-production-page .hero-price-value.pending {font-size:16px!important;}
+  body.foodlab-production-page .field label {font-size:16px!important;}
+  body.foodlab-production-page :is(.keypad-key,.modal-btn,.compare-open-btn,.hero-actions button) {font-size:18px!important;min-height:48px;}
+  body.foodlab-production-page :is(.hero-date,.date-value,.date-val,.big-value) {font-size:clamp(22px,4vw,32px)!important;line-height:1.5!important;}
+
+  /* Orders: statistical values, SKU inputs, report actions. */
+  body.foodlab-orders-page :is(.hero-sub,.pill-label,.field-note,.merged-note,footer.note,.stat .k) {font-size:15px!important;line-height:1.85!important;}
+  body.foodlab-orders-page :is(.order-fields label,.field label) {font-size:16px!important;}
+  body.foodlab-orders-page .stat .v {font-size:clamp(22px,3vw,30px)!important;font-variant-numeric:tabular-nums;}
+  body.foodlab-orders-page .bottom-nav .nav-item {font-size:15px!important;min-height:48px!important;}
+
+  /* Checklists: meaningful task text and completion actions. */
+  body.foodlab-checklist-page .entry-title {font-size:20px!important;}
+  body.foodlab-checklist-page :is(.entry-sub,.entry-count,.progress-text,.check-text) {font-size:16px!important;line-height:1.85!important;}
+  body.foodlab-checklist-page .check-item {min-height:56px!important;padding-block:13px!important;}
+  body.foodlab-checklist-page :is(.new-tpl-btn,.add-item-ghost,.primary,.ghost) {min-height:48px!important;}
+
+  /* Admin: don't obscure values, login feedback and price settings. */
+  #gate .gate-box p, #dash .topbar p, #dash .panel .sub {font-size:15px!important;line-height:1.85!important;}
+  #dash .panel h3 {font-size:20px!important;}
+  #dash .price-fields input,#gate .gate-box input {min-height:54px!important;font-size:18px!important;}
+  #dash .save-btn,#gate .gate-box button {min-height:50px!important;font-size:16px!important;}
+  #dash .toast {font-size:16px!important;}
+
+  /* Backup: keep all data-loss warnings prominent and intact. */
+  body.foodlab-backup-page main > p,body.foodlab-backup-page main small,
+  body.foodlab-backup-page #status:not(:empty) {font-size:16px!important;line-height:1.9!important;}
+  body.foodlab-backup-page .backup-file-picker label {min-height:48px!important;}
+
+  /* Remaining small operational labels in legacy pages. */
+  #homeScreen.fl-app-shell :is(.info-pill .l,.today-weekday,.card-tag) {font-size:15px!important;}
+  #homeScreen.fl-app-shell .copyright {display:none!important;}
+  body.foodlab-checklist-page :is(.tpl-sub,.order-btn) {font-size:15px!important;}
+  body.foodlab-production-page :is(.stat-value .unit,.stat-sub,.checklist-progress-text,.admin-price-fields label,.hero-price-value .unit) {font-size:15px!important;line-height:1.7!important;}
+  body.foodlab-orders-page :is(.summary-strip .k,.stat .v small,.lh-box,.official-sign) {font-size:15px!important;line-height:1.75!important;}
+  /* Screen-only preview readability; the paper's @media print styles still apply. */
+  body.foodlab-orders-page .official-table {font-size:13px!important;}
+  body.foodlab-orders-page .official-table th {font-size:13px!important;}
+
+  /* Official print preview: toolbar only; never alter A5 sheet/grid/print CSS. */
+  body.print-preview-page .toolbar :is(button,a.btn) {font-size:16px!important;min-height:48px!important;}
+  body.print-preview-page .toolbar :is(h1,p,.note) {font-size:15px!important;}
+}
+@media screen and (max-width:760px) {
+  #homeScreen.fl-app-shell :is(.fl-nav-item,.fl-tool-desc,.fl-tool-foot span,.fl-stat-label,.fl-welcome p) {font-size:15px!important;}
+  #homeScreen.fl-app-shell .fl-tool-title {font-size:19px!important;}
+  #homeScreen.fl-app-shell .fl-tool-desc {min-height:0!important;}
+  #homeScreen.fl-app-shell .fl-stat-label {line-height:1.8!important;}
+  .fl-lab-test-grid .test-name {font-size:18px!important;}
+  .fl-lab-test-grid .test-summary {font-size:15px!important;}
+  .fl-lab-test-grid .test-card {grid-template-columns:48px minmax(0,1fr) 32px!important;gap:12px!important;padding:15px!important;}
+  .fl-lab-hero {flex-wrap:wrap!important;}
+  .fl-lab-section {padding:17px!important;}
+  .fl-lab-actions {gap:10px!important;}
+  .fl-lab-actions button {font-size:16px!important;white-space:normal!important;}
+  body.foodlab-production-page :is(.hero-price-value,.hero-price-value.pending) {font-size:19px!important;}
+}
+@media screen and (max-width:390px) {
+  .fl-lab-test-grid .test-card {grid-template-columns:44px minmax(0,1fr) 28px!important;gap:10px!important;}
+  .fl-lab-test-grid .test-icon {width:44px!important;height:44px!important;}
+  .fl-lab-result-section .result-secondary {grid-template-columns:minmax(0,1fr)!important;}
+  body:not(.print-preview-page) .qc-quick-actions {gap:6px!important;}
+  body:not(.print-preview-page) .qc-quick-actions :is(button,a) {flex:1 1 auto;}
+}
+@media print {
+ /* Typography changes in this file deliberately do not affect official print outputs. */
+}
