@@ -1,0 +1,74 @@
+/* QC Toolbox Phase K — targeted laboratory night mode and no hamburger on subpages.
+   Screen only. Print layout remains unchanged. */
+@media screen {
+  html[data-theme="dark"] body .fl-lab-hero,
+  html[data-theme="dark"] body .fl-lab-section,
+  html[data-theme="dark"] body .fl-lab-test-grid .test-card,
+  html[data-theme="dark"] body .fl-lab-count,
+  html[data-theme="dark"] body .fl-lab-detail-header .back-btn,
+  html[data-theme="dark"] body .fl-lab-history-section .history-entry,
+  html[data-theme="dark"] body .fl-lab-history-section .history-empty {
+    background:#203340 !important;
+    background-image:none !important;
+    color:#eff6fa !important;
+    border-color:#506b78 !important;
+    box-shadow:0 5px 18px rgba(0,0,0,.20) !important;
+  }
+  html[data-theme="dark"] body .fl-lab-result-section {
+    background:#214652 !important;
+    background-image:none !important;
+    border-color:#418695 !important;
+    color:#eff8fb !important;
+  }
+  html[data-theme="dark"] body .fl-lab-result-section .result-sec-item {
+    background:#203a46 !important;
+    color:#eff8fb !important;
+    border-color:#4b7280 !important;
+  }
+  html[data-theme="dark"] body .fl-lab-result-section :is(.result-value,.result-value .unit,.result-label,.result-sec-value,.fl-lab-eyebrow) {
+    color:#f1fbff !important;
+    -webkit-text-fill-color:#f1fbff !important;
+  }
+  html[data-theme="dark"] body .fl-lab-result-section :is(.result-sec-label,.fl-lab-inline-status.pending,.result-value.pending) {
+    color:#c6dce5 !important;
+    -webkit-text-fill-color:#c6dce5 !important;
+  }
+  html[data-theme="dark"] body .fl-lab-result-section .fl-lab-inline-status.fail{color:#ffb5bd !important}
+  html[data-theme="dark"] body .fl-lab-result-section .fl-lab-inline-status.pass{color:#9ceacb !important}
+  html[data-theme="dark"] body .fl-lab-hero-mark,
+  html[data-theme="dark"] body .fl-lab-test-grid .test-icon,
+  html[data-theme="dark"] body .fl-lab-result-icon,
+  html[data-theme="dark"] body .fl-lab-range-symbol,
+  html[data-theme="dark"] body .fl-lab-step {background:#2d515e !important;color:#abf0f2 !important}
+  html[data-theme="dark"] body .fl-lab-test-grid .test-card:nth-child(2) .test-icon {background:#324967 !important}
+  html[data-theme="dark"] body .fl-lab-test-grid .test-arrow,
+  html[data-theme="dark"] body .fl-lab-actions .ghost,
+  html[data-theme="dark"] body .fl-lab-range-toggle .range-chevron {background:#2b4552 !important;color:#edf7fa !important;border-color:#537282 !important}
+  html[data-theme="dark"] body .fl-lab-fields .field-input-wrap,
+  html[data-theme="dark"] body .fl-lab-fields .field-input-wrap:focus-within {
+    background:#172934 !important;border-color:#637f8b !important;
+  }
+  html[data-theme="dark"] body .fl-lab-fields :is(input,input:focus) {color:#f4fbff !important;-webkit-text-fill-color:#f4fbff !important;background:transparent !important;border:0 !important}
+  html[data-theme="dark"] body .fl-lab-constant-note {background:#213d48 !important;color:#c0e4ed !important;border-color:#527b87 !important}
+  html[data-theme="dark"] body .fl-lab-sop-note,
+  html[data-theme="dark"] body .fl-lab-footnote {background:#453a27 !important;color:#f4dbaa !important;border-color:#766142 !important}
+  html[data-theme="dark"] body .fl-lab-footnote-icon {background:#5d4b2d !important;color:#f3dfb0 !important}
+  html[data-theme="dark"] body :is(.fl-lab-hero h1,.fl-lab-section-heading h2,.fl-lab-detail-heading .view-title,.fl-lab-test-grid .test-name,.fl-lab-card-heading h2,.fl-lab-range-copy strong){color:#f2f9fb !important}
+  html[data-theme="dark"] body :is(.fl-lab-hero p,.fl-lab-section-heading p,.fl-lab-test-grid .test-summary,.fl-lab-card-heading p,.fl-lab-detail-heading .test-desc,.fl-lab-fields .field-row label,.fl-lab-range-copy small,.fl-lab-history-section .history-time){color:#c0d4dd !important}
+  html[data-theme="dark"] body :is(.fl-lab-eyebrow,.fl-lab-test-grid .test-tag,.fl-lab-count strong,.fl-lab-fields .field-unit){color:#abedf4 !important}
+  html[data-theme="dark"] body .fl-lab-test-grid .test-tag {background:#294c56 !important}
+  html[data-theme="dark"] body .fl-lab-ready-chip,
+  html[data-theme="dark"] body .fl-lab-hero-chip {background:#264e43 !important;color:#b5f0d5 !important}
+  html[data-theme="dark"] body .fl-lab-result-section .fl-lab-inline-status.warning {background:#4b3e27 !important;color:#f6dca8 !important;border-color:#8a7148 !important}
+  html:not([data-theme="dark"]) body .fl-lab-test-grid .test-card,
+  html:not([data-theme="dark"]) body .fl-lab-hero,
+  html:not([data-theme="dark"]) body .fl-lab-section {background:#f3f8fa !important;background-image:none !important}
+  html:not([data-theme="dark"]) body .fl-lab-result-section {background:#d9ebee !important;background-image:none !important}
+  /* Keep the daily report that was previously only accessible from the removed drawer. */
+  .qc-production-report-access {max-width:1100px;margin:8px auto 0;padding:0 16px;display:flex;justify-content:flex-start}
+  .qc-production-report-access #reportOpenBtn {position:static !important;display:inline-flex !important;align-items:center;justify-content:center;padding:9px 15px !important;min-height:42px;border-radius:12px;border:1px solid var(--fl-line);background:var(--fl-surface-soft) !important;color:var(--fl-ink) !important;cursor:pointer;font:700 13px Vazirmatn,Tahoma,sans-serif}
+  /* In case a cached legacy page retains the old menu, do not display it. */
+  body:not(.qc-is-index) #menuBtn, body:not(.qc-is-index) .menu-btn,
+  body:not(.qc-is-index) #drawer, body:not(.qc-is-index) #drawerOverlay {display:none !important}
+}
+@media print {.qc-production-report-access {display:none !important}}

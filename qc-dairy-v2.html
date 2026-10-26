@@ -1203,24 +1203,11 @@
 
 <link rel="stylesheet" href="foodlab-accessibility-phaseI.css">
 <link rel="stylesheet" href="foodlab-theme-repair-phaseJ.css">
+<link rel="stylesheet" href="foodlab-theme-repair-phaseK.css">
 <script defer src="foodlab-theme-controls-phaseI.js"></script>
 </head>
 <body class="foodlab-production-page">
-  <button type="button" id="menuBtn" class="menu-btn" aria-label="باز کردن منو">
-    <span></span><span></span><span></span>
-  </button>
-
-  <div id="drawerOverlay" class="drawer-overlay"></div>
-  <aside id="drawer" class="drawer">
-    <div class="drawer-head">
-      <div class="drawer-title">منو</div>
-      <button type="button" id="drawerClose" class="drawer-close" aria-label="بستن منو">×</button>
-    </div>
-
-    <div class="drawer-note">چک‌لیست‌های بازرسی و شخصی به ابزار جداگانه‌ی «چک‌لیست‌ها» منتقل شدن — از صفحه اصلی اپ در دسترسن.</div>
-
-    <button type="button" id="reportOpenBtn" class="admin-open-btn">📝 گزارش کار روزانه</button>
-  </aside>
+  <div class="qc-production-report-access"><button type="button" id="reportOpenBtn" class="admin-open-btn">📝 گزارش کار روزانه</button></div>
 
   <!-- daily work report -->
   <div class="modal-overlay" id="reportOverlay">
@@ -1955,28 +1942,6 @@ function storageSet(key, value) {
   } catch (e) { /* ignore — falls back to in-memory only for this session */ }
 }
 
-// ---- hamburger menu ----
-const menuBtn = document.getElementById('menuBtn');
-const drawer = document.getElementById('drawer');
-const drawerOverlay = document.getElementById('drawerOverlay');
-const drawerClose = document.getElementById('drawerClose');
-
-function openDrawer() {
-  drawer.classList.add('open');
-  drawerOverlay.classList.add('open');
-  menuBtn.classList.add('open');
-}
-function closeDrawer() {
-  drawer.classList.remove('open');
-  drawerOverlay.classList.remove('open');
-  menuBtn.classList.remove('open');
-}
-menuBtn.addEventListener('click', () => {
-  if (drawer.classList.contains('open')) closeDrawer(); else openDrawer();
-});
-drawerClose.addEventListener('click', closeDrawer);
-drawerOverlay.addEventListener('click', closeDrawer);
-
 // ---- daily work report — simple notepad ----
 const reportOverlay = document.getElementById('reportOverlay');
 const reportDateLabel = document.getElementById('reportDateLabel');
@@ -1999,7 +1964,6 @@ function saveReport() {
 }
 
 function openReport() {
-  closeDrawer();
   const { key, jy, jm, jd } = todayReportKey();
   const now = new Date();
   reportDateLabel.textContent = 'گزارش کار — ' + formatJalali([jy, jm, jd]).readable;
