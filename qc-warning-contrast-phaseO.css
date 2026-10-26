@@ -1,0 +1,36 @@
+/* Phase O: contrast correction for the production/expiry SOP warning.
+   Scoped so lab values, alert semantics and A5 print layout remain untouched. */
+body.foodlab-production-page .production-note {
+  background: #fff4dc !important;
+  border: 2px solid #ad782b !important;
+  color: #603e08 !important;
+  font-size: 15px !important;
+  line-height: 1.95 !important;
+  font-weight: 750 !important;
+  padding: 14px 16px !important;
+  border-radius: 14px !important;
+  overflow-wrap: anywhere;
+}
+body.foodlab-production-page .production-note #priceSyncInfo {
+  color: #603e08 !important;
+  font-weight: 750 !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+/* Dark-mode specificity must exceed the legacy !important brown text rule. */
+html[data-theme="dark"] body.foodlab-production-page .production-note {
+  background: #402d10 !important;
+  border-color: #e9b95b !important;
+  color: #fff1c7 !important;
+  box-shadow: none !important;
+}
+html[data-theme="dark"] body.foodlab-production-page .production-note #priceSyncInfo {
+  color: #ffe0a0 !important;
+}
+@media print {
+  body.foodlab-production-page .production-note {
+    background: #fff !important;
+    color: #181818 !important;
+    border-color: #777 !important;
+  }
+}
