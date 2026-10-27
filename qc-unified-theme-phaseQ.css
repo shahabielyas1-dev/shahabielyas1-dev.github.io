@@ -1,0 +1,132 @@
+/* QC Toolbox Phase Q — one semantic color system, screen only.
+   This file is intentionally loaded last. Print geometry and form templates are untouched. */
+@media screen {
+  :root:not([data-theme="dark"]) {
+    color-scheme:light;
+    --fl-bg:#e8f0f3;--fl-bg-soft:#dde9ee;
+    --fl-surface:#f5f9fb;--fl-surface-soft:#eaf2f5;
+    --fl-ink:#152f3d;--fl-muted:#415e6c;--fl-line:#a8bfcb;
+    --fl-primary:#12394a;--fl-teal:#087b87;--fl-teal-deep:#086773;
+    --fl-teal-soft:#d5ebee;--fl-blue-soft:#deebf2;
+    --fl-green-soft:#d9eee4;--fl-amber-soft:#f7e9cb;--fl-red-soft:#f5e0e3;
+    --qc-bg:#e8f0f3;--qc-panel:#f5f9fb;--qc-raised:#eaf2f5;
+    --qc-text:#152f3d;--qc-secondary:#415e6c;--qc-border:#a8bfcb;
+    --qc-action:#086773;--qc-action-text:#ffffff;
+    --qc-warning-bg:#fff0cf;--qc-warning-ink:#644209;--qc-warning-line:#b48b3e;
+  }
+  :root[data-theme="dark"] {
+    color-scheme:dark;
+    --fl-bg:#101b26;--fl-bg-soft:#172735;
+    --fl-surface:#203441;--fl-surface-soft:#2a4351;
+    --fl-ink:#f2f8fa;--fl-muted:#c5d9e2;--fl-line:#567483;
+    --fl-primary:#f2f8fa;--fl-teal:#33bdc7;--fl-teal-deep:#a4e9ed;
+    --fl-teal-soft:#284c57;--fl-blue-soft:#2b455a;
+    --fl-green-soft:#21483c;--fl-amber-soft:#493b27;--fl-red-soft:#4d303b;
+    --qc-bg:#101b26;--qc-panel:#203441;--qc-raised:#2a4351;
+    --qc-text:#f2f8fa;--qc-secondary:#c5d9e2;--qc-border:#567483;
+    --qc-action:#197e90;--qc-action-text:#ffffff;
+    --qc-warning-bg:#42321b;--qc-warning-ink:#ffedc5;--qc-warning-line:#d7ae5b;
+  }
+  html { background:var(--qc-bg); }
+  body:not(.print-preview-page) { background:var(--qc-bg)!important;color:var(--qc-text)!important; }
+  body:not(.print-preview-page) :is(.topbar,.panel,.panel-card,.card,.entry-card,.stat-card,.info-pill,.today-strip,.gate-box,.settings-row,.checklist-card,.fl-lab-hero,.fl-lab-section,.fl-lab-test-grid .test-card,.fl-lab-history-section .history-entry,.history-card,.history-entry,.fl-backup-panel) {
+    background:var(--qc-panel)!important;background-image:none!important;
+    color:var(--qc-text)!important;border-color:var(--qc-border)!important;
+  }
+  body:not(.print-preview-page) :is(.result-card,.fl-lab-result-section,.result-box) {
+    background:var(--fl-teal-soft)!important;background-image:none!important;
+    color:var(--qc-text)!important;border-color:var(--qc-border)!important;
+  }
+  body:not(.print-preview-page) :is(.section-label,.view-title,.page-title,.top-title,.card h2,.panel h2,.panel h3,.fl-lab-section-heading h2,.fl-lab-test-grid .test-name) {color:var(--qc-text)!important;}
+  body:not(.print-preview-page) :is(.subtitle,.sub,.helper,.hint,.help-text,.entry-sub,.stat-sub,.pill-label,.fl-lab-test-grid .test-summary,.fl-lab-section-heading p) {color:var(--qc-secondary)!important;}
+  body:not(.print-preview-page) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+    background:var(--qc-raised)!important;color:var(--qc-text)!important;
+    -webkit-text-fill-color:var(--qc-text)!important;
+    border-color:var(--qc-border)!important;
+  }
+  body:not(.print-preview-page) :is(input,textarea)::placeholder {color:var(--qc-secondary)!important;opacity:1;}
+  body:not(.print-preview-page) :is(input,textarea,select,button,a):focus-visible {outline:3px solid var(--fl-teal-deep)!important;outline-offset:3px;}
+  body:not(.print-preview-page) :is(.ghost,.modal-secondary,.card-arrow,.card-tag,.entry-arrow,.qc-corner-btn,.qc-view-theme) {
+    background:var(--qc-raised)!important;color:var(--qc-text)!important;border-color:var(--qc-border)!important;
+  }
+  body:not(.print-preview-page) :is(.primary,.save-btn,button.primary) {
+    background:var(--qc-action)!important;color:var(--qc-action-text)!important;border-color:var(--qc-action)!important;
+  }
+  body:not(.print-preview-page) :is(th,td) {border-color:var(--qc-border)!important;color:var(--qc-text)!important;}
+  body:not(.print-preview-page) th {background:var(--qc-raised)!important;}
+  body:not(.print-preview-page) :is(.qc-corner-actions,.app-view-bar){color:var(--qc-text)!important;}
+  /* Laboratory: form fields, units, history and numerical result panels. */
+  body .fl-lab-fields .field-input-wrap {background:var(--qc-raised)!important;border-color:var(--qc-border)!important;}
+  body .fl-lab-fields .field-input-wrap:focus-within {background:var(--qc-panel)!important;border-color:var(--fl-teal-deep)!important;}
+  body .fl-lab-fields input {background:transparent!important;color:var(--qc-text)!important;-webkit-text-fill-color:var(--qc-text)!important;border:0!important;}
+  body .fl-lab-result-section .result-sec-item {background:var(--qc-panel)!important;color:var(--qc-text)!important;border-color:var(--qc-border)!important;}
+  body .fl-lab-result-section :is(.result-value,.result-label,.result-sec-value,.result-value .unit) {color:var(--qc-text)!important;-webkit-text-fill-color:var(--qc-text)!important;}
+  body .fl-lab-result-section :is(.result-sec-label,.result-value.pending,.fl-lab-inline-status.pending) {color:var(--qc-secondary)!important;-webkit-text-fill-color:var(--qc-secondary)!important;}
+  body .fl-lab-constant-note {background:var(--qc-raised)!important;color:var(--qc-secondary)!important;border-color:var(--qc-border)!important;}
+  body :is(.fl-lab-sop-note,.fl-lab-footnote,.fl-lab-inline-status.warning) {background:var(--qc-warning-bg)!important;color:var(--qc-warning-ink)!important;border-color:var(--qc-warning-line)!important;}
+  body .fl-lab-sop-note :is(p,strong,span),body .fl-lab-footnote :is(p,strong,span) {color:var(--qc-warning-ink)!important;}
+  body .fl-lab-history-section :is(.history-entry,.history-empty) {background:var(--qc-panel)!important;color:var(--qc-text)!important;border-color:var(--qc-border)!important;}
+  body .fl-lab-history-section .history-time {color:var(--qc-secondary)!important;}
+  /* Export: remove legacy pale-white stat chips and correct primary hero text. */
+  body.foodlab-orders-page .hero-panel {background:#126979!important;color:#fff!important;border-color:#488e9b!important;}
+  body.foodlab-orders-page .hero-panel :is(.hero-greet,.hero-sub) {color:#fff!important;}
+  body.foodlab-orders-page :is(.stat-pill,.quick-card,.order-card,.group,.summary-strip,.history-entry,.settings-row,.panel-card) {
+    background:var(--qc-panel)!important;color:var(--qc-text)!important;border-color:var(--qc-border)!important;
+  }
+  body.foodlab-orders-page :is(.pill-num,.pill-label,.row-title,.row-sub,.group-title,.history-time,.history-lines) {color:var(--qc-text)!important;}
+  body.foodlab-orders-page :is(.pill-chip,.row-chip,.stat-pill .pill-chip) {background:var(--qc-raised)!important;color:var(--qc-text)!important;}
+  /* Production/expiry: original page uses brown legacy variables and hardcoded white surfaces. */
+  body.foodlab-production-page {
+    --bg:var(--qc-bg);--surface:var(--qc-panel);--surface-2:var(--qc-raised);
+    --text:var(--qc-text);--text-soft:var(--qc-secondary);--text-faint:var(--qc-secondary);
+    --border:var(--qc-border);--border-soft:var(--qc-border);
+    --teal:#3caeab;--teal-deep:var(--fl-teal-deep);--teal-bg:var(--fl-teal-soft);
+    --green:var(--fl-teal-deep);--amber:var(--qc-warning-ink);--amber-bg:var(--qc-warning-bg);
+    --border-w:1.5px solid var(--qc-border);--shadow:var(--fl-shadow);--shadow-sm:var(--fl-shadow);
+  }
+  body.foodlab-production-page :is(.controls,.stat-card,.checklist-card,.settings-card,.modal,.drawer,.hero-price-col,.hero-batch,.badge-core,.hero-actions button:not(#prodToday)) {
+    background:var(--qc-panel)!important;color:var(--qc-text)!important;border-color:var(--qc-border)!important;
+  }
+  body.foodlab-production-page .hero {background:#a6ddd8!important;border-color:var(--qc-border)!important;box-shadow:var(--fl-shadow)!important;}
+  body.foodlab-production-page .hero :is(.hero-eyebrow,.hero-headline,.hero-headline.amber,.hero-sub,.date-block-label,.date-block-label.amber,.badge-label) {color:#103b43!important;}
+  body.foodlab-production-page .hero :is(.hero-price-value,.hero-price-label,.hero-price-value .unit,.hero-batch,.badge-core) {color:var(--qc-text)!important;}
+  body.foodlab-production-page .hero-actions button#prodToday {background:#0b5867!important;color:#fff!important;border-color:#0b5867!important;}
+  body.foodlab-production-page :is(.stat-label,.stat-sub,.stat-value .unit,.checklist-progress-text,.field label,.page-subtitle) {color:var(--qc-secondary)!important;}
+  body.foodlab-production-page :is(.stat-value,.check-text,.page-title,.stat-card.amber .stat-value,.stat-card.teal .stat-value) {color:var(--qc-text)!important;}
+  body.foodlab-production-page :is(.status-pill,.stat-icon,.check-box) {background:var(--qc-raised)!important;color:var(--qc-text)!important;border-color:var(--qc-border)!important;}
+  body.foodlab-production-page .production-note {background:var(--qc-warning-bg)!important;color:var(--qc-warning-ink)!important;border-color:var(--qc-warning-line)!important;}
+  body.foodlab-production-page .production-note #priceSyncInfo {color:var(--qc-warning-ink)!important;}
+  body.foodlab-production-page #shelfError {color:var(--qc-warning-ink)!important;}
+  body.foodlab-production-page #officialPrintOpen {background:var(--qc-raised)!important;color:var(--qc-text)!important;}
+  /* Admin and backup: surfaces, status text and switches. */
+  body.foodlab-backup-page main {background:var(--qc-panel)!important;color:var(--qc-text)!important;border:1px solid var(--qc-border)!important;}
+  body.foodlab-backup-page :is(a,small,#status) {color:var(--qc-text)!important;}
+  body.foodlab-backup-page a {background:var(--qc-raised)!important;}
+  body:not(.print-preview-page) :is(.gate-box p,.gate-err,.panel .sub,.price-fields label) {color:var(--qc-secondary)!important;}
+  body:not(.print-preview-page) .slider {border-color:var(--qc-border)!important;background:var(--qc-raised)!important;}
+  /* Preview toolbar and surrounding stage follow theme, but printed paper stays white. */
+  body.print-preview-page {background:var(--qc-bg)!important;color:var(--qc-text)!important;}
+  body.print-preview-page :is(.toolbar,.note,.preview-stage,.preview-holder) {color:var(--qc-text)!important;}
+  body.print-preview-page .paper {background:#fff!important;color:#111!important;color-scheme:light!important;}
+  body.print-preview-page .qc-corner-btn {background:var(--qc-raised)!important;color:var(--qc-text)!important;border-color:var(--qc-border)!important;}
+  :root[data-theme="dark"] body.foodlab-production-page .hero {background:#235966!important;border-color:#5a96a2!important;}
+  :root[data-theme="dark"] body.foodlab-production-page .hero :is(.hero-eyebrow,.hero-headline,.hero-headline.amber,.hero-sub,.date-block-label,.date-block-label.amber,.badge-label) {color:#f2f8fa!important;}
+  :root[data-theme="dark"] body.foodlab-production-page .hero :is(.hero-price-col,.hero-batch,.badge-core,.hero-actions button:not(#prodToday)) {background:#203441!important;color:#f2f8fa!important;border-color:#628794!important;}
+  :root[data-theme="dark"] body.foodlab-production-page .hero :is(.hero-price-value,.hero-price-label,.hero-price-value .unit,.hero-batch,.badge-core) {color:#f2f8fa!important;}
+  :root[data-theme="dark"] body.foodlab-production-page .hero-actions button#prodToday {background:#b8e6e8!important;color:#12333f!important;border-color:#b8e6e8!important;}
+  :root[data-theme="dark"] body.foodlab-production-page .hero-divider {background:#7da5af!important;}
+  :root[data-theme="dark"] body.foodlab-orders-page .hero-panel {background:#174f61!important;border-color:#567f8d!important;}
+  :root[data-theme="dark"] body.foodlab-orders-page .stat-pill {background:#203441!important;color:#f2f8fa!important;}
+  :root[data-theme="dark"] body.foodlab-orders-page .stat-pill :is(.pill-num,.pill-label) {color:#f2f8fa!important;}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.card-arrow,.card-tag,.entry-icon,.fl-tool-icon,.fl-lab-test-grid .test-icon) {background:var(--qc-raised)!important;color:var(--qc-text)!important;}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.announcement,.fl-lab-inline-status.warning) {background:var(--qc-warning-bg)!important;color:var(--qc-warning-ink)!important;border-color:var(--qc-warning-line)!important;}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.card p,.entry-sub,.fl-tool-desc,.fl-stat-label) {color:var(--qc-secondary)!important;}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.fl-lab-inline-status.fail,.gate-err) {color:#ffb8c1!important;}
+  :root[data-theme="dark"] body:not(.print-preview-page) .fl-lab-inline-status.pass {color:#a1f0c6!important;}
+  :root[data-theme="dark"] body:not(.print-preview-page) :is(.danger-ghost,.fl-lab-reset) {background:#4b303a!important;color:#ffcad0!important;border-color:#925e6d!important;}
+  @media(max-width:640px){
+    body.foodlab-orders-page {padding-bottom:35px!important;}
+    body.foodlab-orders-page .frame {padding-bottom:40px!important;}
+  }
+}
+/* Print must retain original white forms and official A4/A5 geometry. */

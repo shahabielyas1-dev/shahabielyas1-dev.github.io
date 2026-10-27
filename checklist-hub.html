@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('qc-theme')==='dark'?'dark':'light')}catch(_){document.documentElement.setAttribute('data-theme','light')}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>چک‌لیست‌ها</title>
@@ -254,6 +255,8 @@
 <link rel="stylesheet" href="qc-approved-brand-phaseL.css">
 <link rel="stylesheet" href="qc-readable-interface-phaseM.css">
 <link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
+<link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
+<link rel="stylesheet" href="qc-operator-ux-phaseS.css">
 </head>
 <body class="foodlab-checklist-page">
 <div class="shell">
@@ -312,7 +315,7 @@
     </div>
 
     <div class="toolbar">
-      <button type="button" class="ghost" id="dailyClearDone">پاک‌کردن انجام‌شده‌ها</button>
+      <button type="button" class="ghost qc-s-danger" id="dailyClearDone">پاک‌کردن انجام‌شده‌ها</button>
       <button type="button" class="danger-ghost" id="dailyNewDay">↺ شروع روز جدید</button>
     </div>
   </div>
@@ -382,11 +385,11 @@
     </div>
     <div class="toolbar">
       <button type="button" class="primary" id="runSaveRecord">📌 ثبت این نوبت بازرسی</button>
-      <button type="button" class="ghost" id="runResetBtn">↺ ریست کردن تیک‌ها</button>
+      <button type="button" class="ghost qc-s-danger" id="runResetBtn">پاک‌کردن تیک‌ها</button>
     </div>
     <div class="card">
       <div class="card-label">سوابق این قالب در این مرورگر</div>
-      <div id="inspectionArchive"><div class="empty-note">هنوز سابقه‌ای ثبت نشده است.</div></div>
+      <details class="qc-s-history"><summary>نمایش سوابق بازرسی</summary><div id="inspectionArchive"><div class="empty-note">هنوز سابقه‌ای ثبت نشده است.</div></div></details>
     </div>
   </div>
 
@@ -568,10 +571,14 @@ document.getElementById('dailyAddBtn').addEventListener('click', addDailyItem);
 document.getElementById('dailyInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDailyItem(); });
 
 document.getElementById('dailyClearDone').addEventListener('click', () => {
-  dailyItems = dailyItems.filter(i => !i.done);
-  saveDaily();
-  renderDaily();
+  if (!dailyItems.some(i => i.done)) return;
+  askConfirm('موارد تکمیل‌شده از چک‌لیست حذف شوند؟', () => {
+    dailyItems = dailyItems.filter(i => !i.done);
+    saveDaily();
+    renderDaily();
+  });
 });
+/* Phase S: protected delete handler */
 document.getElementById('dailyNewDay').addEventListener('click', () => {
   askConfirm('همه‌ی موارد چک‌لیست روزانه پاک بشن؟ این کار قابل بازگشت نیست.', () => {
     dailyItems = [];

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('qc-theme')==='dark'?'dark':'light')}catch(_){document.documentElement.setAttribute('data-theme','light')}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مرکز محاسبه تاریخ تولید و انقضا</title>
@@ -1126,6 +1127,8 @@
 <link rel="stylesheet" href="qc-readable-interface-phaseM.css">
 <link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
 <link rel="stylesheet" href="qc-warning-contrast-phaseO.css">
+<link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
+<link rel="stylesheet" href="qc-operator-ux-phaseS.css">
 </head>
 <body class="foodlab-production-page">
 
@@ -1239,7 +1242,7 @@
       </svg>
       <div class="hero-top">
         <div style="flex:1;min-width:0;">
-          <div class="hero-eyebrow">🔒 <span id="nameDisplay"><span class="placeholder">نام محصول را انتخاب کنید</span></span></div>
+          <div class="hero-eyebrow"> <span id="nameDisplay"><span class="placeholder">نام محصول را انتخاب کنید</span></span></div>
 
           <div class="date-block-label">تاریخ تولید</div>
           <div class="hero-headline" id="prodDate">—</div>
@@ -1274,7 +1277,7 @@
         </div>
       </div>
       <div class="hero-batch" id="batchCode">کد بچ: —</div>
-      <button type="button" id="compareOpenBtn" class="compare-open-btn">🔍 حالت مقایسه با برچسب</button>
+      <details class="qc-s-extra"><summary>مقایسه با برچسب محصول</summary><button type="button" id="compareOpenBtn" class="compare-open-btn">باز کردن مقایسه</button></details>
       <div class="print-actions-row">
         <select id="officialPrintShift" aria-label="شیفت کاری فرم رسمی" style="flex:0 0 102px;min-width:0;background:var(--surface);color:var(--text);border:2px solid var(--border);border-radius:12px;font-family:inherit;font-weight:800;padding:9px;">
           <option value="">شیفت...</option>
@@ -1284,7 +1287,7 @@
         </select>
         <button type="button" id="officialPrintOpen" class="compare-open-btn" style="margin:0;flex:1;background:#fffdf6;color:#18140d;">🖨 فرم رسمی چاپ</button>
       </div>
-      <div class="print-note">خروجی دقیقاً روی قالب Alis-FO-QA15 (سایز A5) قرار می‌گیرد؛ قبل از چاپ، شیفت را تعیین کنید.</div>
+      <div class="print-note">برای چاپ فرم رسمی، شیفت را انتخاب کنید.</div>
       <div class="hero-actions">
         <button type="button" id="prodPrev" title="یک روز عقب">−</button>
         <button type="button" id="prodToday">بازگشت به امروز</button>

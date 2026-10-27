@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('qc-theme')==='dark'?'dark':'light')}catch(_){document.documentElement.setAttribute('data-theme','light')}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>آزمایشگاه محاسبات</title>
@@ -226,6 +227,8 @@
 <link rel="stylesheet" href="qc-approved-brand-phaseL.css">
 <link rel="stylesheet" href="qc-readable-interface-phaseM.css">
 <link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
+<link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
+<link rel="stylesheet" href="qc-operator-ux-phaseS.css">
 </head>
 <body>
 <div class="shell fl-lab-shell">
@@ -233,16 +236,16 @@
     <header class="fl-lab-hero">
       <div class="fl-lab-hero-mark" aria-hidden="true">🧪</div>
       <div class="fl-lab-hero-copy">
-        <span class="fl-lab-eyebrow">FOODLAB · QUALITY CONTROL</span>
+        
         <h1>آزمایشگاه محاسبات</h1>
         <p>محاسبات آزمایشگاهی، با ورودی‌های روشن و نتیجه‌ای قابل بررسی</p>
       </div>
-      <span class="fl-lab-hero-chip"><i></i> محیط محاسبات</span>
+      
     </header>
 
     <div class="fl-lab-section-heading">
       <div>
-        <span class="fl-lab-eyebrow">TEST LIBRARY</span>
+        
         <h2>آزمون‌های آزمایشگاه</h2>
         <p>برای شروع، آزمون موردنظر را انتخاب کن.</p>
       </div>
@@ -259,11 +262,11 @@
     <header class="fl-lab-detail-header">
       <button type="button" class="back-btn" id="backBtn" aria-label="بازگشت به فهرست آزمون‌ها">→</button>
       <div class="fl-lab-detail-heading">
-        <span class="fl-lab-eyebrow">LABORATORY WORKSPACE</span>
+        
         <h1 class="view-title" id="viewTitle">—</h1>
         <p class="test-desc" id="viewDesc">—</p>
       </div>
-      <span class="fl-lab-ready-chip"><i></i> آماده ورود داده</span>
+      
     </header>
 
     <section class="card fl-lab-section fl-lab-input-section">
@@ -277,7 +280,7 @@
 
     <section class="result-card fl-lab-result-section" aria-live="polite">
       <div class="fl-lab-result-head">
-        <div><span class="fl-lab-eyebrow">CALCULATED OUTPUT</span><div class="result-label" id="resultLabel">نتیجه محاسبه</div></div>
+        <div><div class="result-label" id="resultLabel">نتیجه محاسبه</div></div>
         <span class="fl-lab-result-icon" aria-hidden="true">∑</span>
       </div>
       <div class="fl-lab-result-main"><div class="result-value pending" id="resultValue">ورودی‌ها را تکمیل کن</div></div>
@@ -313,7 +316,7 @@
     <div class="toolbar fl-lab-actions" aria-label="اقدامات نتیجه">
       <button type="button" class="primary" id="saveHistoryBtn">ذخیره در تاریخچه</button>
       <button type="button" class="ghost" id="copyResultBtn">کپی نتیجه</button>
-      <button type="button" class="ghost fl-lab-reset" id="resetBtn">پاک‌کردن ورودی‌ها</button>
+      <button type="button" class="ghost fl-lab-reset qc-s-danger" id="resetBtn">پاک‌کردن ورودی‌ها</button>
     </div>
 
     <section class="card fl-lab-section fl-lab-history-section">
@@ -321,7 +324,7 @@
         <span class="fl-lab-step fl-lab-step-muted">03</span>
         <div><h2>تاریخچه این آزمون</h2><p>سوابق محلی همین مرورگر؛ نسخه پشتیبان جداگانه تهیه کن.</p></div>
       </header>
-      <div id="historyList"><div class="history-empty">هنوز نتیجه‌ای ذخیره نشده</div></div>
+      <details class="qc-s-history"><summary>نمایش سوابق ذخیره‌شده</summary><div id="historyList"><div class="history-empty">هنوز نتیجه‌ای ذخیره نشده</div></div></details>
     </section>
   </section>
 </div>
@@ -650,6 +653,7 @@ document.getElementById('saveHistoryBtn').addEventListener('click', () => {
 });
 
 document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!window.confirm('همه ورودی‌های این آزمون پاک شوند؟ نتیجه ذخیره‌نشده از دست می‌رود.')) return;
   activeTest.fields.forEach(f => { document.getElementById('f-' + f.id).value = f.default || ''; });
   document.getElementById('rangeMin').value = '';
   document.getElementById('rangeMax').value = '';

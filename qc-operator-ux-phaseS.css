@@ -1,0 +1,78 @@
+/* Phase S — Industrial operator UX: presentation only; no changes to calculations or print layouts. */
+@media screen {
+  body:not(.print-preview-page) { font-size:16px; line-height:1.65; }
+  body:not(.print-preview-page) :is(button,select,input,textarea,[role="button"],summary) { touch-action:manipulation; }
+  body:not(.print-preview-page) :is(button,select,input:not([type="checkbox"]):not([type="radio"]),textarea) { min-height:52px; font-size:16px!important; }
+  body:not(.print-preview-page) :is(button,[role="button"],summary) { -webkit-tap-highlight-color:transparent; }
+  body:not(.print-preview-page) :is(input,select,textarea,button,summary,[role="button"]):focus-visible { outline:3px solid var(--fl-teal-deep,#087b87)!important; outline-offset:3px!important; }
+  body:not(.print-preview-page) :is(input,select,textarea):disabled { opacity:.6; cursor:not-allowed; }
+  body:not(.print-preview-page) :is(.card,.panel-card,.fl-lab-section,.order-card,.entry-card) { box-shadow:none!important; }
+  .qc-s-danger { color:var(--qc-text)!important; border:1.5px solid var(--qc-warning-line,#b48b3e)!important; background:var(--qc-panel)!important; }
+  .qc-s-history { margin-top:12px; }
+  .qc-s-history>summary,.qc-s-extra>summary { display:flex; align-items:center; justify-content:space-between; min-height:56px; padding:13px 16px; border:1.5px solid var(--qc-border); border-radius:13px; background:var(--qc-raised); color:var(--qc-text); font-size:16px; font-weight:800; cursor:pointer; list-style:none; }
+  .qc-s-history>summary::-webkit-details-marker,.qc-s-extra>summary::-webkit-details-marker {display:none}
+  .qc-s-history>summary:after,.qc-s-extra>summary:after { content:'⌄'; font-size:22px; margin-inline-start:12px; }
+  .qc-s-history[open]>summary:after,.qc-s-extra[open]>summary:after {content:'⌃'}
+  .qc-s-history[open]>summary,.qc-s-extra[open]>summary {margin-bottom:14px}
+  .qc-s-extra {margin-top:14px}
+  .qc-s-extra button {width:100%;margin-top:4px}
+  /* Lab: prioritize inputs -> result -> record; one clearly dominant action. */
+  body .fl-lab-hero { padding-block:16px!important; }
+  body .fl-lab-hero-mark,body .fl-lab-result-icon,body .fl-lab-ready-chip {display:none!important}
+  body .fl-lab-hero-copy h1 {font-size:clamp(23px,5vw,30px)!important}
+  body .fl-lab-section-heading {margin-block:18px 12px!important}
+  body .fl-lab-test-grid .test-card {min-height:94px!important;box-shadow:none!important;align-items:center!important}
+  body .fl-lab-test-grid .test-name {font-size:17px!important}
+  body .fl-lab-test-grid .test-summary {font-size:13px!important}
+  body .fl-lab-fields .field-row label {font-size:15px!important;color:var(--qc-text)!important}
+  body .fl-lab-fields .field-input-wrap input {min-height:54px!important;font-size:19px!important;font-weight:700!important}
+  body .fl-lab-result-section .result-value {font-size:clamp(27px,7vw,39px)!important;line-height:1.4!important;overflow-wrap:anywhere}
+  body .fl-lab-actions {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  body .fl-lab-actions #saveHistoryBtn {grid-column:1/-1;min-height:60px!important;font-size:18px!important}
+  body .fl-lab-actions :is(#copyResultBtn,#resetBtn) {min-height:54px!important;font-size:15px!important}
+  body .fl-lab-footnote {margin-top:20px!important}
+  /* Production: product and dates are the primary task; quiet status decoration. */
+  body.foodlab-production-page .header-row {margin-bottom:16px!important}
+  body.foodlab-production-page .page-title {font-size:clamp(23px,5vw,30px)!important}
+  body.foodlab-production-page .page-subtitle {font-size:14px!important;line-height:1.65}
+  body.foodlab-production-page .controls {gap:12px!important}
+  body.foodlab-production-page .controls .field {flex:1 1 150px!important;min-width:0}
+  body.foodlab-production-page .controls label {font-size:15px!important;font-weight:800!important}
+  body.foodlab-production-page .controls :is(input,select) {font-size:18px!important;min-height:56px!important}
+  body.foodlab-production-page .hero-wave,body.foodlab-production-page .badge-glow {display:none!important}
+  body.foodlab-production-page .hero-headline {font-size:clamp(30px,8vw,45px)!important;letter-spacing:0!important}
+  body.foodlab-production-page .date-block-label {font-size:16px!important}
+  body.foodlab-production-page .hero-actions button {min-height:54px!important;font-size:16px!important}
+  body.foodlab-production-page .print-actions-row {gap:10px!important}
+  body.foodlab-production-page .print-actions-row #officialPrintOpen {font-size:16px!important;min-height:56px!important}
+  /* Checklists: large checkbox targets and clear primary save. */
+  body.foodlab-checklist-page .entry-card {min-height:100px!important;box-shadow:none!important}
+  body.foodlab-checklist-page .entry-title {font-size:19px!important}
+  body.foodlab-checklist-page .entry-sub {font-size:14px!important}
+  body.foodlab-checklist-page :is(.toolbar,.confirm-actions) {gap:10px!important}
+  body.foodlab-checklist-page :is(#runSaveRecord,#editorSaveBtn,#dailyAddBtn,#newTplBtn) {min-height:58px!important;font-size:17px!important}
+  body.foodlab-checklist-page :is(input[type="checkbox"],input[type="radio"]) {width:23px!important;height:23px!important;accent-color:var(--qc-action)}
+  body.foodlab-checklist-page .back-btn {min-width:52px!important;min-height:52px!important}
+  /* Export: eliminate decorative metrics; keep calculations and parameters. */
+  body.foodlab-orders-page .qc-s-decorative-hero {display:none!important}
+  body.foodlab-orders-page .top-title {font-size:clamp(24px,5vw,30px)!important;margin-bottom:18px!important}
+  body.foodlab-orders-page .section-title {font-size:16px!important}
+  body.foodlab-orders-page .order-card {padding:16px!important}
+  body.foodlab-orders-page :is(.field label,.field-label) {font-size:15px!important}
+  body.foodlab-orders-page :is(.f-qty,#perPack,#perPallet) {font-size:19px!important;font-weight:800!important}
+  body.foodlab-orders-page #addRow {width:100%;min-height:58px!important;font-size:18px!important}
+  body.foodlab-orders-page #exportToolbar {display:flex;flex-wrap:wrap;gap:10px}
+  body.foodlab-orders-page #exportToolbar[style*="display:none"] {display:none!important}
+  body.foodlab-orders-page #exportToolbar button {flex:1 1 160px;min-height:54px!important}
+  body.foodlab-orders-page #printReport {flex-basis:100%!important;order:-1;font-size:17px!important;min-height:58px!important}
+  body.foodlab-orders-page #clearAll {cursor:pointer;min-height:64px}
+  @media (max-width:600px) {
+    body .fl-lab-test-grid {grid-template-columns:1fr!important}
+    body .fl-lab-test-grid .test-card {padding:16px!important}
+    body .fl-lab-actions {grid-template-columns:1fr 1fr!important}
+    body.foodlab-production-page .hero-top {gap:12px!important}
+    body.foodlab-orders-page .toolbar button {width:100%}
+    body.foodlab-checklist-page .toolbar {display:grid!important;grid-template-columns:1fr!important}
+  }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after {scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important} }
+}
