@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qc-toolbox-v44';
+const CACHE_NAME = 'qc-toolbox-v45';
 const ASSETS = [
   './index.html',
   './foodlab-theme.css',
@@ -6,6 +6,7 @@ const ASSETS = [
   './qc-industrial-minimal-phaseR.css',
   './qc-operator-ux-phaseS.css',
   './qc-production-mobile-phaseT.css',
+  './qc-error-prevention-phaseU.css',
   './foodlab-design-system.css',
   './foodlab-polish-phaseH.css',
   './foodlab-accessibility-phaseI.css',

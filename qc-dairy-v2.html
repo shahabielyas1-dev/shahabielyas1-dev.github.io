@@ -1130,6 +1130,7 @@
 <link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
 <link rel="stylesheet" href="qc-operator-ux-phaseS.css">
 <link rel="stylesheet" href="qc-production-mobile-phaseT.css">
+<link rel="stylesheet" href="qc-error-prevention-phaseU.css">
 </head>
 <body class="foodlab-production-page">
 
@@ -1788,9 +1789,9 @@ document.getElementById('officialPrintOpen').addEventListener('click', () => {
   const seq=document.getElementById('batchSeq').value.trim();
   const rawMonths=document.getElementById('shelfMonths').value.trim();
   const months=Number(rawMonths);
-  if (!product || !productLetterMap[product]) { alert('ابتدا یک محصول معتبر را انتخاب کنید.'); return; }
-  if (!/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) { alert('شماره بچ باید عددی بین ۱ تا ۶ رقم و بزرگ‌تر از صفر باشد.'); return; }
-  if (!validShelfMonths(rawMonths)) { alert('ماندگاری محصول نامعتبر است.'); return; }
+  if (!product || !productLetterMap[product]) { document.getElementById('productName').focus();alert('ابتدا یک محصول معتبر را انتخاب کنید.'); return; }
+  if (!/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) { document.getElementById('batchSeq').click();alert('شماره بچ باید عددی بین ۱ تا ۶ رقم و بزرگ‌تر از صفر باشد.'); return; }
+  if (!validShelfMonths(rawMonths)) { document.getElementById('shelfMonths').focus();alert('ماندگاری محصول نامعتبر است.'); return; }
   const prices=priceData[product];
   if (!prices || !Number.isSafeInteger(prices.producer) || !Number.isSafeInteger(prices.consumer) || prices.producer<0 || prices.consumer<0) {
     alert('قیمت محصول معتبر نیست؛ قبل از چاپ نرخ‌های مصوب را بررسی کنید.');return;
@@ -1803,7 +1804,7 @@ document.getElementById('officialPrintOpen').addEventListener('click', () => {
     if (!approved) return;
   }
   const shiftEn=document.getElementById('officialPrintShift').value;
-  if(!/^[123]$/.test(shiftEn)){alert('ابتدا شیفت کاری ۱، ۲ یا ۳ را انتخاب کنید.');return;}
+  if(!/^[123]$/.test(shiftEn)){document.getElementById('officialPrintShift').focus();alert('ابتدا شیفت کاری ۱، ۲ یا ۳ را انتخاب کنید.');return;}
   const date=new Date();date.setDate(date.getDate()+dayOffset);
   const [jy,jm,jd]=toJalali(date.getFullYear(),date.getMonth()+1,date.getDate());
   const [ey,em,ed]=addJalaliMonths(jy,jm,jd,months);

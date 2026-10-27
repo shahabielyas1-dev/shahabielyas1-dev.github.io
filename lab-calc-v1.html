@@ -229,6 +229,7 @@
 <link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
 <link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
 <link rel="stylesheet" href="qc-operator-ux-phaseS.css">
+<link rel="stylesheet" href="qc-error-prevention-phaseU.css">
 </head>
 <body>
 <div class="shell fl-lab-shell">
@@ -506,7 +507,7 @@ function openTest(id){
     row.innerHTML = `
       <label for="f-${f.id}">${f.label}</label>
       <div class="field-input-wrap">
-        <input type="number" id="f-${f.id}" inputmode="decimal" step="any" placeholder="—" value="${f.default || ''}">
+        <input type="number" id="f-${f.id}" inputmode="decimal" step="any" min="0" placeholder="—" aria-describedby="err-${f.id}" value="${f.default || ''}"><small class="qc-u-field-error" id="err-${f.id}" role="status"></small>
         <span class="field-unit">${f.unit}</span>
       </div>
     `;
@@ -556,6 +557,20 @@ function currentValues(){
 function computeAndRender(){
   if (!activeTest) return;
   const v = currentValues();
+  // Each required titration value must be a finite, strictly positive number.
+  // Do not invent instrument/SOP-specific upper bounds.
+  let hasBadInput = false;
+  for (const f of activeTest.fields) {
+    const el = document.getElementById('f-' + f.id);
+    const raw = el.value.trim();
+    const bad = raw !== '' && (!Number.isFinite(Number(raw)) || Number(raw) <= 0);
+    el.setAttribute('aria-invalid', String(bad));
+    const error = document.getElementById('err-' + f.id);
+    if (error) error.textContent = bad ? 'عدد باید بزرگ‌تر از صفر باشد.' : '';
+    hasBadInput ||= bad;
+  }
+  const saveBtn = document.getElementById('saveHistoryBtn');
+  const copyBtn = document.getElementById('copyResultBtn');
   const result = activeTest.calc(v);
   const resultValueEl = document.getElementById('resultValue');
   const secondaryEl = document.getElementById('resultSecondary');
@@ -566,8 +581,9 @@ function computeAndRender(){
     resultValueEl.textContent = 'ورودی‌ها را تکمیل کن';
     secondaryEl.style.display = 'none';
     statusEl.className = 'fl-lab-inline-status pending';
-    statusEl.textContent = 'برای محاسبه، همه مقادیر ضروری را وارد کن.';
+    statusEl.textContent = hasBadInput ? 'ورودی نامعتبر مشخص شده است؛ مقدار مثبت وارد کنید.' : 'برای محاسبه، همه مقادیر ضروری را وارد کن.';
     window.__lastResult = null;
+    saveBtn.disabled = true; copyBtn.disabled = true;
     return;
   }
 
@@ -591,6 +607,7 @@ function computeAndRender(){
     statusEl.className = 'fl-lab-inline-status warning';
     statusEl.textContent = '⚠ نتیجه خلوص خارج از محدوده فیزیکی ۰ تا ۱۰۰٪ است؛ رقت، واحدها و داده‌های تیتراسیون را بررسی کن. ذخیره نتیجه غیرفعال است.';
     window.__lastResult = null;
+    saveBtn.disabled = true; copyBtn.disabled = true;
     return;
   }
 
@@ -600,6 +617,7 @@ function computeAndRender(){
     statusEl.className = 'fl-lab-inline-status warning';
     statusEl.textContent = '⚠ حداقل نمی‌تواند بیشتر از حداکثر باشد.';
     window.__lastResult = null;
+    saveBtn.disabled = true; copyBtn.disabled = true;
     return;
   }
   if (Number.isFinite(min) || Number.isFinite(max)) {
@@ -614,6 +632,7 @@ function computeAndRender(){
   }
 
   window.__lastResult = { test: activeTest, values: v, result };
+  saveBtn.disabled = false; copyBtn.disabled = false;
 }
 
 // ============ history actions ============
@@ -636,7 +655,19 @@ document.getElementById('saveHistoryBtn').addEventListener('click', () => {
   if (!window.__lastResult) return;
   const sampleId=document.getElementById('sampleId').value.trim();
   const analyst=document.getElementById('analystName').value.trim();
-  if(!sampleId || !analyst){ alert('برای ذخیره نتیجه، شماره نمونه/بچ و نام آزمایشگر را وارد کن.');return; }
+  if(!sampleId || !analyst){
+    const missing = document.getElementById(!sampleId ? 'sampleId' : 'analystName');
+    missing.setAttribute('aria-invalid','true'); missing.focus();
+    alert('برای ذخیره نتیجه، شماره نمونه/بچ و نام آزمایشگر را وارد کن.');return;
+  }
+  document.getElementById('sampleId').removeAttribute('aria-invalid');
+  document.getElementById('analystName').removeAttribute('aria-invalid');
+  const last=historyStore[activeTest.id].at(-1);
+  if(last && last.sampleId===sampleId && last.analyst===analyst &&
+    JSON.stringify(last.values)===JSON.stringify(window.__lastResult.values) &&
+    Date.now()-last.ts.getTime()<60000){
+    alert('همین نتیجه برای این نمونه در یک دقیقه گذشته ثبت شده است.');return;
+  }
   const rawMin=document.getElementById('rangeMin').value;
   const rawMax=document.getElementById('rangeMax').value;
   const entry={ts:new Date(),sampleId,analyst,values:{...window.__lastResult.values},

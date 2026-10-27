@@ -1,0 +1,8 @@
+/* Phase U — operator error prevention, mobile-safe, dark/light neutral */
+.qc-u-field-error{display:block;min-height:0;color:#ad3428;font-size:13px;font-weight:700;line-height:1.65;margin-top:3px}
+input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="true"]{outline:3px solid #cf493c!important;outline-offset:2px;border-color:#cf493c!important}
+button:disabled{cursor:not-allowed!important;opacity:.48!important;filter:grayscale(.15)}
+:focus-visible{outline:3px solid #148aa0!important;outline-offset:3px}
+@media(max-width:600px){.qc-u-field-error{font-size:14px}input,select,textarea{scroll-margin-top:100px}}
+[data-theme="dark"] .qc-u-field-error{color:#ffaaa0}
+[data-theme="dark"] input[aria-invalid="true"],[data-theme="dark"] select[aria-invalid="true"]{outline-color:#ff8177!important;border-color:#ff8177!important}

@@ -257,6 +257,7 @@
 <link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
 <link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
 <link rel="stylesheet" href="qc-operator-ux-phaseS.css">
+<link rel="stylesheet" href="qc-error-prevention-phaseU.css">
 </head>
 <body class="foodlab-checklist-page">
 <div class="shell">
@@ -827,10 +828,12 @@ document.getElementById('runSaveRecord').addEventListener('click',()=>{
   if(!tpl || !tpl.items.length)return;
   const batch=document.getElementById('inspectionBatch').value.trim();
   const inspector=document.getElementById('inspectionInspector').value.trim();
-  if(!batch||!inspector){alert('نام بازرس و شماره بچ/نمونه الزامی است.');return;}
+  if(!batch||!inspector){const missing=document.getElementById(!batch?'inspectionBatch':'inspectionInspector');missing.setAttribute('aria-invalid','true');missing.focus();alert('نام بازرس و شماره بچ/نمونه الزامی است.');return;}
+  document.getElementById('inspectionBatch').removeAttribute('aria-invalid');
+  document.getElementById('inspectionInspector').removeAttribute('aria-invalid');
   const progress=storageGet(runProgressKey(),{});
   const items=tpl.items.map(i=>({id:i.id,text:i.text,status:currentItemState(progress,i.id)}));
-  if(items.some(i=>i.status==='pending')){alert('تمام موارد باید بررسی شوند؛ وضعیت «بررسی‌نشده» هنوز وجود دارد.');return;}
+  if(items.some(i=>i.status==='pending')){const pending=[...document.querySelectorAll('#runListHost select')].find(el=>el.value==='pending');if(pending){pending.setAttribute('aria-invalid','true');pending.focus();}alert('تمام موارد باید بررسی شوند؛ وضعیت «بررسی‌نشده» هنوز وجود دارد.');return;}
   const snapshot={id:crypto.randomUUID?.()||String(Date.now()),templateId:runningId,
     templateName:tpl.name, timestamp:new Date().toISOString(),batch,inspector,
     notes:document.getElementById('inspectionNotes').value.trim(), items};

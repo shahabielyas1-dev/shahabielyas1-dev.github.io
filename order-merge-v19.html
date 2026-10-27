@@ -304,6 +304,7 @@
 <link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
 <link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
 <link rel="stylesheet" href="qc-operator-ux-phaseS.css">
+<link rel="stylesheet" href="qc-error-prevention-phaseU.css">
 </head>
 <body class="foodlab-orders-page">
 <div class="frame">
@@ -445,17 +446,19 @@ rowsBody.addEventListener('click', (event) => {
   if (deleteButton && rowsBody.contains(deleteButton)) {
     event.preventDefault();
     const card = deleteButton.closest('.order-card');
-    if (card) { card.remove(); reindexRows(); runCalcNow(); }
+    if (card && window.confirm('این سفارش حذف شود؟ اطلاعات واردشده در آن از بین می‌رود.')) { card.remove(); reindexRows(); runCalcNow(); }
     return;
   }
   if (target.matches('.order-card input, .order-card select')) event.stopPropagation();
 });
 rowsBody.addEventListener('input', (event) => {
   const target = event.target;
+  if(target instanceof HTMLInputElement){target.setCustomValidity('');target.removeAttribute('aria-invalid');}
   if (target instanceof HTMLInputElement && target.matches('.order-card input:not([type="checkbox"]):not([type="date"])')) scheduleCalc();
 });
 rowsBody.addEventListener('change', (event) => {
   const target = event.target;
+  if(target instanceof HTMLElement){target.removeAttribute('aria-invalid');if(typeof target.setCustomValidity==='function')target.setCustomValidity('');}
   if (target instanceof Element && target.matches('.order-card select, .order-card input[type="checkbox"], .order-card input[type="date"]')) scheduleCalc();
 });
 const resultsEl = document.getElementById('results');
@@ -608,8 +611,10 @@ function calc(){
   const perPack=Number(packRaw);
   const cards=Array.from(rowsBody.querySelectorAll('.order-card'));
   let invalid='';
+  let invalidControl=null;
   if(!validPositiveInteger(packRaw)) invalid='تعداد بطری در هر بسته باید عدد صحیح مثبت باشد.';
   else if(!validPositiveInteger(palletRaw)) invalid='ظرفیت پیش‌فرض پالت باید عدد صحیح مثبت باشد.';
+  if(invalid) invalidControl=!validPositiveInteger(packRaw)?perPackEl:perPalletEl;
 
   // Read each row's controls once; reuse this snapshot for validation, totals and print data.
   let entries=[];
@@ -641,6 +646,13 @@ function calc(){
       if(!invalid && entry.labSample!=='' && !validNonnegativeInteger(entry.labSample)) invalid='تعداد نمونه آزمایشگاه باید عدد صحیح نامنفی باشد.';
       if(!invalid && Number(entry.qtyRaw)>0 && !Number.isSafeInteger(Number(entry.qtyRaw)*perPack)) invalid='تعداد کل بطری‌ها از ظرفیت دقیق محاسبات بیشتر است.';
       if(!invalid && entry.prodDate && entry.expDate && entry.expDate<entry.prodDate) invalid='تاریخ انقضا نمی‌تواند قبل از تاریخ تولید باشد.';
+      if(invalid && !invalidControl){
+        const card=cards[i];
+        invalidControl= !validNonnegativeInteger(entry.qtyRaw) && entry.qtyRaw!=='' ? card.querySelector('.f-qty') :
+          (Number(entry.qtyRaw)>0 && !entry.product ? card.querySelector('.f-product') :
+          (entry.labSample!=='' && !validNonnegativeInteger(entry.labSample) ? card.querySelector('.f-labsample') :
+          (entry.prodDate && entry.expDate && entry.expDate<entry.prodDate ? card.querySelector('.f-expdate') : card.querySelector('.f-qty'))));
+      }
     }
   }
   if(!invalid && Object.values(perPalletOverrides).some(x=>!Number.isSafeInteger(x)||x<=0))invalid='ظرفیت اختصاصی پالت نامعتبر است.';
@@ -650,6 +662,7 @@ function calc(){
     document.getElementById('exportToolbar').style.display='none';
     document.getElementById('printArea').innerHTML='';
     resultsEl.innerHTML='<div class="empty" role="alert" style="color:#a83e26;">⚠ '+invalid+'</div>';
+    if(invalidControl){invalidControl.setAttribute('aria-invalid','true');invalidControl.setCustomValidity(invalid);}
     return;
   }
 
@@ -1011,8 +1024,8 @@ document.getElementById('saveHistory').addEventListener('click', () => {
 document.getElementById('addRow').addEventListener('click', addEmptyRow);
 document.getElementById('clearAll').addEventListener('click', clearAll);
 document.getElementById('clearAll').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clearAll(); } });
-perPackEl.addEventListener('input', () => { scheduleCalc(); updateParamsPreview(); });
-perPalletEl.addEventListener('input', () => { scheduleCalc(); updateParamsPreview(); });
+perPackEl.addEventListener('input', () => { perPackEl.setCustomValidity('');perPackEl.removeAttribute('aria-invalid');scheduleCalc(); updateParamsPreview(); });
+perPalletEl.addEventListener('input', () => { perPalletEl.setCustomValidity('');perPalletEl.removeAttribute('aria-invalid');scheduleCalc(); updateParamsPreview(); });
 perPackEl.addEventListener('click', e => e.stopPropagation());
 perPalletEl.addEventListener('click', e => e.stopPropagation());
 
