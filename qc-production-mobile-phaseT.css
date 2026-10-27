@@ -1,0 +1,51 @@
+/* Phase T — mobile production date layout; presentation-only patch. */
+@media screen {
+  body.foodlab-production-page .hero-top {display:block!important;}
+  body.foodlab-production-page .hero-top > div:first-child {width:100%!important;min-width:0!important;display:block!important;}
+  /* The status is already communicated in the accessible workflow status bar below. */
+  body.foodlab-production-page .hero-top > .badge-col {display:none!important;}
+  body.foodlab-production-page .hero {padding:18px 16px 20px!important;overflow:hidden;}
+  body.foodlab-production-page .hero-eyebrow {margin-bottom:16px!important;line-height:1.5!important;letter-spacing:0!important;}
+  body.foodlab-production-page .date-block-label {display:block!important;font-size:16px!important;line-height:1.6!important;margin-bottom:5px!important;}
+  body.foodlab-production-page #prodDate,
+  body.foodlab-production-page #expDate {
+    display:block!important;width:100%!important;max-width:100%!important;
+    font-family:'Vazirmatn',sans-serif!important;
+    font-size:clamp(26px,7.3vw,38px)!important;
+    font-weight:900!important;line-height:1.5!important;
+    letter-spacing:0!important;white-space:nowrap!important;
+    overflow-wrap:normal!important;word-break:normal!important;
+    direction:ltr!important;unicode-bidi:isolate!important;text-align:right!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  body.foodlab-production-page .hero-sub {font-size:14px!important;line-height:1.65!important;}
+  body.foodlab-production-page .hero-divider {margin:15px 0!important;}
+  body.foodlab-production-page .hero-price-row {display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;}
+  body.foodlab-production-page .hero-price-col {
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;
+    gap:6px!important;min-width:0!important;padding:12px 14px!important;
+  }
+  body.foodlab-production-page .hero-price-col .date-block-label {
+    font-size:15px!important;line-height:1.5!important;white-space:normal!important;
+  }
+  body.foodlab-production-page .hero-price-value {
+    display:block!important;max-width:100%!important;min-width:0!important;
+    font-family:'Vazirmatn',sans-serif!important;font-size:clamp(17px,5vw,22px)!important;
+    line-height:1.6!important;white-space:nowrap!important;
+    overflow-wrap:normal!important;word-break:normal!important;
+    direction:rtl!important;unicode-bidi:isolate!important;text-align:right!important;
+  }
+  body.foodlab-production-page .hero-price-value .unit {font-size:13px!important;white-space:nowrap!important;}
+  body.foodlab-production-page .hero-batch {max-width:100%!important;overflow-wrap:anywhere!important;}
+  body.foodlab-production-page .print-actions-row {display:grid!important;grid-template-columns:minmax(100px,0.36fr) minmax(0,1fr)!important;gap:10px!important;}
+  body.foodlab-production-page .print-actions-row #officialPrintShift {width:100%!important;min-width:0!important;max-width:100%!important;flex:auto!important;font-size:15px!important;}
+  body.foodlab-production-page .print-actions-row #officialPrintOpen {min-width:0!important;width:100%!important;flex:auto!important;font-size:15px!important;padding:10px 6px!important;}
+  body.foodlab-production-page .hero-actions {grid-template-columns:56px minmax(0,1fr) 56px!important;gap:8px!important;}
+  body.foodlab-production-page .hero-actions button {min-width:0!important;padding:10px 5px!important;}
+  @media(max-width:359px) {
+    body.foodlab-production-page .hero {padding-inline:12px!important;}
+    body.foodlab-production-page #prodDate,body.foodlab-production-page #expDate {font-size:25px!important;}
+    body.foodlab-production-page .hero-price-value {font-size:17px!important;}
+    body.foodlab-production-page .print-actions-row {grid-template-columns:100px minmax(0,1fr)!important;}
+  }
+}
