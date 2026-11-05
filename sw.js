@@ -28,6 +28,7 @@ const ASSETS = [
   './qc-warning-contrast-phaseO.css',
   './qc-dairy-v2.html',
   './alis-print.html',
+  './b-titr-bold.ttf',
   './alis-form-revision5-a5.png',
   './alis-official-template.svg',
   './lab-calc-v1.html',

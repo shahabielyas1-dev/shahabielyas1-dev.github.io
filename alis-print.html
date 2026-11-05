@@ -2,140 +2,174 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فرم رسمی اعلام اطلاعات چاپ آلیس | A5</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>فرم اعلام اطلاعات چاپ آلیس — A5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:light;--preview-scale:1;--preview-width:559px;--preview-height:794px}
+@font-face{font-family:"BTitr";src:url("./b-titr-bold.ttf") format("truetype");font-style:normal;font-weight:700;font-display:swap}
+:root{color-scheme:light;--ink:#171717;--teal:#155e68}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{background:#edf2f5;color:#172b35;font-family:Vazirmatn,Tahoma,Arial,sans-serif}
-.toolbar{width:min(760px,calc(100% - 24px));margin:16px auto;padding:16px 18px;background:#fff;border:1px solid #d8e2e8;border-radius:14px;box-shadow:0 4px 18px #18394a12}
-.toolbar h1{font-size:18px;line-height:1.7;margin:0 0 5px;font-weight:900}
-.toolbar p{font-size:13px;line-height:1.9;margin:4px 0;color:#49616d}
-.summary{display:flex;flex-wrap:wrap;gap:7px 18px;margin:10px 0;padding:10px 12px;background:#f4f8fa;border-radius:9px;font-size:13px;font-weight:700}
-.summary span{white-space:nowrap}
-.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
-button,.back{font:800 14px Vazirmatn,Tahoma,sans-serif;border:0;border-radius:9px;padding:11px 18px;min-height:44px;text-decoration:none;cursor:pointer}
-button{background:#126b78;color:#fff}
-button:disabled{opacity:.45;cursor:not-allowed}
-.back{background:#e8eff3;color:#193b49;display:inline-flex;align-items:center}
-#status{font-size:13px;font-weight:700;color:#315765}
-#status.error{color:#a12d2d}
-.sheet-wrap{width:var(--preview-width);height:var(--preview-height);position:relative;margin:18px auto 32px}
-.sheet{position:absolute;top:0;left:0;width:148mm;height:210mm;transform:scale(var(--preview-scale));transform-origin:top left;background:#fff;overflow:hidden;box-shadow:0 5px 22px #102c3b35;direction:ltr}
-.template{position:absolute;inset:0;width:100%;height:100%;display:block}
-.field{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;color:#050505;overflow:hidden;line-height:1.12;padding:0 1mm;font-family:Vazirmatn,Tahoma,Arial,sans-serif;font-weight:900;direction:rtl;font-variant-numeric:tabular-nums}
-/* Header values */
-#shiftValue{left:3.82%;top:11.76%;width:43.28%;height:3.55%;font-size:11.5pt}
-#todayValue{left:61.01%;top:11.76%;width:13.92%;height:3.55%;font:800 10.5pt Arial,sans-serif;direction:ltr}
-/* Filler printer: production, expiry and batch */
-.stamp{direction:ltr;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2mm;font:800 15pt Arial,sans-serif;white-space:nowrap}
-#productionStamp{left:61.1%;top:19.34%;width:35.5%;height:6.18%}
-#expiryStamp{left:61.1%;top:25.72%;width:35.5%;height:5.85%}
-#batchStamp{left:61.1%;top:31.7%;width:35.5%;height:4.5%;font-size:13.5pt}
-/* Sleeve printer prices: source values are the exact values passed from qc-dairy-v2 */
-.price{left:3.82%;width:57.3%;display:flex;flex-direction:row;direction:rtl;gap:2mm;align-items:center;justify-content:center;font-size:15.5pt;white-space:nowrap}
-#producerPrice{top:19.34%;height:6.18%}
-#consumerPrice{top:25.72%;height:5.85%}
-.price-label{font-family:Vazirmatn,Tahoma,sans-serif;font-weight:900}
-.price-amount{font-family:Arial,Vazirmatn,sans-serif;font-weight:900;direction:ltr;unicode-bidi:isolate}
-/* Product/body-printer information */
-#productLetter{left:33.2%;top:42.65%;width:27.9%;height:4.56%;font:900 14pt Arial,sans-serif;direction:ltr}
-#bottleSize{left:3.82%;top:49.56%;width:43.28%;height:2.68%;font:900 12pt Arial,sans-serif;direction:ltr}
-#productName{left:61.1%;top:49.56%;width:13.92%;height:2.68%;font-size:7.2pt;line-height:1.05;white-space:normal;overflow-wrap:anywhere;padding:0 1px}
-@media(max-width:600px){.toolbar{margin:8px auto;padding:13px}.toolbar h1{font-size:16px}.toolbar p{font-size:12px}.summary{font-size:12px}.sheet-wrap{margin-top:12px}}
+html,body{margin:0;min-height:100%;background:#edf1f3;color:#172a30;font-family:"Vazirmatn",Tahoma,Arial,sans-serif}
+body{padding:14px 10px 28px}
+.editor{width:min(760px,100%);margin:0 auto 16px;padding:16px 18px;background:#fff;border:1px solid #d9e1e5;border-radius:14px;box-shadow:0 5px 20px #18334b12}
+.editor h1{font-size:18px;font-weight:900;margin:0 0 5px}
+.editor .intro{font-size:12px;color:#52636b;line-height:1.9;margin:0 0 10px}
+.summary{display:flex;flex-wrap:wrap;gap:7px 16px;padding:10px 12px;margin:8px 0 12px;background:#f4f7f8;border-radius:10px;font-size:12px;font-weight:700;line-height:1.9}
+.summary span{white-space:normal}
+#status{font-size:12px;line-height:1.8;margin:0 0 10px;color:#285b39;font-weight:700}
+#status.error{color:#a12e27}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+button,.back{min-height:44px;border:0;border-radius:10px;padding:10px 17px;font:800 14px "Vazirmatn",Tahoma,Arial,sans-serif;text-decoration:none;cursor:pointer}
+button{background:#145e69;color:#fff}
+button:disabled{opacity:.42;cursor:not-allowed}
+.back{display:inline-flex;align-items:center;background:#e9eff1;color:#29424a}
+.paperwrap{position:relative;width:var(--pw,148mm);height:var(--ph,210mm);margin:0 auto;background:#fff}
+.paper{position:absolute;left:0;top:0;width:148mm;height:210mm;overflow:hidden;transform:scale(var(--scale,1));transform-origin:top left;background:#fff;direction:ltr}
+.template{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.value{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;color:#080808;line-height:1.08;padding:0 1mm;white-space:nowrap;font-variant-numeric:tabular-nums}
+.persian{direction:rtl;font-family:"Vazirmatn",Tahoma,Arial,sans-serif;font-weight:900}
+.latin{direction:ltr;font-family:Arial,"Vazirmatn",sans-serif;font-weight:800;letter-spacing:.15px}
+#shift{left:3.82%;top:11.55%;width:42.42%;height:3.42%;font-size:12.5pt}
+#reportDate{left:59.68%;top:11.55%;width:13.54%;height:3.42%;font-size:11.5pt}
+#prodDate{left:59.68%;top:18.80%;width:34.70%;height:6.31%;font-size:15.5pt}
+#expDate{left:59.68%;top:25.12%;width:34.70%;height:5.78%;font-size:15.5pt}
+#batch{left:59.68%;top:30.89%;width:34.70%;height:5.30%;font-size:15.5pt}
+.price{left:3.82%;width:55.86%;display:grid;grid-template-columns:max-content max-content 1fr;align-items:center;justify-items:center;direction:rtl;gap:1.5mm;font-family:"BTitr","Vazirmatn",Tahoma,Arial,sans-serif;font-size:17.5pt;font-weight:700}
+.price,.price *{font-family:"BTitr","Vazirmatn",Tahoma,Arial,sans-serif;font-weight:700}
+.price .label{grid-column:1;justify-self:end;direction:rtl;white-space:nowrap}
+.price .r{grid-column:2;justify-self:center;direction:ltr;white-space:nowrap}
+.price .amount{grid-column:3;justify-self:start;direction:ltr;unicode-bidi:isolate;letter-spacing:0;white-space:nowrap}
+#producer{top:18.80%;height:6.31%}
+#consumer{top:25.12%;height:5.78%}
+#letter{left:32.60%;top:41.57%;width:27.07%;height:4.70%;font-size:16.5pt}
+#size{left:3.82%;top:48.22%;width:42.42%;height:2.82%;font-size:14pt}
+#product{left:59.68%;top:48.22%;width:13.54%;height:2.82%;font-size:12.5pt;padding:0 .5mm}
+@media(max-width:600px){body{padding:8px 6px 20px}.editor{padding:13px}.editor h1{font-size:16px}.summary{gap:4px 10px}}
 @page{size:A5 portrait;margin:0}
 @media print{
- html,body{width:148mm!important;height:210mm!important;margin:0!important;padding:0!important;background:#fff!important;overflow:hidden!important}
- .toolbar{display:none!important}
- .sheet-wrap{width:148mm!important;height:210mm!important;margin:0!important}
- .sheet{position:relative!important;left:0!important;top:0!important;transform:none!important;width:148mm!important;height:210mm!important;box-shadow:none!important;overflow:hidden!important}
- .template{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{width:148mm!important;height:210mm!important;min-height:210mm!important;margin:0!important;padding:0!important;background:#fff!important}
+  .editor{display:none!important}
+  .paperwrap{width:148mm!important;height:210mm!important;margin:0!important}
+  .paper{position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important}
+  .template{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
 <body>
-<section class="toolbar" dir="rtl">
-  <h1>فرم رسمی اعلام اطلاعات چاپ — آلیس، بازنگری ۵</h1>
-  <p>تمام مقادیر زیر مستقیماً از محاسبات صفحه تولید و انقضا و قیمت‌های همان نشست برنامه دریافت شده‌اند. هیچ ورود مجددی لازم نیست.</p>
+<section class="editor" dir="rtl">
+  <h1>فرم رسمی اعلام اطلاعات چاپ آلیس</h1>
+  <p class="intro">اطلاعات زیر مستقیماً از محاسبات بخش تولید و انقضا و قیمت‌های همان لحظه برنامه منتقل شده‌اند. هیچ فیلد ورود مجددی در این صفحه وجود ندارد.</p>
   <div class="summary" id="summary" aria-live="polite"></div>
-  <p id="status" role="status"></p>
-  <div class="actions"><button id="printButton" type="button" disabled>چاپ فرم A5</button><a class="back" href="qc-dairy-v2.html">بازگشت به تولید و انقضا</a></div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div class="actions">
+    <button id="print" type="button" disabled>چاپ فرم A5</button>
+    <a class="back" href="qc-dairy-v2.html">بازگشت به تولید و انقضا</a>
+  </div>
 </section>
-<div class="sheet-wrap" id="sheetWrap">
- <main class="sheet" id="sheet" aria-label="فرم رسمی آلیس در اندازه A5">
-  <img class="template" id="template" src="alis-form-revision5-a5.png" alt="قالب رسمی فرم آلیس، بازنگری ۵">
-  <div class="field" id="shiftValue"></div>
-  <div class="field" id="todayValue"></div>
-  <div class="field stamp" id="productionStamp"><span>P:</span><bdi id="productionDate" dir="ltr"></bdi></div>
-  <div class="field stamp" id="expiryStamp"><span>E:</span><bdi id="expiryDate" dir="ltr"></bdi></div>
-  <div class="field stamp" id="batchStamp"><span>BN:</span><bdi id="batchCode" dir="ltr"></bdi></div>
-  <div class="field price" id="producerPrice"><span class="price-label">ق.ت:</span><bdi class="price-amount" id="producerAmount" dir="ltr"></bdi></div>
-  <div class="field price" id="consumerPrice"><span class="price-label">ق.م:</span><bdi class="price-amount" id="consumerAmount" dir="ltr"></bdi></div>
-  <div class="field" id="productLetter"></div>
-  <div class="field" id="bottleSize"></div>
-  <div class="field" id="productName"></div>
-  <!-- بخش تأیید و هر سه محل امضا عمداً بدون نوشته باقی می‌مانند تا دستی تکمیل شوند. -->
- </main>
+<div class="paperwrap" id="wrap">
+  <main class="paper" id="paper">
+    <img class="template" id="template" src="alis-form-revision5-a5.png" alt="فرم رسمی آلیس بازنگری ۵">
+    <!-- Values are positioned against the original 1049 × 1489 A5 company template. -->
+    <div class="value persian" id="shift"></div>
+    <div class="value persian" id="reportDate"></div>
+    <div class="value latin" id="prodDate"></div>
+    <div class="value latin" id="expDate"></div>
+    <div class="value latin" id="batch"></div>
+    <div class="value price" id="producer">
+      <span class="label">ق.ت:</span><span class="r">R:</span><span class="amount"></span>
+    </div>
+    <div class="value price" id="consumer">
+      <span class="label">ق.م:</span><span class="r">R:</span><span class="amount"></span>
+    </div>
+    <div class="value latin" id="letter"></div>
+    <div class="value persian" id="size"></div>
+    <div class="value persian" id="product"></div>
+    <!-- The clock fields, product checks, approval rows and signatures remain blank for manual completion. -->
+  </main>
 </div>
 <script>
 (function(){
- 'use strict';
- const params=new URLSearchParams(window.location.search);
- const $=id=>document.getElementById(id);
- const values={
-  production:params.get('prod')||'', expiry:params.get('exp')||'', batch:params.get('batch')||'',
-  product:params.get('product')||'', size:params.get('size')||'', shift:params.get('shift')||'',
-  letter:params.get('letter')||'', producer:params.get('producer')||'', consumer:params.get('consumer')||''
- };
- const dateOK=v=>/^\d{4}\/\d{2}\/\d{2}$/.test(v)&&Number(v.slice(5,7))>=1&&Number(v.slice(5,7))<=12&&Number(v.slice(8,10))>=1&&Number(v.slice(8,10))<=31;
- const priceOK=v=>/^\d{1,15}$/.test(v)&&Number.isSafeInteger(Number(v))&&Number(v)>=0;
- const valid=dateOK(values.production)&&dateOK(values.expiry)&&/^[A-Z0-9]{6,16}$/.test(values.batch)&&values.product.length>0&&values.product.length<=50&&!/[<>]/.test(values.product)&&/^(200|1000)$/.test(values.size)&&/^[123]$/.test(values.shift)&&/^[A-Z]$/.test(values.letter)&&priceOK(values.producer)&&priceOK(values.consumer);
- const fa=value=>String(value).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
- const money=value=>fa(Number(value).toLocaleString('en-US'));
- function put(id,value){$(id).textContent=value;}
- if(valid){
-  put('shiftValue',fa(values.shift));
-  put('todayValue',values.production);
-  put('productionDate',values.production);
-  put('expiryDate',values.expiry);
-  put('batchCode',values.batch);
-  put('producerAmount','R: '+money(values.producer));
-  put('consumerAmount','R: '+money(values.consumer));
-  put('productLetter',values.letter);
-  put('bottleSize',values.size);
-  put('productName',values.product);
-  $('summary').innerHTML='';
-  const summaryItems=[['محصول',values.product],['تولید',fa(values.production)],['انقضا',fa(values.expiry)],['کد بچ',values.batch],['قیمت تولیدکننده',money(values.producer)+' ریال'],['قیمت مصرف‌کننده',money(values.consumer)+' ریال'],['شیفت',fa(values.shift)]];
-  summaryItems.forEach(([label,value])=>{const span=document.createElement('span');span.textContent=label+' : '+value;$('summary').appendChild(span);});
- }else{
-  $('summary').textContent='اطلاعات دریافتی از صفحه محاسبات ناقص یا نامعتبر است.';
- }
- const image=$('template'),button=$('printButton'),status=$('status');
- function refresh(){
-  const imageReady=image.complete&&image.naturalWidth>0;
-  button.disabled=!(valid&&imageReady);
-  status.className=valid&&imageReady?'':'error';
-  status.textContent=!valid?'اطلاعات فرم معتبر نیست؛ به صفحه تولید و انقضا برگردید و دوباره فرم را باز کنید.':!imageReady?'قالب رسمی فرم بارگذاری نشده است؛ چاپ غیرفعال است.':'آماده چاپ A5 عمودی؛ قیمت‌ها و تاریخ‌ها از محاسبات برنامه منتقل شده‌اند و محل امضاها خالی است.';
- }
- image.addEventListener('load',refresh);image.addEventListener('error',refresh);
- function resizePreview(){
-  const baseWidth=148*96/25.4,baseHeight=210*96/25.4;
-  const scale=Math.min(1,Math.max(.2,(window.innerWidth-20)/baseWidth));
-  document.documentElement.style.setProperty('--preview-scale',String(scale));
-  document.documentElement.style.setProperty('--preview-width',(baseWidth*scale)+'px');
-  document.documentElement.style.setProperty('--preview-height',(baseHeight*scale)+'px');
- }
- window.addEventListener('resize',resizePreview);resizePreview();refresh();
- button.addEventListener('click',async()=>{
-  refresh();if(button.disabled)return;
-  button.disabled=true;
-  try{if(document.fonts&&document.fonts.ready)await document.fonts.ready;}catch(_){ }
-  refresh();if(!button.disabled)window.print();
- });
+  'use strict';
+  const params=new URLSearchParams(location.search);
+  const $=id=>document.getElementById(id);
+  const rules={
+    prod:/^\d{4}\/\d{2}\/\d{2}$/,
+    exp:/^\d{4}\/\d{2}\/\d{2}$/,
+    batch:/^[A-Z0-9]{6,16}$/,
+    producer:/^\d{1,11}$/,
+    consumer:/^\d{1,11}$/,
+    shift:/^[123]$/,
+    letter:/^[A-Z]$/,
+    size:/^(200|1000)$/
+  };
+  const valid=Object.entries(rules).every(([key,rule])=>rule.test(params.get(key)||'')) &&
+    !!params.get('product') && params.get('product').length<=50 && !/[<>]/.test(params.get('product'));
+  const fa=value=>String(value).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+  const fmt=value=>Number(value).toLocaleString('en-US');
+  const set=(id,value)=>{$(id).textContent=value;};
+  const img=$('template'),button=$('print'),status=$('status');
+  let priceFontReady=false;
+  if(document.fonts&&document.fonts.load){document.fonts.load('17.5pt BTitr').then(()=>{priceFontReady=true;checkReady();}).catch(()=>{priceFontReady=false;checkReady();});}
+  if(valid){
+    const prod=params.get('prod'),exp=params.get('exp'),batch=params.get('batch');
+    const product=params.get('product'),shift=params.get('shift'),letter=params.get('letter');
+    const producer=fmt(params.get('producer')),consumer=fmt(params.get('consumer'));
+    set('shift',fa(shift));
+    set('reportDate',fa(prod));
+    set('prodDate','P:'+prod);
+    set('expDate','E:'+exp);
+    set('batch','BN:'+batch);
+    $('producer').querySelector('.amount').textContent=fa(producer);
+    $('consumer').querySelector('.amount').textContent=fa(consumer);
+    set('letter',letter);
+    set('size',fa(params.get('size')));
+    set('product',product);
+    const summary=$('summary');
+    [
+      ['تولید',fa(prod)],['انقضا',fa(exp)],['کد بچ',batch],
+      ['محصول',product],['حجم',fa(params.get('size'))],
+      ['شیفت',fa(shift)],['قیمت تولیدکننده',fa(producer)+' ریال'],
+      ['قیمت مصرف‌کننده',fa(consumer)+' ریال']
+    ].forEach(([label,value])=>{
+      const item=document.createElement('span');
+      item.textContent=label+': '+value;
+      summary.appendChild(item);
+    });
+  }else{
+    status.classList.add('error');
+    status.textContent='اطلاعات محاسبه‌شده ناقص یا نامعتبر است. برای جلوگیری از چاپ اشتباه، فرم غیرفعال شده است؛ از صفحه تولید و انقضا دوباره فرم رسمی را باز کنید.';
+  }
+  function checkReady(){
+    const imageReady=img.complete&&img.naturalWidth>0;
+    const ready=valid&&imageReady&&priceFontReady;
+    button.disabled=!ready;
+    if(valid){
+      status.classList.toggle('error',!imageReady);
+      status.textContent=!imageReady
+        ?'تصویر فرم رسمی بارگذاری نشده است؛ تا بارگذاری صحیح فرم، چاپ غیرفعال است.'
+        :!priceFontReady
+          ?'فونت B Titr هنوز بارگذاری نشده است؛ برای جلوگیری از چاپ با فونت جایگزین، کمی صبر کنید.'
+          :'اطلاعات محاسبه‌شده آماده چاپ است. خانه‌های ساعت، تأیید و امضا مطابق نمونه برای تکمیل دستی خالی مانده‌اند.';
+    }
+  }
+  img.addEventListener('load',checkReady);
+  img.addEventListener('error',checkReady);
+  button.addEventListener('click',()=>{
+    checkReady();
+    if(!button.disabled)window.print();
+  });
+  function scale(){
+    const pageWidth=148*96/25.4;
+    const ratio=Math.min(1,(document.documentElement.clientWidth-16)/pageWidth);
+    document.documentElement.style.setProperty('--scale',ratio);
+    document.documentElement.style.setProperty('--pw',(pageWidth*ratio)+'px');
+    document.documentElement.style.setProperty('--ph',(210*96/25.4*ratio)+'px');
+  }
+  window.addEventListener('resize',scale);
+  scale();
+  checkReady();
 })();
 </script>
 </body>
