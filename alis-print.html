@@ -31,21 +31,22 @@ button:disabled{opacity:.42;cursor:not-allowed}
 .value{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;color:#080808;line-height:1.08;padding:0 1mm;white-space:nowrap;font-variant-numeric:tabular-nums}
 .persian{direction:rtl;font-family:"Vazirmatn",Tahoma,Arial,sans-serif;font-weight:900}
 .latin{direction:ltr;font-family:Arial,"Vazirmatn",sans-serif;font-weight:800;letter-spacing:.15px}
-#shift{left:3.82%;top:11.55%;width:42.42%;height:3.42%;font-size:12.5pt}
-#reportDate{left:59.68%;top:11.55%;width:13.54%;height:3.42%;font-size:11.5pt}
-#prodDate{left:59.68%;top:18.80%;width:34.70%;height:6.31%;font-size:15.5pt}
-#expDate{left:59.68%;top:25.12%;width:34.70%;height:5.78%;font-size:15.5pt}
-#batch{left:59.68%;top:30.89%;width:34.70%;height:5.30%;font-size:15.5pt}
-.price{left:3.82%;width:55.86%;display:grid;grid-template-columns:max-content max-content 1fr;align-items:center;justify-items:center;direction:rtl;gap:1.5mm;font-family:"BTitr","Vazirmatn",Tahoma,Arial,sans-serif;font-size:17.5pt;font-weight:700}
+#shift{left:3.72%;top:11.55%;width:43.37%;height:3.42%;font-size:13.5pt}
+#reportDate{left:61.11%;top:11.55%;width:13.82%;height:3.42%;font-size:12.5pt}
+#prodDate{left:61.01%;top:19.34%;width:35.65%;height:6.18%;font-size:16.5pt}
+#expDate{left:61.01%;top:25.72%;width:35.65%;height:5.85%;font-size:16.5pt}
+#batch{left:61.01%;top:31.70%;width:35.65%;height:5.44%;font-size:16.5pt}
+.price{left:3.72%;width:57.30%;display:grid;grid-template-columns:max-content max-content 1fr;align-items:center;justify-items:center;direction:rtl;gap:1mm;font-family:"BTitr","Vazirmatn",Tahoma,Arial,sans-serif;font-size:18.5pt;font-weight:700}
 .price,.price *{font-family:"BTitr","Vazirmatn",Tahoma,Arial,sans-serif;font-weight:700}
 .price .label{grid-column:1;justify-self:end;direction:rtl;white-space:nowrap}
 .price .r{grid-column:2;justify-self:center;direction:ltr;white-space:nowrap}
 .price .amount{grid-column:3;justify-self:start;direction:ltr;unicode-bidi:isolate;letter-spacing:0;white-space:nowrap}
-#producer{top:18.80%;height:6.31%}
-#consumer{top:25.12%;height:5.78%}
-#letter{left:32.60%;top:41.57%;width:27.07%;height:4.70%;font-size:16.5pt}
-#size{left:3.82%;top:48.22%;width:42.42%;height:2.82%;font-size:14pt}
-#product{left:59.68%;top:48.22%;width:13.54%;height:2.82%;font-size:12.5pt;padding:0 .5mm}
+.price .r{font-family:Arial,Helvetica,sans-serif!important;font-weight:800;direction:ltr;unicode-bidi:isolate;letter-spacing:0}
+#producer{top:19.34%;height:6.18%}
+#consumer{top:25.72%;height:5.85%}
+#letter{left:33.75%;top:42.58%;width:27.26%;height:4.63%;font-size:17.5pt}
+#size{left:3.72%;top:52.45%;width:43.37%;height:2.42%;font-size:15.5pt}
+#product{left:74.93%;top:52.45%;width:21.73%;height:2.42%;font-size:13.5pt;padding:0 .5mm}
 @media(max-width:600px){body{padding:8px 6px 20px}.editor{padding:13px}.editor h1{font-size:16px}.summary{gap:4px 10px}}
 @page{size:A5 portrait;margin:0}
 @media print{
@@ -111,7 +112,7 @@ button:disabled{opacity:.42;cursor:not-allowed}
   const set=(id,value)=>{$(id).textContent=value;};
   const img=$('template'),button=$('print'),status=$('status');
   let priceFontReady=false;
-  if(document.fonts&&document.fonts.load){document.fonts.load('17.5pt BTitr').then(()=>{priceFontReady=true;checkReady();}).catch(()=>{priceFontReady=false;checkReady();});}
+  if(document.fonts&&document.fonts.load){document.fonts.load('18.5pt BTitr').then(()=>{priceFontReady=true;fitVariableFields();checkReady();}).catch(()=>{priceFontReady=false;checkReady();});}
   if(valid){
     const prod=params.get('prod'),exp=params.get('exp'),batch=params.get('batch');
     const product=params.get('product'),shift=params.get('shift'),letter=params.get('letter');
@@ -154,6 +155,18 @@ button:disabled{opacity:.42;cursor:not-allowed}
           :'اطلاعات محاسبه‌شده آماده چاپ است. خانه‌های ساعت، تأیید و امضا مطابق نمونه برای تکمیل دستی خالی مانده‌اند.';
     }
   }
+  function fitText(id,minPt,maxPt){
+    const el=$(id); if(!el)return;
+    let size=maxPt; el.style.fontSize=size+'pt';
+    while(el.scrollWidth>el.clientWidth+1 && size>minPt){
+      size-=0.25; el.style.fontSize=size+'pt';
+    }
+  }
+  function fitVariableFields(){
+    fitText('product',11.5,13.5);
+    fitText('producer',16.5,18.5);
+    fitText('consumer',16.5,18.5);
+  }
   img.addEventListener('load',checkReady);
   img.addEventListener('error',checkReady);
   button.addEventListener('click',()=>{
@@ -166,9 +179,11 @@ button:disabled{opacity:.42;cursor:not-allowed}
     document.documentElement.style.setProperty('--scale',ratio);
     document.documentElement.style.setProperty('--pw',(pageWidth*ratio)+'px');
     document.documentElement.style.setProperty('--ph',(210*96/25.4*ratio)+'px');
+    fitVariableFields();
   }
   window.addEventListener('resize',scale);
   scale();
+  fitVariableFields();
   checkReady();
 })();
 </script>
