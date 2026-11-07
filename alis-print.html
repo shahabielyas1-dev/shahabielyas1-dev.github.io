@@ -56,6 +56,107 @@ button:disabled{opacity:.42;cursor:not-allowed}
   .paper{position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important}
   .template{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* QC Print Designer — CSS overrides */
+#shift {
+  left: 3.721%;
+  top: 11.889%;
+  width: 43.423%;
+  height: 3.415%;
+  font-size: 11.50pt;
+  font-weight: 900;
+  text-align: center;
+  color: #080808;
+}
+#reportDate {
+  left: 61.187%;
+  top: 11.889%;
+  width: 13.834%;
+  height: 3.415%;
+  font-size: 8.00pt;
+  font-weight: 900;
+  text-align: center;
+  color: #080808;
+}
+#prodDate {
+  left: 61.088%;
+  top: 19.184%;
+  width: 35.692%;
+  height: 6.175%;
+  font-size: 17.00pt;
+  font-weight: 800;
+  text-align: center;
+  color: #080808;
+}
+#expDate {
+  left: 61.088%;
+  top: 25.378%;
+  width: 35.692%;
+  height: 6.175%;
+  font-size: 17.00pt;
+  font-weight: 800;
+  text-align: center;
+  color: #080808;
+}
+#batch {
+  left: 61.088%;
+  top: 31.534%;
+  width: 35.692%;
+  height: 5.302%;
+  font-size: 17.00pt;
+  font-weight: 800;
+  text-align: center;
+  color: #080808;
+}
+#producer {
+  left: 1.933%;
+  top: 19.324%;
+  width: 45.924%;
+  height: 6.301%;
+  font-size: 18.00pt;
+  font-weight: 700;
+  text-align: center;
+  color: #080808;
+}
+#consumer {
+  left: 2.111%;
+  top: 25.699%;
+  width: 44.493%;
+  height: 5.968%;
+  font-size: 18.00pt;
+  font-weight: 700;
+  text-align: center;
+  color: #080808;
+}
+#letter {
+  left: 33.792%;
+  top: 42.546%;
+  width: 27.296%;
+  height: 4.622%;
+  font-size: 15.50pt;
+  font-weight: 800;
+  text-align: center;
+  color: #080808;
+}
+#size {
+  left: 3.992%;
+  top: 49.702%;
+  width: 42.379%;
+  height: 2.683%;
+  font-size: 12.00pt;
+  font-weight: 900;
+  text-align: center;
+  color: #080808;
+}
+#product {
+  left: 61.363%;
+  top: 49.576%;
+  width: 13.551%;
+  height: 2.683%;
+  font-size: 9.75pt;
+  font-weight: 900;
+  text-align: center;
+  color: #080808;
+}
 </style>
 </head>
 <body>
@@ -167,9 +268,17 @@ button:disabled{opacity:.42;cursor:not-allowed}
   }
   function fitText(id,minPt,maxPt){
     const el=$(id); if(!el)return;
-    let size=maxPt; el.style.fontSize=size+'pt';
-    while(el.scrollWidth>el.clientWidth+1 && size>minPt){
-      size-=0.25; el.style.fontSize=size+'pt';
+    // Respect the font size selected in CSS / QC Print Designer.
+    // Keep that chosen size as the ceiling; shrink only when the text truly overflows.
+    const cssPt=parseFloat(getComputedStyle(el).fontSize)*72/96;
+    const savedPt=parseFloat(el.dataset.baseFontPt);
+    const chosenPt=Number.isFinite(savedPt)?savedPt:cssPt;
+    const ceiling=id==='product' && Number.isFinite(chosenPt) ? chosenPt : maxPt;
+    const floor=Math.min(minPt,ceiling);
+    el.dataset.baseFontPt=String(ceiling);
+    let size=ceiling; el.style.fontSize=size+'pt';
+    while(el.scrollWidth>el.clientWidth+1 && size>floor){
+      size=Math.max(floor,size-0.25); el.style.fontSize=size+'pt';
     }
   }
   function fitVariableFields(){
