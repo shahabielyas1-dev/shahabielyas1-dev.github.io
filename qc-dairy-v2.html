@@ -1212,22 +1212,11 @@
         <label for="productName">نام محصول</label>
         <select id="productName">
           <option value="" selected>— انتخاب کنید —</option>
-          <option value="شیر پرچرب ۲۰۰">شیر پرچرب ۲۰۰</option>
-          <option value="شیر کم‌چرب ۲۰۰">شیر کم‌چرب ۲۰۰</option>
-          <option value="شیر موز ۲۰۰">شیر موز ۲۰۰</option>
-          <option value="شیر کاکائو ۲۰۰">شیر کاکائو ۲۰۰</option>
-          <option value="شیر قهوه ۲۰۰">شیر قهوه ۲۰۰</option>
-          <option value="شیر نارگیل ۲۰۰">شیر نارگیل ۲۰۰</option>
-          <option value="شیر پرچرب ۱۰۰۰">شیر پرچرب ۱۰۰۰</option>
-          <option value="شیر کم‌چرب ۱۰۰۰">شیر کم‌چرب ۱۰۰۰</option>
-          <option value="شیر موز ۱۰۰۰">شیر موز ۱۰۰۰</option>
-          <option value="شیر کاکائو ۱۰۰۰">شیر کاکائو ۱۰۰۰</option>
-          <option value="شیر نارگیل ۱۰۰۰">شیر نارگیل ۱۰۰۰</option>
         </select>
       </div>
       <div class="field" style="flex:.6;">
         <label for="shelfMonths">ماندگاری</label>
-        <input id="shelfMonths" type="number" min="1" max="36" step="1" value="6">
+        <input id="shelfMonths" type="number" min="1" max="36" step="1" value="" placeholder="از کاتالوگ محصول" readonly aria-readonly="true">
       </div>
       <div class="field" style="flex:.7;">
         <label for="batchSeq">شماره بچ</label>
@@ -1309,6 +1298,7 @@
 
   </div>
 
+<script src="qc-product-catalog.js"></script>
 <script>
 // ============ haptic feedback on every tap ============
 document.addEventListener('click', () => {
@@ -1428,7 +1418,58 @@ function toPersianDigits(str) {
 
 const monthNames = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
 
-// producer/consumer prices per product (rial). Add more as they're provided.
+// Product catalog is centrally managed in dashboard.html and synced from Supabase.
+let productCatalog = QCProductCatalog.normalizeCatalog(null);
+try {
+  const cachedCatalog = localStorage.getItem('qc-product-catalog');
+  if (cachedCatalog) productCatalog = QCProductCatalog.normalizeCatalog(JSON.parse(cachedCatalog));
+} catch (e) { /* retain safe built-in catalog */ }
+let productLetterMap = {};
+function getProductById(id) {
+  return productCatalog.find(product => product.id === id) || null;
+}
+function getProductPrices(product) {
+  if (!product || !product.pricingEnabled) return null;
+  return priceData[product.priceKey] || null;
+}
+function isProductPriceVerified(product) {
+  return !!product && !!product.pricingEnabled && verifiedPriceKeysThisSession.has(product.priceKey);
+}
+function refreshProductLetterMap() {
+  productLetterMap = {};
+  productCatalog.forEach(product => { if (product.batchLetter) productLetterMap[product.id] = product.batchLetter; });
+}
+function renderProductOptions() {
+  const select = document.getElementById('productName');
+  if (!select) return;
+  const previous = select.value;
+  select.replaceChildren(new Option('— انتخاب کنید —', ''));
+  [
+    { type: 'standard', label: 'محصولات عادی' },
+    { type: 'restaurant', label: 'محصولات ویژه رستوران — اسلیو' }
+  ].forEach(groupInfo => {
+    const items = productCatalog.filter(product => product.productionType === groupInfo.type);
+    if (!items.length) return;
+    const group = document.createElement('optgroup');
+    group.label = groupInfo.label;
+    items.forEach(product => {
+      const option = document.createElement('option');
+      option.value = product.id;
+      option.textContent = QCProductCatalog.canUse(product)
+        ? product.displayName
+        : product.displayName + ' — ' + QCProductCatalog.statusText(product);
+      option.disabled = !QCProductCatalog.canUse(product);
+      group.appendChild(option);
+    });
+    select.appendChild(group);
+  });
+  const canRestore = Array.from(select.options).some(option => option.value === previous && !option.disabled);
+  select.value = canRestore ? previous : '';
+}
+refreshProductLetterMap();
+renderProductOptions();
+
+// Producer/consumer prices are keyed by legacy product name or by dynamic product ID.
 const priceData = {
   'شیر پرچرب ۲۰۰': { producer: 330850, consumer: 437500 },
   'شیر کم‌چرب ۲۰۰': { producer: 317600, consumer: 420000 },
@@ -1442,41 +1483,48 @@ const priceData = {
   'شیر نارگیل ۱۰۰۰': { producer: 1455700, consumer: 1925000 },
   'شیر موز ۱۰۰۰': { producer: 1389600, consumer: 1837500 },
 };
-
-// Manager-updated prices use exact numeric validation and carry a source timestamp.
-const factoryPriceDefaults=JSON.parse(JSON.stringify(priceData));
-function applyValidatedPriceOverrides(overrides){
-  Object.keys(factoryPriceDefaults).forEach(name=>{priceData[name]={...factoryPriceDefaults[name]};});
-  if(!overrides || typeof overrides!=='object'||Array.isArray(overrides))return;
-  Object.entries(overrides).forEach(([name,fields])=>{
-    if(!priceData[name]||!fields||typeof fields!=='object')return;
-    ['producer','consumer'].forEach(field=>{
-      const v=fields[field];
-      if(typeof v==='number'&&Number.isSafeInteger(v)&&v>=0) priceData[name][field]=v;
-    });
+const factoryPriceDefaults = JSON.parse(JSON.stringify(priceData));
+function applyValidatedPriceOverrides(overrides) {
+  Object.keys(priceData).forEach(key => delete priceData[key]);
+  Object.assign(priceData, JSON.parse(JSON.stringify(factoryPriceDefaults)));
+  if (!overrides || typeof overrides !== 'object' || Array.isArray(overrides)) return;
+  const allowedKeys = new Set(productCatalog.filter(product => product.pricingEnabled).map(product => product.priceKey));
+  Object.entries(overrides).forEach(([key, fields]) => {
+    if (!allowedKeys.has(key) || !fields || typeof fields !== 'object' || Array.isArray(fields)) return;
+    const producer = fields.producer, consumer = fields.consumer;
+    // Both prices are accepted together or neither; partial price records are ignored.
+    if (typeof producer === 'number' && Number.isSafeInteger(producer) && producer >= 0
+      && typeof consumer === 'number' && Number.isSafeInteger(consumer) && consumer >= 0) {
+      priceData[key] = { producer, consumer };
+    }
   });
 }
-function markPriceSource(text){
-  const el=document.getElementById('priceSyncInfo');if(el)el.textContent=text;
+function markPriceSource(text) {
+  const el = document.getElementById('priceSyncInfo'); if (el) el.textContent = text;
 }
-// manager-updated prices (persisted locally) override the defaults above
-(function applyPriceOverrides() {
+
+// Restore the last synced catalog and prices for offline continuity.
+(function applyCachedSettings() {
   try {
-    const raw = localStorage.getItem('qc-price-overrides');
-    if (!raw) return;
-    const overrides = JSON.parse(raw);
-    applyValidatedPriceOverrides(overrides);
-    const last=localStorage.getItem('qc-price-synced-at');
-    markPriceSource('قیمت‌ها: نسخه ذخیره‌شده '+(last?'· آخرین همگام‌سازی '+new Date(last).toLocaleString('fa-IR'):'· تاریخ نامشخص')+' · تأیید آنلاین نشده');
+    const rawCatalog = localStorage.getItem('qc-product-catalog');
+    if (rawCatalog) {
+      productCatalog = QCProductCatalog.normalizeCatalog(JSON.parse(rawCatalog));
+      refreshProductLetterMap();
+      renderProductOptions();
+    }
+    const rawPrices = localStorage.getItem('qc-price-overrides');
+    if (rawPrices) {
+      applyValidatedPriceOverrides(JSON.parse(rawPrices));
+      const last = localStorage.getItem('qc-price-synced-at');
+      markPriceSource('قیمت‌ها: نسخه ذخیره‌شده ' + (last ? '· آخرین همگام‌سازی ' + new Date(last).toLocaleString('fa-IR') : '· تاریخ نامشخص') + ' · تأیید آنلاین نشده');
+    }
   } catch (e) { markPriceSource('قیمت‌ها: مقادیر داخلی (تأیید آنلاین نشده)'); }
 })();
 
-// ---- cloud sync (Supabase): pulls manager-updated prices + announcements
-// shared across every device, cached to localStorage as an offline fallback ----
+// ---- cloud sync: catalog + price records remain separate keys in qc_settings ----
 const SUPABASE_URL = 'https://ubrydkyqmradyuiinjla.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVicnlka3lxbXJhZHl1aWluamxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMzcyNTgsImV4cCI6MjEwMTgxMzI1OH0.R7LF4uH7HGjqtkQEWs6zAdD2WgI9d2HRwMWXd1Xo2hc';
-let pricesVerifiedOnlineThisSession = false;
-let pricesVerifiedAt = null;
+let verifiedPriceKeysThisSession = new Set();
 let supabaseClient = null;
 let supabaseSdkPromise = null;
 const SUPABASE_SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
@@ -1490,10 +1538,7 @@ function loadSupabaseSdk() {
       script.onload = () => window.supabase?.createClient ? resolve(window.supabase) : reject(new Error('Supabase SDK unavailable'));
       script.onerror = () => reject(new Error('Supabase SDK failed to load'));
       document.head.appendChild(script);
-    }).catch(error => {
-      supabaseSdkPromise = null;
-      throw error;
-    });
+    }).catch(error => { supabaseSdkPromise = null; throw error; });
   }
   return supabaseSdkPromise;
 }
@@ -1502,50 +1547,58 @@ async function syncFromCloud() {
   try {
     if (!window.supabase?.createClient) await loadSupabaseSdk();
     if (!supabaseClient) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data, error } = await supabaseClient
-      .from('qc_settings')
-      .select('key,value')
-      .eq('key', 'prices');
-    if(error || !data){pricesVerifiedOnlineThisSession=false;markPriceSource('قیمت‌ها: آخرین نسخه محلی؛ دریافت از سرور ناموفق بود');return;}
-    const priceRow = data.find((r) => r.key === 'prices');
-    if (priceRow && priceRow.value && typeof priceRow.value === 'object') {
+    const { data, error } = await supabaseClient.from('qc_settings').select('key,value').in('key', ['prices','product_catalog']);
+    if (error || !data) throw error || new Error('Cloud settings unavailable');
+
+    const catalogRow = data.find(row => row.key === 'product_catalog');
+    if (catalogRow && catalogRow.value) {
+      productCatalog = QCProductCatalog.normalizeCatalog(catalogRow.value);
+      refreshProductLetterMap();
+      renderProductOptions();
+      try { localStorage.setItem('qc-product-catalog', JSON.stringify(catalogRow.value)); } catch (e) { /* storage optional */ }
+    }
+
+    const priceRow = data.find(row => row.key === 'prices');
+    if (priceRow && priceRow.value && typeof priceRow.value === 'object' && !Array.isArray(priceRow.value)) {
       applyValidatedPriceOverrides(priceRow.value);
-      const syncedAt=new Date().toISOString();
-      localStorage.setItem('qc-price-overrides', JSON.stringify(priceRow.value));
-      localStorage.setItem('qc-price-synced-at',syncedAt);
-      pricesVerifiedOnlineThisSession=true;
-      pricesVerifiedAt=syncedAt;
-      markPriceSource('قیمت‌ها: دریافت از سرور · '+new Date(syncedAt).toLocaleString('fa-IR'));
-      if (typeof render === 'function') render();
-    }else {pricesVerifiedOnlineThisSession=false;markPriceSource('قیمت‌ها: مرجع داخلی؛ هنوز قیمت سرور ثبت نشده');}
-  } catch (e) { pricesVerifiedOnlineThisSession=false;markPriceSource('قیمت‌ها: آخرین نسخه محلی؛ اتصال اینترنت در دسترس نیست'); }
+      const syncedAt = new Date().toISOString();
+      try {
+        localStorage.setItem('qc-price-overrides', JSON.stringify(priceRow.value));
+        localStorage.setItem('qc-price-synced-at', syncedAt);
+      } catch (e) { /* storage optional */ }
+      verifiedPriceKeysThisSession = new Set(Object.entries(priceRow.value).filter(([key, fields]) => {
+        return productCatalog.some(product => product.pricingEnabled && product.priceKey === key)
+          && fields && typeof fields === 'object' && !Array.isArray(fields)
+          && typeof fields.producer === 'number' && Number.isSafeInteger(fields.producer) && fields.producer >= 0
+          && typeof fields.consumer === 'number' && Number.isSafeInteger(fields.consumer) && fields.consumer >= 0;
+      }).map(([key]) => key));
+      markPriceSource('قیمت‌ها: دریافت از سرور · ' + new Date(syncedAt).toLocaleString('fa-IR'));
+    } else {
+      verifiedPriceKeysThisSession = new Set();
+      markPriceSource('قیمت‌ها: مرجع داخلی؛ هنوز قیمت سرور ثبت نشده');
+    }
+    if (typeof render === 'function') render();
+  } catch (e) {
+    verifiedPriceKeysThisSession = new Set();
+    markPriceSource('قیمت‌ها: آخرین نسخه محلی؛ اتصال اینترنت در دسترس نیست');
+    if (typeof render === 'function') render();
+  }
 }
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', syncFromCloud);
-} else {
-  syncFromCloud();
-}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncFromCloud);
+else syncFromCloud();
 
 // digit -> letter cipher used in batch codes: 1=A .. 9=I, 0=Z
 const digitToLetter = ['Z','A','B','C','D','E','F','G','H','I'];
 
-// product letter used in batch codes.
-const productLetterMap = {
-  'شیر پرچرب ۲۰۰': 'D',
-  'شیر پرچرب ۱۰۰۰': 'D',
-  'شیر کم‌چرب ۲۰۰': 'E',
-  'شیر کم‌چرب ۱۰۰۰': 'E',
-  'شیر کاکائو ۲۰۰': 'F',
-  'شیر کاکائو ۱۰۰۰': 'F',
-  'شیر قهوه ۲۰۰': 'G',
-  'شیر نارگیل ۲۰۰': 'I',
-  'شیر نارگیل ۱۰۰۰': 'I',
-  'شیر موز ۲۰۰': 'J',
-  'شیر موز ۱۰۰۰': 'J',
-};
-
 function formatRial(n) {
   return toPersianDigits(n.toLocaleString('en-US'));
+}
+function setPriceDisplay(element, value) {
+  element.replaceChildren(document.createTextNode(formatRial(value)));
+  const unit = document.createElement('span');
+  unit.className = 'unit';
+  unit.textContent = 'ریال';
+  element.appendChild(unit);
 }
 
 function formatJalali([jy, jm, jd]) {
@@ -1559,14 +1612,14 @@ function formatJalaliEn([jy, jm, jd]) {
   return String(jy) + '/' + String(jm).padStart(2,'0') + '/' + String(jd).padStart(2,'0');
 }
 
-function generateBatchCode(jy, jm, jd, productName, seq) {
+function generateBatchCode(jy, jm, jd, productId, seq) {
   if (!validJalaliDate(jy, jm, jd)) return null;
   const yearDigit = String(jy).slice(-1);
   const monthTens = Math.floor(jm / 10);
   const monthUnits = jm % 10;
   const monthCode = digitToLetter[monthTens] + digitToLetter[monthUnits];
   const dayCode = String(jd).padStart(2, '0');
-  const productLetter = productLetterMap[productName] || null;
+  const productLetter = productLetterMap[productId] || null;
   if (!productLetter || !/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) return null;
   return (yearDigit + monthCode + dayCode + productLetter + seq).toUpperCase();
 }
@@ -1580,40 +1633,39 @@ function updateWorkflowStatus() {
   const activityText = document.getElementById('workflowStatusText');
   if (!statusEl || !statusIconEl || !statusLabelEl || !activityBar || !activityIcon || !activityText) return;
 
-  const product = document.getElementById('productName').value.trim();
-  const rawMonths = document.getElementById('shelfMonths').value.trim();
+  const product = getProductById(document.getElementById('productName').value.trim());
   const seq = document.getElementById('batchSeq').value.trim();
-  const monthsValid = validShelfMonths(rawMonths);
-  const prices = product ? priceData[product] : null;
-  const pricesValid = !!prices && Number.isSafeInteger(prices.producer) && Number.isSafeInteger(prices.consumer) && prices.producer >= 0 && prices.consumer >= 0;
+  const prices = getProductPrices(product);
+  const pricesValid = !!prices && Number.isSafeInteger(prices.producer) && Number.isSafeInteger(prices.consumer)
+    && prices.producer >= 0 && prices.consumer >= 0;
 
-  let state = 'waiting';
-  let glyph = '—';
-  let label = 'انتخاب محصول';
-  let activityGlyph = 'i';
-  let message = 'ابتدا محصول را انتخاب کنید تا قیمت و کد بچ نمایش داده شود.';
-
-  if (!monthsValid) {
-    state = 'invalid'; glyph = '!'; label = 'ماندگاری نامعتبر'; activityGlyph = '!';
-    message = 'ماندگاری باید عدد صحیح بین ۱ تا ۳۶ ماه باشد؛ تاریخ معتبر نیست.';
-  } else if (!product) {
-    state = 'waiting'; glyph = '—'; label = 'انتخاب محصول'; activityGlyph = 'i';
-    message = 'ابتدا محصول را انتخاب کنید تا قیمت و کد بچ نمایش داده شود.';
-  } else if (!productLetterMap[product]) {
-    state = 'warning'; glyph = '!'; label = 'کد بچ تعریف نشده'; activityGlyph = '!';
-    message = 'برای این محصول حرف اختصاصی کد بچ تعریف نشده است؛ پیش از استفاده با مدیر سیستم هماهنگ کنید.';
+  let state = 'waiting', glyph = '—', label = 'انتخاب محصول', activityGlyph = 'i';
+  let message = 'ابتدا یک محصول فعال و تأییدشده را انتخاب کنید.';
+  if (!product) {
+    message = 'ابتدا یک محصول فعال و تأییدشده را انتخاب کنید.';
+  } else if (!QCProductCatalog.isValidShelfLife(product.shelfLifeMonths)) {
+    state = 'warning'; glyph = '!'; label = 'ماندگاری تعیین نشده'; activityGlyph = '!';
+    message = 'ماندگاری مصوب این محصول هنوز ثبت نشده است؛ محاسبه تاریخ و چاپ تا ثبت آن مسدود است.';
+  } else if (!product.batchLetter) {
+    state = 'warning'; glyph = '!'; label = 'کد بچ ناقص'; activityGlyph = '!';
+    message = 'حرف اختصاصی کد بچ این محصول در مدیریت محصولات ثبت نشده است.';
+  } else if (!product.active) {
+    state = 'warning'; glyph = '!'; label = 'محصول غیرفعال'; activityGlyph = '!';
+    message = 'این محصول در پنل مدیریت غیرفعال است و قابل استفاده در تولید نیست.';
   } else if (!/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) {
     state = 'waiting'; glyph = '…'; label = 'شماره بچ لازم'; activityGlyph = 'i';
-    message = 'محصول انتخاب شد؛ شماره بچ را وارد کنید تا کد بچ کامل شود.';
-  } else if (!pricesValid) {
-    state = 'warning'; glyph = '!'; label = 'قیمت نامعتبر'; activityGlyph = '!';
-    message = 'قیمت معتبر برای این محصول موجود نیست؛ پیش از چاپ نرخ مصوب کارخانه را بررسی کنید.';
-  } else if (!pricesVerifiedOnlineThisSession) {
+    message = 'محصول تأیید شده است؛ شماره بچ را وارد کنید تا کد بچ کامل شود.';
+  } else if (product.pricingEnabled && !pricesValid) {
+    state = 'warning'; glyph = '!'; label = 'قیمت ثبت نشده'; activityGlyph = '!';
+    message = 'قیمت تولیدکننده و مصرف‌کننده این محصول باید در پنل مدیریت ثبت شوند.';
+  } else if (product.pricingEnabled && !isProductPriceVerified(product)) {
     state = 'warning'; glyph = '!'; label = 'تطبیق قیمت'; activityGlyph = '!';
-    message = 'اطلاعات فرم وارد شده، اما قیمت‌ها در این نشست از سرور تأیید نشده‌اند؛ پیش از چاپ نرخ مصوب را تطبیق دهید.';
+    message = 'قیمت این محصول در این نشست از سرور تأیید نشده است؛ پیش از چاپ قیمت مصوب را تطبیق دهید.';
   } else {
     state = 'ready'; glyph = '✓'; label = 'اطلاعات کامل'; activityGlyph = '✓';
-    message = 'اطلاعات محصول، ماندگاری و شماره بچ کامل است؛ پیش از چاپ، قیمت مصوب و مشخصات روی برچسب را بررسی کنید.';
+    message = product.pricingEnabled
+      ? 'اطلاعات محصول، ماندگاری، کد بچ و قیمت کامل است؛ پیش از چاپ مشخصات را تطبیق دهید.'
+      : 'محصول ویژه رستوران آماده است؛ این مسیر بدون قیمت و با مشخصات اسلیو چاپ می‌شود.';
   }
 
   statusEl.dataset.state = state;
@@ -1631,83 +1683,92 @@ function render() {
   const [jy, jm, jd] = toJalali(gy, gm, gd);
 
   const prodSubEl = document.getElementById('prodDateSub');
-  if (dayOffset === 0) {
-    prodSubEl.textContent = 'امروز، به‌صورت خودکار';
-  } else if (dayOffset > 0) {
-    prodSubEl.textContent = toPersianDigits(dayOffset) + ' روز جلوتر از امروز';
-  } else {
-    prodSubEl.textContent = toPersianDigits(Math.abs(dayOffset)) + ' روز قبل از امروز';
-  }
+  if (dayOffset === 0) prodSubEl.textContent = 'امروز، به‌صورت خودکار';
+  else if (dayOffset > 0) prodSubEl.textContent = toPersianDigits(dayOffset) + ' روز جلوتر از امروز';
+  else prodSubEl.textContent = toPersianDigits(Math.abs(dayOffset)) + ' روز قبل از امروز';
 
-  // Keep product, batch and price displays in sync even when shelf-life input is invalid.
-  const nameVal = document.getElementById('productName').value.trim();
-  document.getElementById('nameDisplay').textContent = nameVal || 'نام محصول را انتخاب کنید';
+  const productId = document.getElementById('productName').value.trim();
+  const product = getProductById(productId);
+  const nameDisplay = document.getElementById('nameDisplay');
+  nameDisplay.textContent = product ? product.displayName : 'نام محصول را انتخاب کنید';
 
+  const shelfInput = document.getElementById('shelfMonths');
+  shelfInput.value = product && QCProductCatalog.isValidShelfLife(product.shelfLifeMonths) ? String(product.shelfLifeMonths) : '';
+  const months = product ? product.shelfLifeMonths : null;
+  const canCalculate = QCProductCatalog.canUse(product);
   const seqVal = document.getElementById('batchSeq').value.trim();
-  const batchEl = document.getElementById('batchCode');
-  const compareBatchEl = document.getElementById('compareBatch');
-  if (!nameVal) {
-    batchEl.textContent = 'کد بچ: —';
-    compareBatchEl.textContent = '—';
-  } else if (!productLetterMap[nameVal]) {
-    batchEl.textContent = 'کد بچ: حرف اختصاصی این محصول هنوز ثبت نشده';
-    compareBatchEl.textContent = '—';
-  } else if (!seqVal || !/^[0-9]{1,6}$/.test(seqVal) || Number(seqVal) === 0) {
-    batchEl.textContent = 'کد بچ: شماره بچ تولیدی را وارد کنید';
-    compareBatchEl.textContent = '—';
-  } else {
-    const code = generateBatchCode(jy, jm, jd, nameVal, seqVal);
-    batchEl.textContent = code ? 'کد بچ: ' + code : 'کد بچ: نامعتبر';
-    compareBatchEl.textContent = code || '—';
-  }
 
   const producerEl = document.getElementById('producerPrice');
   const consumerEl = document.getElementById('consumerPrice');
   const compareProducerEl = document.getElementById('compareProducerPrice');
   const compareConsumerEl = document.getElementById('compareConsumerPrice');
-  const prices = nameVal ? priceData[nameVal] : null;
-  const pricesValid = !!prices && Number.isSafeInteger(prices.producer) && Number.isSafeInteger(prices.consumer) && prices.producer >= 0 && prices.consumer >= 0;
-  if (pricesValid) {
-    producerEl.className = 'hero-price-value';
-    consumerEl.className = 'hero-price-value';
-    producerEl.innerHTML = formatRial(prices.producer) + '<span class="unit">ریال</span>';
-    consumerEl.innerHTML = formatRial(prices.consumer) + '<span class="unit">ریال</span>';
-    // compare overlay: English digits to match physical jet-print output
+  const compareBody = document.querySelector('.body-simulation');
+  const compareBodyHint = document.querySelector('.body-hint');
+  const prices = getProductPrices(product);
+  const pricesValid = !!prices && Number.isSafeInteger(prices.producer) && Number.isSafeInteger(prices.consumer)
+    && prices.producer >= 0 && prices.consumer >= 0;
+
+  if (!product) {
+    producerEl.className = 'hero-price-value pending'; consumerEl.className = 'hero-price-value pending';
+    producerEl.textContent = '—'; consumerEl.textContent = '—';
+    compareProducerEl.textContent = '—'; compareConsumerEl.textContent = '—';
+    if (compareBody) compareBody.style.display = '';
+    if (compareBodyHint) compareBodyHint.style.display = '';
+  } else if (!product.pricingEnabled) {
+    producerEl.className = 'hero-price-value pending'; consumerEl.className = 'hero-price-value pending';
+    producerEl.textContent = 'بدون قیمت'; consumerEl.textContent = 'بدون قیمت';
+    compareProducerEl.textContent = '—'; compareConsumerEl.textContent = '—';
+    if (compareBody) compareBody.style.display = 'none';
+    if (compareBodyHint) compareBodyHint.style.display = 'none';
+  } else if (pricesValid) {
+    producerEl.className = 'hero-price-value'; consumerEl.className = 'hero-price-value';
+    setPriceDisplay(producerEl, prices.producer);
+    setPriceDisplay(consumerEl, prices.consumer);
     compareProducerEl.textContent = prices.producer.toLocaleString('en-US');
     compareConsumerEl.textContent = prices.consumer.toLocaleString('en-US');
+    if (compareBody) compareBody.style.display = '';
+    if (compareBodyHint) compareBodyHint.style.display = '';
   } else {
-    producerEl.className = 'hero-price-value pending';
-    consumerEl.className = 'hero-price-value pending';
-    producerEl.textContent = nameVal ? 'ثبت نشده' : '—';
-    consumerEl.textContent = nameVal ? 'ثبت نشده' : '—';
-    compareProducerEl.textContent = '—';
-    compareConsumerEl.textContent = '—';
+    producerEl.className = 'hero-price-value pending'; consumerEl.className = 'hero-price-value pending';
+    producerEl.textContent = 'ثبت نشده'; consumerEl.textContent = 'ثبت نشده';
+    compareProducerEl.textContent = '—'; compareConsumerEl.textContent = '—';
+    if (compareBody) compareBody.style.display = '';
+    if (compareBodyHint) compareBodyHint.style.display = '';
   }
-  updateWorkflowStatus();
 
-  const monthsRaw=document.getElementById('shelfMonths').value.trim();
-  const months=Number(monthsRaw);
-  const monthsValid=validShelfMonths(monthsRaw);
-  const shelfError=document.getElementById('shelfError');
-  shelfError.style.display=monthsValid?'none':'block';
-  shelfError.textContent=monthsValid?'':'⚠ ماندگاری باید عدد صحیح بین ۱ تا ۳۶ ماه باشد؛ نتیجه تاریخ معتبر نیست.';
-  if(!monthsValid){
-    document.getElementById('expDate').textContent='—';
-    document.getElementById('compareExpDate').textContent='—';
-    document.getElementById('dayCount').textContent='—';
-    document.getElementById('shelfNote').textContent='ماندگاری نامعتبر';
-    document.getElementById('shelfLabel').textContent='—';
-    document.getElementById('prodDate').textContent=formatJalali([jy,jm,jd]).numeric;
-    document.getElementById('compareProdDate').textContent=formatJalaliEn([jy,jm,jd]);
-    document.getElementById('batchCode').textContent='کد بچ: ابتدا ماندگاری را اصلاح کنید';
-    document.getElementById('compareBatch').textContent='—';
+  const shelfError = document.getElementById('shelfError');
+  if (product && !QCProductCatalog.isValidShelfLife(product.shelfLifeMonths)) {
+    shelfError.style.display = 'block';
+    shelfError.textContent = '⚠ ماندگاری مصوب این محصول هنوز در پنل مدیریت ثبت نشده است؛ محاسبه و چاپ غیرفعال است.';
+  } else if (product && !product.active) {
+    shelfError.style.display = 'block';
+    shelfError.textContent = '⚠ این محصول در پنل مدیریت غیرفعال است.';
+  } else if (product && !product.batchLetter) {
+    shelfError.style.display = 'block';
+    shelfError.textContent = '⚠ حرف اختصاصی کد بچ این محصول ثبت نشده است.';
+  } else {
+    shelfError.style.display = 'none'; shelfError.textContent = '';
+  }
+
+  updateWorkflowStatus();
+  const batchEl = document.getElementById('batchCode');
+  const compareBatchEl = document.getElementById('compareBatch');
+  if (!canCalculate) {
+    document.getElementById('prodDate').textContent = '—';
+    document.getElementById('expDate').textContent = '—';
+    document.getElementById('compareProdDate').textContent = '—';
+    document.getElementById('compareExpDate').textContent = '—';
+    document.getElementById('dayCount').textContent = '—';
+    document.getElementById('shelfNote').textContent = product ? 'در انتظار تأیید مشخصات محصول' : 'ماندگاری محصول';
+    document.getElementById('shelfLabel').textContent = '—';
+    batchEl.textContent = product ? 'کد بچ: محصول هنوز قابل استفاده نیست' : 'کد بچ: —';
+    compareBatchEl.textContent = '—';
     return;
   }
-  const [ey, em, ed] = addJalaliMonths(jy, jm, jd, months);
 
   const prod = formatJalali([jy, jm, jd]);
+  const [ey, em, ed] = addJalaliMonths(jy, jm, jd, months);
   const exp = formatJalali([ey, em, ed]);
-
   document.getElementById('prodDate').textContent = prod.numeric;
   document.getElementById('expDate').textContent = exp.numeric;
   document.getElementById('shelfNote').textContent = 'تولید + ' + toPersianDigits(months) + ' ماه';
@@ -1715,11 +1776,15 @@ function render() {
   document.getElementById('compareProdDate').textContent = formatJalaliEn([jy, jm, jd]);
   document.getElementById('compareExpDate').textContent = formatJalaliEn([ey, em, ed]);
 
-  // day count between the two dates using julian day numbers
-  const prodJdn = g2d(gy, gm, gd);
-  const expGreg = d2g(j2dSafe(ey, em, ed));
+  if (!seqVal || !/^[0-9]{1,6}$/.test(seqVal) || Number(seqVal) === 0) {
+    batchEl.textContent = 'کد بچ: شماره بچ تولیدی را وارد کنید';
+    compareBatchEl.textContent = '—';
+  } else {
+    const code = generateBatchCode(jy, jm, jd, product.id, seqVal);
+    batchEl.textContent = code ? 'کد بچ: ' + code : 'کد بچ: نامعتبر';
+    compareBatchEl.textContent = code || '—';
+  }
   document.getElementById('dayCount').textContent = toPersianDigits(diffDays(jy, jm, jd, ey, em, ed)) + ' روز';
-
 }
 
 // helper: jalali -> julian day number (mirrors j2d from the standard algorithm)
@@ -1733,8 +1798,11 @@ function diffDays(jy1, jm1, jd1, jy2, jm2, jd2) {
 
 let dayOffset = 0;
 
-document.getElementById('productName').addEventListener('change', render);
-document.getElementById('shelfMonths').addEventListener('input', render);
+document.getElementById('productName').addEventListener('change', () => {
+  const product = getProductById(document.getElementById('productName').value);
+  document.getElementById('shelfMonths').value = product && QCProductCatalog.isValidShelfLife(product.shelfLifeMonths) ? String(product.shelfLifeMonths) : '';
+  render();
+});
 document.getElementById('batchSeq').addEventListener('input', (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0,6);
   render();
@@ -1785,42 +1853,64 @@ document.getElementById('keypadDone').addEventListener('click', () => {
 
 // ---- official Alis-FO-QA15 printing: uses original form as an immutable image template ----
 document.getElementById('officialPrintOpen').addEventListener('click', () => {
-  const product=document.getElementById('productName').value.trim();
-  const seq=document.getElementById('batchSeq').value.trim();
-  const rawMonths=document.getElementById('shelfMonths').value.trim();
-  const months=Number(rawMonths);
-  if (!product || !productLetterMap[product]) { document.getElementById('productName').focus();alert('ابتدا یک محصول معتبر را انتخاب کنید.'); return; }
-  if (!/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) { document.getElementById('batchSeq').click();alert('شماره بچ باید عددی بین ۱ تا ۶ رقم و بزرگ‌تر از صفر باشد.'); return; }
-  if (!validShelfMonths(rawMonths)) { document.getElementById('shelfMonths').focus();alert('ماندگاری محصول نامعتبر است.'); return; }
-  const prices=priceData[product];
-  if (!prices || !Number.isSafeInteger(prices.producer) || !Number.isSafeInteger(prices.consumer) || prices.producer<0 || prices.consumer<0) {
-    alert('قیمت محصول معتبر نیست؛ قبل از چاپ نرخ‌های مصوب را بررسی کنید.');return;
+  const productId = document.getElementById('productName').value.trim();
+  const product = getProductById(productId);
+  const seq = document.getElementById('batchSeq').value.trim();
+  if (!product || !QCProductCatalog.canUse(product)) {
+    alert('این محصول هنوز قابل استفاده نیست؛ ماندگاری مصوب، حرف کد بچ و وضعیت فعال را در پنل مدیریت بررسی کنید.');
+    return;
   }
-  // Prevent silent official printing with unverified cached/default prices.
-  if (!pricesVerifiedOnlineThisSession) {
-    const last=localStorage.getItem('qc-price-synced-at');
-    const lastText=last && !Number.isNaN(Date.parse(last)) ? new Date(last).toLocaleString('fa-IR') : 'نامشخص';
-    const approved=window.confirm('هشدار: قیمت این محصول در این نوبت از سرور تأیید نشده است.\nآخرین همگام‌سازی: '+lastText+'\nقیمت تولیدکننده: '+prices.producer.toLocaleString('fa-IR')+' ریال\nقیمت مصرف‌کننده: '+prices.consumer.toLocaleString('fa-IR')+' ریال\n\nفقط پس از تطبیق با نرخ مصوب کارخانه، «تأیید» را انتخاب کنید. آیا قیمت‌ها را شخصاً بررسی کرده‌اید؟');
+  if (!/^[0-9]{1,6}$/.test(seq) || Number(seq) === 0) {
+    document.getElementById('batchSeq').click();
+    alert('شماره بچ باید عددی بین ۱ تا ۶ رقم و بزرگ‌تر از صفر باشد.');
+    return;
+  }
+
+  const prices = getProductPrices(product);
+  const pricesValid = !!prices && Number.isSafeInteger(prices.producer) && Number.isSafeInteger(prices.consumer)
+    && prices.producer >= 0 && prices.consumer >= 0;
+  if (product.pricingEnabled && !pricesValid) {
+    alert('قیمت تولیدکننده و مصرف‌کننده این محصول ثبت نشده یا معتبر نیست؛ قبل از چاپ نرخ‌های مصوب را بررسی کنید.');
+    return;
+  }
+  // Only ordinary products require online price verification and price confirmation.
+  if (product.pricingEnabled && !isProductPriceVerified(product)) {
+    const last = localStorage.getItem('qc-price-synced-at');
+    const lastText = last && !Number.isNaN(Date.parse(last)) ? new Date(last).toLocaleString('fa-IR') : 'نامشخص';
+    const approved = window.confirm('هشدار: قیمت این محصول در این نوبت از سرور تأیید نشده است.\nآخرین همگام‌سازی: ' + lastText + '\nقیمت تولیدکننده: ' + prices.producer.toLocaleString('fa-IR') + ' ریال\nقیمت مصرف‌کننده: ' + prices.consumer.toLocaleString('fa-IR') + ' ریال\n\nفقط پس از تطبیق با نرخ مصوب کارخانه، «تأیید» را انتخاب کنید. آیا قیمت‌ها را شخصاً بررسی کرده‌اید؟');
     if (!approved) return;
   }
-  const shiftEn=document.getElementById('officialPrintShift').value;
-  if(!/^[123]$/.test(shiftEn)){document.getElementById('officialPrintShift').focus();alert('ابتدا شیفت کاری ۱، ۲ یا ۳ را انتخاب کنید.');return;}
-  const date=new Date();date.setDate(date.getDate()+dayOffset);
-  const [jy,jm,jd]=toJalali(date.getFullYear(),date.getMonth()+1,date.getDate());
-  const [ey,em,ed]=addJalaliMonths(jy,jm,jd,months);
-  const batch=generateBatchCode(jy,jm,jd,product,seq);
-  if(!batch){alert('کد بچ نامعتبر است.');return;}
-  const size=product.includes('۱۰۰۰')?'1000':product.includes('۲۰۰')?'200':null;
-  if(!size){alert('حجم محصول مشخص نیست.');return;}
-  const params=new URLSearchParams({
-    prod:formatJalaliEn([jy,jm,jd]),exp:formatJalaliEn([ey,em,ed]),
-    product,size,batch,shift:shiftEn,letter:productLetterMap[product],
-    producer:String(prices.producer),consumer:String(prices.consumer)
+
+  const shiftEn = document.getElementById('officialPrintShift').value;
+  if (!/^[123]$/.test(shiftEn)) {
+    document.getElementById('officialPrintShift').focus();
+    alert('ابتدا شیفت کاری ۱، ۲ یا ۳ را انتخاب کنید.');
+    return;
+  }
+  const date = new Date(); date.setDate(date.getDate() + dayOffset);
+  const [jy, jm, jd] = toJalali(date.getFullYear(), date.getMonth() + 1, date.getDate());
+  const months = product.shelfLifeMonths;
+  const [ey, em, ed] = addJalaliMonths(jy, jm, jd, months);
+  const batch = generateBatchCode(jy, jm, jd, product.id, seq);
+  if (!batch) { alert('کد بچ نامعتبر است؛ حرف اختصاصی محصول را در پنل مدیریت بررسی کنید.'); return; }
+
+  const params = new URLSearchParams({
+    prod: formatJalaliEn([jy, jm, jd]),
+    exp: formatJalaliEn([ey, em, ed]),
+    product: product.name,
+    size: String(product.volumeMl),
+    batch,
+    shift: shiftEn,
+    letter: product.batchLetter,
+    mode: product.printTarget
   });
-  // Source values are captured together, so preview and current app values agree.
-  const url='alis-print.html?'+params.toString();
-  const win=window.open(url,'_blank');
-  if(!win) alert('لطفاً باز شدن صفحه جدید (Pop-up) را برای چاپ مجاز کنید.');
+  if (product.pricingEnabled) {
+    params.set('producer', String(prices.producer));
+    params.set('consumer', String(prices.consumer));
+  }
+  const url = 'alis-print.html?' + params.toString();
+  const win = window.open(url, '_blank');
+  if (!win) alert('لطفاً باز شدن صفحه جدید (Pop-up) را برای چاپ مجاز کنید.');
 });
 
 // ---- compare-with-physical-label full-screen mode ----

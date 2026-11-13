@@ -48,6 +48,8 @@ button:disabled{opacity:.42;cursor:not-allowed}
 #size{left:3.813%;top:48.355%;width:42.326%;height:2.686%;font-size:13.5pt}
 #product{left:59.676%;top:48.355%;width:13.537%;height:2.686%;font-size:11.5pt;padding:0 .5mm}
 @media(max-width:600px){body{padding:8px 6px 20px}.editor{padding:13px}.editor h1{font-size:16px}.summary{gap:4px 10px}}
+/* Restaurant sleeve runs must never display or print standard product prices. */
+.paper.sleeve-mode #producer,.paper.sleeve-mode #consumer{display:none!important;}
 @page{size:A5 portrait;margin:0}
 @media print{
   html,body{width:148mm!important;height:210mm!important;min-height:210mm!important;margin:0!important;padding:0!important;background:#fff!important}
@@ -196,24 +198,28 @@ button:disabled{opacity:.42;cursor:not-allowed}
   'use strict';
   const params=new URLSearchParams(location.search);
   const $=id=>document.getElementById(id);
+  const mode=params.get('mode')||'standard';
   const rules={
     prod:/^\d{4}\/\d{2}\/\d{2}$/,
     exp:/^\d{4}\/\d{2}\/\d{2}$/,
     batch:/^[A-Z0-9]{6,16}$/,
-    producer:/^\d{1,11}$/,
-    consumer:/^\d{1,11}$/,
     shift:/^[123]$/,
     letter:/^[A-Z]$/,
-    size:/^(200|1000)$/
+    size:/^(200|275|1000)$/
   };
-  const valid=Object.entries(rules).every(([key,rule])=>rule.test(params.get(key)||'')) &&
+  const coreValid=Object.entries(rules).every(([key,rule])=>rule.test(params.get(key)||'')) &&
     !!params.get('product') && params.get('product').length<=50 && !/[<>]/.test(params.get('product'));
+  const pricesValid=mode==='sleeve'
+    ? !params.has('producer') && !params.has('consumer')
+    : mode==='standard' && /^\d{1,11}$/.test(params.get('producer')||'') && /^\d{1,11}$/.test(params.get('consumer')||'');
+  const valid=coreValid&&pricesValid;
   const fa=value=>String(value).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
   const fmt=value=>Number(value).toLocaleString('en-US');
   const set=(id,value)=>{$(id).textContent=value;};
   const img=$('template'),button=$('print'),status=$('status');
-  let priceFontReady=false;
-  if(document.fonts&&document.fonts.load){document.fonts.load('16.5pt BTitr').then(()=>{priceFontReady=true;fitVariableFields();checkReady();}).catch(()=>{priceFontReady=false;checkReady();});}
+  let priceFontReady=mode==='sleeve';
+  if(mode==='standard'&&document.fonts&&document.fonts.load){document.fonts.load('16.5pt BTitr').then(()=>{priceFontReady=true;fitVariableFields();checkReady();}).catch(()=>{priceFontReady=false;checkReady();});}
+  if(mode==='sleeve'){$('paper').classList.add('sleeve-mode');document.title='فرم اطلاعات محصول ویژه رستوران — اسلیو';document.querySelector('.editor h1').textContent='فرم اطلاعات محصول ویژه رستوران — اسلیو';document.querySelector('.editor .intro').textContent='اطلاعات تاریخ تولید، انقضا، حجم، حرف محصول و کد بچ مستقیماً از محاسبات برنامه منتقل شده‌اند. این مسیر بدون قیمت‌گذاری است.';}
   if(valid){
     const prod=params.get('prod'),exp=params.get('exp'),batch=params.get('batch');
     const rawProduct=params.get('product'),shift=params.get('shift'),letter=params.get('letter');
@@ -227,24 +233,27 @@ button:disabled{opacity:.42;cursor:not-allowed}
     const productMatch=normalizeDigits(product).match(sizeSuffix);
     if(productMatch) product=product.slice(0,product.length-productMatch[0].length).trim();
     product=product.replace(/[\\s\\u200c]+$/g,'');
-    const producer=fmt(params.get('producer')),consumer=fmt(params.get('consumer'));
+    const producer=mode==='standard'?fmt(params.get('producer')):'';
+    const consumer=mode==='standard'?fmt(params.get('consumer')):'';
     set('shift',fa(shift));
     set('reportDate',fa(prod));
     set('prodDate','P:'+prod);
     set('expDate','E:'+exp);
     set('batch','BN:'+batch);
-    $('producer').querySelector('.amount').textContent=fa(producer);
-    $('consumer').querySelector('.amount').textContent=fa(consumer);
+    if(mode==='standard'){
+      $('producer').querySelector('.amount').textContent=fa(producer);
+      $('consumer').querySelector('.amount').textContent=fa(consumer);
+    }
     set('letter',letter);
     set('size',fa(params.get('size')));
     set('product',product);
     const summary=$('summary');
-    [
+    const summaryItems=[
       ['تولید',fa(prod)],['انقضا',fa(exp)],['کد بچ',batch],
-      ['محصول',product],['حجم',fa(params.get('size'))],
-      ['شیفت',fa(shift)],['قیمت تولیدکننده',fa(producer)+' ریال'],
-      ['قیمت مصرف‌کننده',fa(consumer)+' ریال']
-    ].forEach(([label,value])=>{
+      ['محصول',product],['حجم',fa(params.get('size'))],['شیفت',fa(shift)]
+    ];
+    if(mode==='standard') summaryItems.push(['قیمت تولیدکننده',fa(producer)+' ریال'],['قیمت مصرف‌کننده',fa(consumer)+' ریال']);
+    summaryItems.forEach(([label,value])=>{
       const item=document.createElement('span');
       item.textContent=label+': '+value;
       summary.appendChild(item);
@@ -255,15 +264,18 @@ button:disabled{opacity:.42;cursor:not-allowed}
   }
   function checkReady(){
     const imageReady=img.complete&&img.naturalWidth>0;
-    const ready=valid&&imageReady&&priceFontReady;
+    const typographyReady=mode==='sleeve'||priceFontReady;
+    const ready=valid&&imageReady&&typographyReady;
     button.disabled=!ready;
     if(valid){
-      status.classList.toggle('error',!imageReady);
+      status.classList.toggle('error',!imageReady||!typographyReady);
       status.textContent=!imageReady
         ?'تصویر فرم رسمی بارگذاری نشده است؛ تا بارگذاری صحیح فرم، چاپ غیرفعال است.'
-        :!priceFontReady
+        :!typographyReady
           ?'فونت B Titr هنوز بارگذاری نشده است؛ برای جلوگیری از چاپ با فونت جایگزین، کمی صبر کنید.'
-          :'اطلاعات محاسبه‌شده آماده چاپ است. خانه‌های ساعت، تأیید و امضا مطابق نمونه برای تکمیل دستی خالی مانده‌اند.';
+          :mode==='sleeve'
+            ?'اطلاعات اسلیو آماده چاپ است؛ هیچ قیمت تولیدکننده یا مصرف‌کننده‌ای به این فرم منتقل نشده است.'
+            :'اطلاعات محاسبه‌شده آماده چاپ است. خانه‌های ساعت، تأیید و امضا مطابق نمونه برای تکمیل دستی خالی مانده‌اند.';
     }
   }
   function fitText(id,minPt,maxPt){
@@ -283,8 +295,7 @@ button:disabled{opacity:.42;cursor:not-allowed}
   }
   function fitVariableFields(){
     fitText('product',9.5,11.5);
-    fitText('producer',14.5,16.5);
-    fitText('consumer',14.5,16.5);
+    if(mode==='standard'){fitText('producer',14.5,16.5);fitText('consumer',14.5,16.5);}
   }
   img.addEventListener('load',checkReady);
   img.addEventListener('error',checkReady);

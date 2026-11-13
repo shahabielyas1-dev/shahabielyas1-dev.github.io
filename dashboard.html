@@ -140,6 +140,30 @@
   }
   .modal-close:active{transform:translate(2px,2px);box-shadow:none;}
   .modal-secondary{background:var(--bg);color:var(--ink);margin-top:10px;}
+
+  .product-list{display:grid;gap:9px;margin:12px 0 16px;}
+  .product-card{border:2px solid #d8d0b8;border-radius:12px;padding:10px 11px;background:var(--bg);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;}
+  .product-card-name{font-size:13px;font-weight:800;line-height:1.7;}
+  .product-card-meta{font-size:11px;color:var(--muted);font-weight:600;line-height:1.8;}
+  .product-status{display:inline-block;margin-top:3px;padding:2px 7px;border-radius:999px;background:#eee5cf;color:#6d4c0a;font-size:10px;font-weight:800;}
+  .product-status.ready{background:#dff2df;color:#1f6b2c;}
+  .product-actions{display:flex;gap:5px;flex-direction:column;}
+  .product-actions button,.product-form-actions button{border:2px solid var(--ink);border-radius:9px;padding:7px 10px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;}
+  .product-edit{background:#e8efff;color:#2349a5;}
+  .product-toggle{background:#f7e8d7;color:#7b3e13;}
+  .product-form{border-top:2px dashed #d8d0b8;padding-top:14px;margin-top:12px;}
+  .product-form h4{font-size:13px;margin:0 0 10px;}
+  .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .product-grid label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px;}
+  .product-grid input,.product-grid select{width:100%;min-width:0;border:2px solid var(--ink);border-radius:9px;padding:9px 8px;background:var(--bg);color:var(--ink);font:600 13px 'Vazirmatn',sans-serif;}
+  .product-form-actions{display:flex;gap:8px;margin-top:12px;}
+  .product-form-actions button{flex:1;padding:11px 8px;font-family:'Vazirmatn',sans-serif;font-size:12px;}
+  #saveProduct{background:var(--blue);color:#fff;}
+  #cancelProductEdit{background:var(--bg);color:var(--ink);}
+  .product-hint{font-size:11px;color:var(--muted);line-height:1.9;margin:8px 0 0;}
+  .product-empty{font-size:12px;color:var(--muted);padding:10px 0;}
+  @media(max-width:380px){.product-grid{grid-template-columns:1fr}.product-card{grid-template-columns:minmax(0,1fr) auto}}
+
 </style>
 <link rel="stylesheet" href="foodlab-theme.css">
 <link rel="stylesheet" href="foodlab-design-system.css">
@@ -191,6 +215,50 @@
     <button class="save-btn" id="saveAnn">ذخیره اعلان</button>
   </div>
 
+  <div class="panel" id="productManagerPanel">
+    <h3>🧃 مدیریت محصولات</h3>
+    <p class="sub">محصولات، حجم، نوع تولید، ماندگاری مصوب و حرف اختصاصی کد بچ را مدیریت کن. محصول ناقص تا تکمیل مشخصات وارد محاسبات نمی‌شود.</p>
+    <div id="productList" class="product-list" aria-live="polite"></div>
+    <div class="product-form">
+      <h4 id="productFormTitle">افزودن محصول جدید</h4>
+      <input id="productId" type="hidden">
+      <div class="product-grid">
+        <div>
+          <label for="productNameInput">نام محصول (بدون حجم)</label>
+          <input id="productNameInput" type="text" maxlength="50" placeholder="مثلاً: دوغ">
+        </div>
+        <div>
+          <label for="productVolumeInput">حجم (میلی‌لیتر)</label>
+          <input id="productVolumeInput" type="number" min="50" max="5000" step="1" placeholder="مثلاً: ۲۷۵">
+        </div>
+        <div>
+          <label for="productTypeInput">نوع تولید</label>
+          <select id="productTypeInput">
+            <option value="standard">تولید عادی (قیمت‌دار)</option>
+            <option value="restaurant">ویژه رستوران (اسلیو)</option>
+          </select>
+        </div>
+        <div>
+          <label for="productShelfInput">ماندگاری مصوب (ماه)</label>
+          <input id="productShelfInput" type="number" min="1" max="36" step="1" placeholder="هنوز تعیین نشده">
+        </div>
+        <div>
+          <label for="productLetterInput">حرف اختصاصی کد بچ</label>
+          <input id="productLetterInput" type="text" maxlength="1" pattern="[A-Za-z]" autocapitalize="characters" placeholder="مثلاً: K" style="direction:ltr;text-transform:uppercase;">
+        </div>
+      </div>
+      <div class="toggle-row">
+        <label class="switch"><input type="checkbox" id="productActiveInput"><span class="slider"></span></label>
+        <label for="productActiveInput">فعال‌سازی محصول پس از تکمیل مشخصات</label>
+      </div>
+      <p class="product-hint">برای فعال‌سازی، ثبت ماندگاری مصوب و حرف کد بچ الزامی است. در محصولات ویژه رستوران قیمت‌گذاری غیرفعال است و هیچ قیمتی به آن‌ها منتقل نمی‌شود.</p>
+      <div class="product-form-actions">
+        <button type="button" id="saveProduct">ذخیره محصول</button>
+        <button type="button" id="cancelProductEdit">انصراف / محصول جدید</button>
+      </div>
+    </div>
+  </div>
+
   <div class="panel">
     <button type="button" class="collapsible-header" id="priceToggle">
       <div>
@@ -219,6 +287,7 @@
   </div>
 </div>
 
+<script src="qc-product-catalog.js"></script>
 <script>
   // haptic feedback on every tap
   document.addEventListener('click', () => {
@@ -259,7 +328,8 @@
   }
   let verifiedAdminId = null;
   let startupSessionCheck = null;
-
+  let productCatalog = QCProductCatalog.normalizeCatalog(null);
+  let effectivePriceOverrides = {};
 
   // same defaults baked into the QC tool — dashboard shows/edits on top of these
   const priceDefaults = {
@@ -333,36 +403,229 @@
     setTimeout(() => t.classList.remove('show'), 1800);
   }
 
+  function safePriceObject(value){
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  }
+
+  function productHasValidPrices(product){
+    if (!product || !product.pricingEnabled) return true;
+    const key = product.priceKey || product.id;
+    const stored = safePriceObject(effectivePriceOverrides);
+    const values = Object.prototype.hasOwnProperty.call(stored, key)
+      ? safePriceObject(stored[key])
+      : (priceDefaults[key] || {});
+    return Number.isSafeInteger(values.producer) && values.producer >= 0
+      && Number.isSafeInteger(values.consumer) && values.consumer >= 0;
+  }
+
+  function productCanBeActivated(product){
+    return !!product && QCProductCatalog.isValidShelfLife(product.shelfLifeMonths)
+      && !!product.batchLetter && productHasValidPrices(product);
+  }
+
+  function productStatusLabel(product){
+    if (!QCProductCatalog.isValidShelfLife(product.shelfLifeMonths)) return 'پیش‌نویس: ماندگاری تعیین نشده';
+    if (!product.batchLetter) return 'پیش‌نویس: حرف کد بچ ثبت نشده';
+    if (product.pricingEnabled && !productHasValidPrices(product)) return product.active ? 'خطا: قیمت ناقص' : 'پیش‌نویس: قیمت‌ها ثبت نشده';
+    return QCProductCatalog.statusText(product);
+  }
+
+  function buildProductList(){
+    const wrap = document.getElementById('productList');
+    wrap.replaceChildren();
+    productCatalog.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      const info = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'product-card-name';
+      name.textContent = product.displayName;
+      const meta = document.createElement('div');
+      meta.className = 'product-card-meta';
+      const typeText = product.productionType === 'restaurant' ? 'ویژه رستوران · اسلیو' : 'تولید عادی · قیمت‌دار';
+      const shelfText = product.shelfLifeMonths ? product.shelfLifeMonths + ' ماه' : 'تعیین نشده';
+      const letterText = product.batchLetter || 'ثبت نشده';
+      meta.textContent = typeText + ' · ماندگاری: ' + shelfText + ' · حرف بچ: ' + letterText;
+      const status = document.createElement('span');
+      status.className = 'product-status' + (QCProductCatalog.canUse(product) ? ' ready' : '');
+      status.textContent = productStatusLabel(product);
+      info.append(name, meta, status);
+
+      const actions = document.createElement('div');
+      actions.className = 'product-actions';
+      const edit = document.createElement('button');
+      edit.type = 'button'; edit.className = 'product-edit'; edit.dataset.action = 'edit'; edit.dataset.id = product.id; edit.textContent = 'ویرایش';
+      const toggle = document.createElement('button');
+      toggle.type = 'button'; toggle.className = 'product-toggle'; toggle.dataset.action = 'toggle'; toggle.dataset.id = product.id;
+      toggle.textContent = product.active ? 'غیرفعال' : 'فعال‌سازی';
+      if (!product.active && !productCanBeActivated(product)) toggle.disabled = true;
+      actions.append(edit, toggle);
+      card.append(info, actions);
+      wrap.appendChild(card);
+    });
+    if (!productCatalog.length) {
+      const empty = document.createElement('div'); empty.className = 'product-empty'; empty.textContent = 'هنوز محصولی تعریف نشده است.'; wrap.appendChild(empty);
+    }
+  }
+
+  function resetProductForm(){
+    document.getElementById('productId').value = '';
+    document.getElementById('productNameInput').value = '';
+    document.getElementById('productVolumeInput').value = '';
+    document.getElementById('productTypeInput').value = 'standard';
+    document.getElementById('productShelfInput').value = '';
+    document.getElementById('productLetterInput').value = '';
+    document.getElementById('productActiveInput').checked = false;
+    document.getElementById('productFormTitle').textContent = 'افزودن محصول جدید';
+    document.getElementById('saveProduct').textContent = 'ذخیره محصول';
+  }
+
+  function editProduct(id){
+    const product = productCatalog.find(item => item.id === id);
+    if (!product) return;
+    document.getElementById('productId').value = product.id;
+    document.getElementById('productNameInput').value = product.name;
+    document.getElementById('productVolumeInput').value = product.volumeMl;
+    document.getElementById('productTypeInput').value = product.productionType;
+    document.getElementById('productShelfInput').value = product.shelfLifeMonths || '';
+    document.getElementById('productLetterInput').value = product.batchLetter || '';
+    document.getElementById('productActiveInput').checked = product.active;
+    document.getElementById('productFormTitle').textContent = 'ویرایش ' + product.displayName;
+    document.getElementById('saveProduct').textContent = 'ذخیره تغییرات';
+    document.getElementById('productManagerPanel').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  async function persistProductCatalog(nextCatalog){
+    await requireAdminForWrite();
+    const value = QCProductCatalog.serialize(nextCatalog);
+    const {error} = await supa.from('qc_settings').upsert({ key: 'product_catalog', value, updated_at: new Date().toISOString() });
+    if (error) throw error;
+  }
+
+  async function saveProduct(){
+    const btn = document.getElementById('saveProduct');
+    const idInput = document.getElementById('productId');
+    const name = document.getElementById('productNameInput').value.trim();
+    const volumeMl = Number(document.getElementById('productVolumeInput').value);
+    const productionType = document.getElementById('productTypeInput').value === 'restaurant' ? 'restaurant' : 'standard';
+    const shelfRaw = document.getElementById('productShelfInput').value.trim();
+    const shelfLifeMonths = shelfRaw === '' ? null : Number(shelfRaw);
+    const batchLetterRaw = document.getElementById('productLetterInput').value.trim().toUpperCase();
+    const batchLetter = /^[A-Z]$/.test(batchLetterRaw) ? batchLetterRaw : null;
+    const activeRequested = document.getElementById('productActiveInput').checked;
+
+    if (!name || name.length > 50 || /[<>]/.test(name)) { showToast('نام محصول معتبر نیست'); return; }
+    if (!Number.isInteger(volumeMl) || volumeMl < 50 || volumeMl > 5000) { showToast('حجم باید عدد صحیح بین ۵۰ تا ۵۰۰۰ میلی‌لیتر باشد'); return; }
+    if (shelfRaw !== '' && !QCProductCatalog.isValidShelfLife(shelfLifeMonths)) { showToast('ماندگاری باید بین ۱ تا ۳۶ ماه باشد یا خالی بماند'); return; }
+    if (document.getElementById('productLetterInput').value.trim() && !batchLetter) { showToast('حرف کد بچ باید یک حرف انگلیسی A تا Z باشد'); return; }
+    if (activeRequested && (!QCProductCatalog.isValidShelfLife(shelfLifeMonths) || !batchLetter)) {
+      showToast('برای فعال‌سازی، ماندگاری مصوب و حرف کد بچ الزامی است'); return;
+    }
+    if (activeRequested && productionType === 'standard') {
+      const priceKey = idInput.value ? (productCatalog.find(item => item.id === idInput.value)?.priceKey || idInput.value) : null;
+      const candidateKey = priceKey || 'pending-new-product';
+      const priceValues = { ...(priceDefaults[candidateKey] || {}), ...(safePriceObject(effectivePriceOverrides)[candidateKey] || {}) };
+      if (!Number.isSafeInteger(priceValues.producer) || priceValues.producer < 0 || !Number.isSafeInteger(priceValues.consumer) || priceValues.consumer < 0) {
+        showToast('برای فعال‌سازی محصول عادی، ابتدا هر دو قیمت را در بخش قیمت محصولات ثبت کنید'); return;
+      }
+    }
+
+    const editingId = idInput.value.trim();
+    const existing = editingId ? productCatalog.find(item => item.id === editingId) : null;
+    const duplicate = productCatalog.find(item => item.id !== editingId && item.name === name && item.volumeMl === volumeMl && item.productionType === productionType);
+    if (duplicate) { showToast('محصولی با همین نام، حجم و نوع تولید وجود دارد'); return; }
+
+    const id = existing ? existing.id : QCProductCatalog.createId();
+    const candidate = QCProductCatalog.normalizeProduct({
+      id, name, volumeMl, productionType,
+      active: activeRequested,
+      shelfLifeMonths,
+      batchLetter,
+      priceKey: existing ? existing.priceKey : id
+    });
+    if (!candidate) { showToast('مشخصات محصول قابل ثبت نیست'); return; }
+
+    const previous = productCatalog;
+    const next = existing ? productCatalog.map(item => item.id === id ? candidate : item) : productCatalog.concat(candidate);
+    btn.disabled = true;
+    try {
+      await persistProductCatalog(next);
+      productCatalog = next;
+      buildProductList();
+      buildPriceList(effectivePriceOverrides);
+      resetProductForm();
+      showToast('کاتالوگ محصولات روی سرور ذخیره شد ✓');
+    } catch (error) {
+      productCatalog = previous;
+      showToast('محصول ذخیره نشد: ' + (error?.message || 'اتصال یا مجوز را بررسی کن'));
+    } finally { btn.disabled = false; }
+  }
+
+  async function toggleProduct(id){
+    const product = productCatalog.find(item => item.id === id);
+    if (!product) return;
+    const active = !product.active;
+    if (active && !productCanBeActivated(product)) {
+      showToast(product.pricingEnabled && !productHasValidPrices(product)
+        ? 'برای فعال‌سازی محصول عادی، ابتدا هر دو قیمت را ثبت کنید'
+        : 'تا تعیین ماندگاری و حرف کد بچ، محصول قابل فعال‌سازی نیست');
+      return;
+    }
+    const next = productCatalog.map(item => item.id === id ? QCProductCatalog.normalizeProduct({...item, active}) : item);
+    try {
+      await persistProductCatalog(next);
+      productCatalog = next;
+      buildProductList();
+      showToast(active ? 'محصول فعال شد ✓' : 'محصول غیرفعال شد');
+    } catch (error) { showToast('تغییر وضعیت ذخیره نشد: ' + (error?.message || 'اتصال را بررسی کن')); }
+  }
+
+  document.getElementById('saveProduct').addEventListener('click', saveProduct);
+  document.getElementById('cancelProductEdit').addEventListener('click', resetProductForm);
+  document.getElementById('productLetterInput').addEventListener('input', event => { event.target.value = event.target.value.replace(/[^a-z]/gi, '').slice(0,1).toUpperCase(); });
+  document.getElementById('productList').addEventListener('click', event => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+    if (button.dataset.action === 'edit') editProduct(button.dataset.id);
+    if (button.dataset.action === 'toggle') toggleProduct(button.dataset.id);
+  });
+
   function buildPriceList(effective){
     const wrap = document.getElementById('priceList');
-    wrap.innerHTML = '';
-    Object.keys(priceDefaults).forEach(name => {
-      const vals = { ...priceDefaults[name], ...(effective[name] || {}) };
+    wrap.replaceChildren();
+    productCatalog.filter(product => product.pricingEnabled).forEach(product => {
+      const key = product.priceKey || product.id;
+      const stored = safePriceObject(effective);
+      const vals = Object.prototype.hasOwnProperty.call(stored, key)
+        ? safePriceObject(stored[key])
+        : (priceDefaults[key] || {});
       const row = document.createElement('div');
       row.className = 'price-row';
-      row.innerHTML = `
-        <div class="name">${name}</div>
-        <div class="price-fields">
-          <div>
-            <label>قیمت تولیدکننده</label>
-            <input type="number" min="0" step="1" required data-product="${name}" data-field="producer" value="${vals.producer}">
-          </div>
-          <div>
-            <label>قیمت مصرف‌کننده</label>
-            <input type="number" min="0" step="1" required data-product="${name}" data-field="consumer" value="${vals.consumer}">
-          </div>
-        </div>`;
-      wrap.appendChild(row);
+      const name = document.createElement('div'); name.className = 'name'; name.textContent = product.displayName;
+      const fields = document.createElement('div'); fields.className = 'price-fields';
+      [['producer','قیمت تولیدکننده'],['consumer','قیمت مصرف‌کننده']].forEach(([field,labelText]) => {
+        const col = document.createElement('div');
+        const label = document.createElement('label'); label.textContent = labelText;
+        const input = document.createElement('input'); input.type = 'number'; input.min = '0'; input.step = '1'; input.dataset.product = key; input.dataset.field = field;
+        input.placeholder = 'ثبت نشده';
+        input.value = Number.isSafeInteger(vals[field]) && vals[field] >= 0 ? String(vals[field]) : '';
+        col.append(label,input); fields.appendChild(col);
+      });
+      row.append(name,fields); wrap.appendChild(row);
     });
   }
 
   async function loadData(){
     try {
-      const { data, error } = await supa.from('qc_settings').select('key,value').in('key', ['prices','announcement']);
+      const { data, error } = await supa.from('qc_settings').select('key,value').in('key', ['prices','announcement','product_catalog']);
       if(error || !data) throw error || new Error('داده‌ای دریافت نشد');
 
       const priceRow = data.find(r => r.key === 'prices');
-      buildPriceList(priceRow ? priceRow.value : {});
+      effectivePriceOverrides = safePriceObject(priceRow ? priceRow.value : {});
+      const catalogRow = data.find(r => r.key === 'product_catalog');
+      productCatalog = QCProductCatalog.normalizeCatalog(catalogRow ? catalogRow.value : null);
+      buildProductList();
+      buildPriceList(effectivePriceOverrides);
 
       const annRow = data.find(r => r.key === 'announcement');
       if(annRow && annRow.value){
@@ -370,14 +633,18 @@
         document.getElementById('annActive').checked = !!annRow.value.active;
       }
     } catch(e){
+      productCatalog = QCProductCatalog.normalizeCatalog(null);
+      buildProductList();
       buildPriceList({});
       showToast('دریافت اطلاعات ناموفق بود؛ ذخیره نکن');
       document.getElementById('savePrices').disabled = true;
       document.getElementById('saveAnn').disabled = true;
+      document.getElementById('saveProduct').disabled = true;
       return;
     }
     document.getElementById('savePrices').disabled = false;
     document.getElementById('saveAnn').disabled = false;
+    document.getElementById('saveProduct').disabled = false;
   }
 
   async function requireAdminForWrite(){
@@ -402,23 +669,31 @@
   });
 
   document.getElementById('savePrices').addEventListener('click', async () => {
-    const overrides = {};
-    for(const inp of document.querySelectorAll('#priceList input')){
-      const n = Number(inp.value);
-      if(inp.value.trim()==='' || !Number.isSafeInteger(n) || n<0){
-        inp.focus(); inp.setCustomValidity('قیمت باید عدد صحیح نامنفی باشد');inp.reportValidity();
-        showToast('قیمت نامعتبر؛ ذخیره انجام نشد');return;
+    const overrides = { ...effectivePriceOverrides };
+    const grouped = new Map();
+    for (const inp of document.querySelectorAll('#priceList input')) {
+      const key = inp.dataset.product, field = inp.dataset.field;
+      if (!grouped.has(key)) grouped.set(key, {});
+      grouped.get(key)[field] = inp.value.trim();
+    }
+    for (const [key, fields] of grouped.entries()) {
+      const producerRaw = fields.producer || '', consumerRaw = fields.consumer || '';
+      if (!producerRaw && !consumerRaw) { delete overrides[key]; continue; }
+      if (!producerRaw || !consumerRaw) { showToast('برای هر محصول باید هر دو قیمت ثبت شوند یا هر دو خالی باشند'); return; }
+      const producer = Number(producerRaw), consumer = Number(consumerRaw);
+      if (!Number.isSafeInteger(producer) || producer < 0 || !Number.isSafeInteger(consumer) || consumer < 0) {
+        showToast('قیمت‌ها باید عدد صحیح و نامنفی باشند'); return;
       }
-      inp.setCustomValidity('');
-      const name=inp.dataset.product, field=inp.dataset.field;
-      if(!overrides[name]) overrides[name]={};
-      overrides[name][field]=n;
+      overrides[key] = { producer, consumer };
     }
     const btn=document.getElementById('savePrices');btn.disabled=true;
     try {
       await requireAdminForWrite();
       const {error} = await supa.from('qc_settings').upsert({ key: 'prices', value: overrides, updated_at: new Date().toISOString() });
       if(error) throw error;
+      effectivePriceOverrides = overrides;
+      buildPriceList(effectivePriceOverrides);
+      buildProductList();
       showToast('قیمت‌ها با موفقیت روی سرور ذخیره شد ✓');
     } catch(e){ showToast('ذخیره نشد: ' + (e?.message || 'اتصال یا مجوز را بررسی کن')); }
     finally {btn.disabled=false;}
