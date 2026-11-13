@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>فرم اعلام اطلاعات چاپ ویژه رستوران — A5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--ink:#171717}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#edf1f3;color:#172a30;font-family:"Vazirmatn",Tahoma,Arial,sans-serif}
+body{padding:14px 10px 28px}
+.editor{width:min(760px,100%);margin:0 auto 16px;padding:16px 18px;background:#fff;border:1px solid #d9e1e5;border-radius:14px;box-shadow:0 5px 20px #18334b12}
+.editor h1{font-size:18px;font-weight:900;margin:0 0 5px}
+.editor .intro{font-size:12px;color:#52636b;line-height:1.9;margin:0 0 10px}
+.summary{display:flex;flex-wrap:wrap;gap:7px 16px;padding:10px 12px;margin:8px 0 12px;background:#f4f7f8;border-radius:10px;font-size:12px;font-weight:700;line-height:1.9}
+.summary span{white-space:normal}
+#status{font-size:12px;line-height:1.8;margin:0 0 10px;color:#285b39;font-weight:700}
+#status.error{color:#a12e27}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+button,.back{min-height:44px;border:0;border-radius:10px;padding:10px 17px;font:800 14px "Vazirmatn",Tahoma,Arial,sans-serif;text-decoration:none;cursor:pointer}
+button{background:#145e69;color:#fff}
+button:disabled{opacity:.42;cursor:not-allowed}
+.back{display:inline-flex;align-items:center;background:#e9eff1;color:#29424a}
+.paperwrap{position:relative;width:var(--pw,148mm);height:var(--ph,210mm);margin:0 auto;background:#fff}
+.paper{position:absolute;left:0;top:0;width:148mm;height:210mm;overflow:hidden;transform:scale(var(--scale,1));transform-origin:top left;background:#fff;direction:ltr}
+.template{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.value{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;color:#080808;line-height:1.08;padding:0 1mm;white-space:nowrap;font-variant-numeric:tabular-nums}
+.persian{direction:rtl;font-family:"Vazirmatn",Tahoma,Arial,sans-serif;font-weight:900}
+.latin{direction:ltr;font-family:Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:.1px;unicode-bidi:isolate}
+/* Coordinates are mapped to the original 1049 × 1489 px company form. */
+#shift{left:4.96%;top:11.85%;width:41.28%;height:3.05%;font-size:11.5pt}
+#reportDate{left:59.39%;top:11.85%;width:14.97%;height:3.05%;font-size:9.5pt}
+#prodDate{left:59.39%;top:19.15%;width:33.75%;height:5.95%;font-size:16.5pt}
+#expDate{left:59.39%;top:25.35%;width:33.75%;height:5.35%;font-size:16.5pt}
+#batch{left:59.39%;top:31.25%;width:33.75%;height:4.75%;font-size:16pt}
+#letter{left:32.89%;top:41.85%;width:26.50%;height:4.35%;font-size:16pt}
+#size{left:4.96%;top:50.80%;width:41.28%;height:2.45%;font-size:13pt}
+#product{left:59.39%;top:50.80%;width:14.97%;height:2.45%;font-size:11.5pt;padding:0 .5mm}
+@media(max-width:600px){body{padding:8px 6px 20px}.editor{padding:13px}.editor h1{font-size:16px}.summary{gap:4px 10px}}
+@page{size:A5 portrait;margin:0}
+@media print{
+  html,body{width:148mm!important;height:210mm!important;min-height:210mm!important;margin:0!important;padding:0!important;background:#fff!important}
+  .editor{display:none!important}
+  .paperwrap{width:148mm!important;height:210mm!important;margin:0!important}
+  .paper{position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important}
+  .template{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<section class="editor" dir="rtl">
+  <h1>فرم رسمی اعلام اطلاعات چاپ — ویژه رستوران</h1>
+  <p class="intro">این فرم مخصوص محصولات ویژه رستوران است. تاریخ‌ها، کد بچ، حرف محصول و مشخصات محصول مستقیماً از محاسبات QC Toolbox دریافت می‌شوند؛ بخش‌های ساعت، تأیید و امضا مطابق نمونه شرکت برای تکمیل دستی خالی می‌مانند.</p>
+  <div class="summary" id="summary" aria-live="polite"></div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div class="actions">
+    <button id="print" type="button" disabled>چاپ فرم A5 ویژه رستوران</button>
+    <a class="back" href="qc-dairy-v2.html">بازگشت به تولید و انقضا</a>
+  </div>
+</section>
+<div class="paperwrap" id="wrap">
+  <main class="paper" id="paper">
+    <img class="template" id="template" src="alis-restaurant-form-revision5-a5.png" alt="فرم رسمی اعلام اطلاعات چاپ ویژه رستوران آلیس، بازنگری ۵">
+    <div class="value persian" id="shift"></div>
+    <div class="value persian" id="reportDate"></div>
+    <div class="value latin" id="prodDate"></div>
+    <div class="value latin" id="expDate"></div>
+    <div class="value latin" id="batch"></div>
+    <div class="value latin" id="letter"></div>
+    <div class="value persian" id="size"></div>
+    <div class="value persian" id="product"></div>
+  </main>
+</div>
+<script>
+(function(){
+  'use strict';
+  const params=new URLSearchParams(location.search);
+  const $=id=>document.getElementById(id);
+  const mode=params.get('mode')||'';
+  const prod=params.get('prod')||'';
+  const exp=params.get('exp')||'';
+  const batch=params.get('batch')||'';
+  const shift=params.get('shift')||'';
+  const letter=params.get('letter')||'';
+  const size=params.get('size')||'';
+  const rawProduct=params.get('product')||'';
+  const dateRule=/^\d{4}\/\d{2}\/\d{2}$/;
+  const sizeNumber=Number(size);
+  const valid=mode==='sleeve'
+    && dateRule.test(prod) && dateRule.test(exp)
+    && /^[A-Z0-9]{6,16}$/.test(batch)
+    && /^[123]$/.test(shift) && /^[A-Z]$/.test(letter)
+    && /^\d{2,4}$/.test(size) && Number.isInteger(sizeNumber) && sizeNumber>=50 && sizeNumber<=5000
+    && !!rawProduct.trim() && rawProduct.length<=50 && !/[<>]/.test(rawProduct)
+    && !params.has('producer') && !params.has('consumer');
+  const fa=value=>String(value).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+  const set=(id,value)=>{$(id).textContent=value;};
+  const img=$('template'),button=$('print'),status=$('status');
+  let product=rawProduct.trim().replace(/\s*ویژه\s*رستوران\s*$/,'').trim()||rawProduct.trim();
+  if(valid){
+    set('shift',fa(shift));
+    set('reportDate',fa(prod));
+    set('prodDate','P:'+prod);
+    set('expDate','E:'+exp);
+    set('batch','BN:'+batch);
+    set('letter',letter);
+    set('size',fa(size));
+    set('product',product);
+    [
+      ['تولید',fa(prod)],['انقضا',fa(exp)],['کد بچ',batch],
+      ['محصول',product],['اندازه بطری',fa(size)],['شیفت کاری',fa(shift)],
+      ['حرف پرینتر بدنه',letter],['نوع فرم','ویژه رستوران — بدون قیمت']
+    ].forEach(([label,value])=>{
+      const item=document.createElement('span');
+      item.textContent=label+': '+value;
+      $('summary').appendChild(item);
+    });
+  }else{
+    status.classList.add('error');
+    status.textContent='اطلاعات محصول ویژه رستوران ناقص یا نامعتبر است. این فرم فقط برای مسیر اسلیو و بدون قیمت معتبر است؛ از صفحه تولید و انقضا دوباره فرم را باز کنید.';
+  }
+  function fitText(id,minPt,maxPt){
+    const el=$(id); if(!el)return;
+    const cssPt=parseFloat(getComputedStyle(el).fontSize)*72/96;
+    let sizePt=Math.min(maxPt,Math.max(minPt,cssPt));
+    el.style.fontSize=sizePt+'pt';
+    while(el.scrollWidth>el.clientWidth+1&&sizePt>minPt){
+      sizePt=Math.max(minPt,sizePt-.25);
+      el.style.fontSize=sizePt+'pt';
+    }
+  }
+  function fitFields(){fitText('product',8.5,11.5);fitText('batch',12,16);fitText('prodDate',12,16.5);fitText('expDate',12,16.5);}
+  function checkReady(){
+    const imageReady=img.complete&&img.naturalWidth===1049&&img.naturalHeight===1489;
+    button.disabled=!(valid&&imageReady);
+    if(valid){
+      status.classList.toggle('error',!imageReady);
+      status.textContent=imageReady
+        ?'فرم ویژه رستوران آماده چاپ است. خانه‌های ساعت، تأیید اطلاعات و امضا برای تکمیل دستی خالی مانده‌اند.'
+        :'قالب رسمی فرم بارگذاری نشده یا اندازه آن معتبر نیست؛ چاپ تا بارگذاری صحیح قالب غیرفعال است.';
+    }
+  }
+  img.addEventListener('load',()=>{fitFields();checkReady();});
+  img.addEventListener('error',checkReady);
+  button.addEventListener('click',()=>{checkReady();if(!button.disabled)window.print();});
+  function scale(){
+    const pageWidth=148*96/25.4;
+    const ratio=Math.min(1,(document.documentElement.clientWidth-16)/pageWidth);
+    document.documentElement.style.setProperty('--scale',ratio);
+    document.documentElement.style.setProperty('--pw',(pageWidth*ratio)+'px');
+    document.documentElement.style.setProperty('--ph',(210*96/25.4*ratio)+'px');
+    fitFields();
+  }
+  window.addEventListener('resize',scale);
+  scale();
+  fitFields();
+  checkReady();
+})();
+</script>
+</body>
+</html>

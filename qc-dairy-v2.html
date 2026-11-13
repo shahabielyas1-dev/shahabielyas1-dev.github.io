@@ -1894,10 +1894,13 @@ document.getElementById('officialPrintOpen').addEventListener('click', () => {
   const batch = generateBatchCode(jy, jm, jd, product.id, seq);
   if (!batch) { alert('کد بچ نامعتبر است؛ حرف اختصاصی محصول را در پنل مدیریت بررسی کنید.'); return; }
 
+  const restaurantProductName = product.productionType === 'restaurant'
+    ? product.name.replace(/\s*ویژه\s*رستوران\s*$/, '').trim()
+    : product.name;
   const params = new URLSearchParams({
     prod: formatJalaliEn([jy, jm, jd]),
     exp: formatJalaliEn([ey, em, ed]),
-    product: product.name,
+    product: restaurantProductName,
     size: String(product.volumeMl),
     batch,
     shift: shiftEn,
@@ -1908,7 +1911,10 @@ document.getElementById('officialPrintOpen').addEventListener('click', () => {
     params.set('producer', String(prices.producer));
     params.set('consumer', String(prices.consumer));
   }
-  const url = 'alis-print.html?' + params.toString();
+  const printPage = product.productionType === 'restaurant'
+    ? 'alis-restaurant-print.html'
+    : 'alis-print.html';
+  const url = printPage + '?' + params.toString();
   const win = window.open(url, '_blank');
   if (!win) alert('لطفاً باز شدن صفحه جدید (Pop-up) را برای چاپ مجاز کنید.');
 });
