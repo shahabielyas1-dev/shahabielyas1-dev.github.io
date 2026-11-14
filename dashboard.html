@@ -177,6 +177,179 @@
 <link rel="stylesheet" href="qc-readable-interface-phaseM.css">
 <link rel="stylesheet" href="qc-brand-navigation-phaseN.css">
 <link rel="stylesheet" href="qc-unified-theme-phaseQ.css">
+
+<style id="admin-ux-overrides">
+:root{--adm-bg:var(--qc-bg,#e8f0f3);--adm-surface:var(--qc-panel,#f5f9fb);--adm-raised:var(--qc-raised,#eaf2f5);--adm-text:var(--qc-text,#152f3d);--adm-muted:var(--qc-secondary,#415e6c);--adm-line:var(--qc-border,#a8bfcb);--adm-action:var(--qc-action,#086773);--adm-good:#18794e;--adm-warn:#9a6710;--adm-bad:#b42336}
+html,body{background:var(--adm-bg)!important;color:var(--adm-text)!important;font-family:'Vazirmatn',Tahoma,sans-serif}
+body{min-height:100vh;font-weight:500}
+#gate{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:22px;background:var(--adm-bg)}
+#gate .gate-box{width:min(100%,410px);max-width:410px;padding:28px;background:var(--adm-surface)!important;border:1px solid var(--adm-line)!important;border-radius:22px!important;box-shadow:0 12px 34px rgba(20,55,70,.09)!important;text-align:right}
+#gate .gate-box .ic{width:64px;height:64px;margin:0 0 18px;background:var(--adm-raised)!important;border:1px solid var(--adm-line)!important;border-radius:18px;color:var(--adm-text)}
+#gate .gate-box h2{font-size:21px;color:var(--adm-text);margin:0 0 6px}
+#gate .gate-box p{font-size:13px;line-height:1.9;color:var(--adm-muted);margin:0 0 18px}
+#gate .gate-box input{width:100%;min-height:48px;margin:0 0 12px;padding:11px 13px;border:1px solid var(--adm-line)!important;border-radius:12px!important;background:var(--adm-raised)!important;color:var(--adm-text)!important;box-shadow:none!important;letter-spacing:normal}
+#gate .gate-box button{min-height:48px;padding:12px 16px;border:0!important;border-radius:12px!important;background:var(--adm-action)!important;color:#fff!important;box-shadow:none!important;font:800 14px 'Vazirmatn',sans-serif}
+#dash.shell{display:none;width:min(100%,1040px);max-width:1040px;margin:0 auto;padding:22px 20px 54px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:5px 0 20px;border-bottom:1px solid var(--adm-line);margin-bottom:16px}
+.admin-brand{display:flex;align-items:center;gap:13px;min-width:0}
+.admin-logo{width:54px;height:54px;display:grid;place-items:center;flex-shrink:0;border-radius:16px;background:var(--adm-raised);border:1px solid var(--adm-line)}
+.admin-logo img{width:42px;height:42px;object-fit:contain}
+.admin-brand-copy h1{font-size:21px;line-height:1.5;font-weight:900;margin:0;color:var(--adm-text)}
+.admin-brand-copy p{font-size:12px;line-height:1.6;font-weight:500;color:var(--adm-muted);margin:2px 0 0}
+.admin-header-actions{display:flex;align-items:center;gap:10px}
+.session-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--adm-line);border-radius:999px;color:var(--adm-muted);font-size:11px;font-weight:700;white-space:nowrap}
+.session-dot,.data-status-dot{width:7px;height:7px;display:inline-block;border-radius:50%;background:#1b9b67;flex-shrink:0}
+.logout-btn{min-height:38px;padding:7px 13px;border:1px solid var(--adm-line);border-radius:10px;background:var(--adm-surface);color:var(--adm-text);font:700 12px 'Vazirmatn',sans-serif;cursor:pointer}
+.data-status{display:flex;align-items:center;gap:9px;padding:10px 13px;margin:0 0 14px;border:1px solid var(--adm-line);border-radius:11px;background:var(--adm-surface);color:var(--adm-muted);font-size:12px;font-weight:600;line-height:1.7}
+.data-status.success{background:var(--fl-green-soft,#d9eee4);border-color:#9bc9b4;color:#185c43}
+.data-status.error{background:var(--fl-red-soft,#f5e0e3);border-color:#d8a5ad;color:#8b2635}
+.data-status.error .data-status-dot{background:#bd3448}
+.admin-nav{position:sticky;top:8px;z-index:25;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:5px;margin:0 0 16px;border:1px solid var(--adm-line);border-radius:14px;background:var(--adm-raised);box-shadow:0 4px 12px rgba(20,55,70,.06);backdrop-filter:blur(12px)}
+.admin-tab{min-height:44px;padding:9px 12px;border:0!important;border-radius:10px!important;background:transparent!important;color:var(--adm-muted)!important;font:800 13px 'Vazirmatn',sans-serif;cursor:pointer;box-shadow:none!important}
+.admin-tab.active{background:var(--adm-surface)!important;color:var(--adm-text)!important;box-shadow:0 1px 5px rgba(15,45,60,.12)!important}
+.admin-panel{display:none;background:var(--adm-surface)!important;border:1px solid var(--adm-line)!important;border-radius:18px!important;padding:clamp(16px,2.4vw,25px);box-shadow:0 8px 24px rgba(20,55,70,.045)!important;margin:0 0 18px;min-width:0}
+.admin-panel.active{display:block}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:0 0 19px}
+.panel-head-stack{display:block}
+.eyebrow{margin:0 0 4px;color:var(--adm-action);font-size:11px;font-weight:800;letter-spacing:.02em}
+.panel-head h2{margin:0;color:var(--adm-text);font-size:20px;line-height:1.55;font-weight:900}
+.panel-description{margin:4px 0 0;color:var(--adm-muted);font-size:12px;line-height:1.9;font-weight:500;max-width:650px}
+.primary-btn,.secondary-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border:1px solid transparent;border-radius:11px;font:800 13px 'Vazirmatn',sans-serif;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.primary-btn{background:var(--adm-action)!important;color:#fff!important;border-color:var(--adm-action)!important;box-shadow:none!important}
+.primary-btn:hover:not(:disabled){filter:brightness(1.06)}
+.secondary-btn{background:var(--adm-raised)!important;color:var(--adm-text)!important;border-color:var(--adm-line)!important}
+.primary-btn:disabled,.secondary-btn:disabled{opacity:.48;cursor:not-allowed}
+.product-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:0 0 18px}
+.stat-box{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border:1px solid var(--adm-line);border-radius:12px;background:var(--adm-raised)}
+.stat-box span{font-size:11px;font-weight:700;color:var(--adm-muted)}
+.stat-box strong{font:800 20px 'Vazirmatn',sans-serif;color:var(--adm-text);font-variant-numeric:tabular-nums}
+.product-toolbar{display:grid;grid-template-columns:minmax(200px,1fr) auto;align-items:end;gap:12px;margin-bottom:15px}
+.search-field{display:block;min-width:0}
+.search-label,.field-block>label{display:block;margin:0 0 6px;color:var(--adm-muted);font-size:11px;font-weight:800}
+.search-field input,.field-block input,.field-block select,.field-block textarea{width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--adm-line)!important;border-radius:10px!important;background:var(--adm-raised)!important;color:var(--adm-text)!important;font:600 13px 'Vazirmatn',sans-serif;box-shadow:none!important}
+.search-field input{direction:rtl}
+.filter-chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.filter-chip{min-height:36px;padding:7px 11px;border:1px solid var(--adm-line)!important;border-radius:999px!important;background:var(--adm-surface)!important;color:var(--adm-muted)!important;font:700 11px 'Vazirmatn',sans-serif;cursor:pointer;box-shadow:none!important}
+.filter-chip.active{background:var(--adm-teal-soft,var(--fl-teal-soft,#d5ebee))!important;border-color:var(--adm-action)!important;color:var(--adm-text)!important}
+.product-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
+.product-card{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:13px;border:1px solid var(--adm-line)!important;border-radius:13px!important;background:var(--adm-surface)!important;box-shadow:none!important}
+.product-card-info{min-width:0;flex:1}
+.product-card-name{font-size:14px;line-height:1.65;font-weight:900;color:var(--adm-text);overflow-wrap:anywhere}
+.product-card-meta{margin-top:3px;color:var(--adm-muted);font-size:10.5px;line-height:1.85;font-weight:600}
+.product-card-tags{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:7px}
+.product-type,.product-status{display:inline-flex;align-items:center;min-height:23px;padding:3px 8px;border-radius:999px;font-size:10px;line-height:1.4;font-weight:800}
+.product-type{background:var(--adm-raised);color:var(--adm-muted);border:1px solid var(--adm-line)}
+.product-status.ready{background:var(--fl-green-soft,#d9eee4);color:#17633f}
+.product-status.draft{background:var(--fl-amber-soft,#f7e9cb);color:#80570c}
+.product-status.inactive{background:var(--adm-raised);color:var(--adm-muted)}
+.product-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.product-actions button{min-height:34px;padding:6px 10px;border:1px solid var(--adm-line)!important;border-radius:8px!important;font:700 10.5px 'Vazirmatn',sans-serif;white-space:nowrap;cursor:pointer;box-shadow:none!important}
+.product-edit{background:var(--adm-raised)!important;color:var(--adm-text)!important}
+.product-toggle{background:var(--adm-surface)!important;color:var(--adm-action)!important}
+.product-actions button:disabled{opacity:.42;cursor:not-allowed}
+.product-empty{grid-column:1/-1;padding:25px 12px;text-align:center;border:1px dashed var(--adm-line);border-radius:12px;color:var(--adm-muted);font-size:12px}
+.section-footnote{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--adm-line);color:var(--adm-muted);font-size:11px;line-height:1.9}
+.info-note{padding:12px 14px;margin:0 0 16px;border:1px solid #d4b777;border-radius:11px;background:var(--qc-warning-bg,#fff0cf);color:var(--qc-warning-ink,#644209);font-size:12px;line-height:1.9}
+.price-list-head{display:flex;justify-content:space-between;gap:12px;padding:0 12px 8px;color:var(--adm-muted);font-size:10px;font-weight:800}
+.price-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.price-row{min-width:0;padding:13px;border:1px solid var(--adm-line)!important;border-radius:12px!important;background:var(--adm-raised)!important}
+.price-row .name{margin:0 0 10px;color:var(--adm-text);font-size:13px;font-weight:900;line-height:1.7}
+.price-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.price-fields div{min-width:0}
+.price-fields label{display:block;margin:0 0 5px;color:var(--adm-muted)!important;font-size:10px;font-weight:700}
+.price-fields input{width:100%;min-width:0;min-height:42px;padding:9px 10px;border:1px solid var(--adm-line)!important;border-radius:9px!important;background:var(--adm-surface)!important;color:var(--adm-text)!important;font:700 12px 'JetBrains Mono',monospace;direction:ltr;text-align:left;box-shadow:none!important}
+.save-area{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding-top:15px;border-top:1px solid var(--adm-line)}
+.save-hint{margin:0;color:var(--adm-muted);font-size:11px;line-height:1.8;font-weight:500}
+.save-wide{min-width:190px}
+.field-block{min-width:0}
+.field-block textarea{min-height:125px;resize:vertical;line-height:1.9}
+.field-meta{display:flex;justify-content:space-between;gap:12px;margin-top:5px;color:var(--adm-muted);font-size:10px}
+.announcement-control{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:18px;padding:14px;border:1px solid var(--adm-line);border-radius:12px;background:var(--adm-raised)}
+.announcement-control strong{font-size:13px;color:var(--adm-text)}
+.announcement-control p{margin:4px 0 0;color:var(--adm-muted);font-size:11px;line-height:1.8}
+.announcement-preview{margin-top:15px;padding:14px;border:1px solid var(--adm-line);border-radius:12px;background:var(--adm-raised)}
+.preview-heading{display:flex;align-items:center;gap:8px;color:var(--adm-text);font-size:12px}
+.preview-icon{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--adm-action);color:#fff;font:800 13px Arial,sans-serif}
+.preview-state{margin-inline-start:auto;padding:3px 8px;border-radius:999px;background:var(--adm-surface);color:var(--adm-muted);font-size:10px}
+.preview-state.active{background:var(--fl-green-soft,#d9eee4);color:#17633f}
+.announcement-preview p{margin:10px 0 0;color:var(--adm-text);font-size:12px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}
+.switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+.switch input{position:absolute;width:1px;height:1px;opacity:0}
+.switch .slider{position:absolute;inset:0;border:1px solid var(--adm-line)!important;border-radius:999px;background:var(--adm-surface)!important;cursor:pointer;transition:.18s}
+.switch .slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;border:0!important;border-radius:50%;background:#8298a4;transition:.18s}
+.switch input:checked+.slider{background:var(--adm-action)!important;border-color:var(--adm-action)!important}
+.switch input:checked+.slider:before{transform:translateX(19px);background:#fff}
+.modal-overlay{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(9,27,36,.55);backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex}
+.modal-box{width:min(100%,570px);max-width:570px;max-height:min(90svh,900px);overflow:auto;padding:22px;background:var(--adm-surface)!important;border:1px solid var(--adm-line)!important;border-radius:19px!important;box-shadow:0 18px 55px rgba(0,0,0,.2)!important;text-align:right}
+.product-modal-box{padding:22px}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;padding-bottom:15px;border-bottom:1px solid var(--adm-line);margin-bottom:15px}
+.modal-header h2{margin:0;color:var(--adm-text);font-size:18px;font-weight:900}
+.modal-header p:not(.eyebrow){margin:5px 0 0;color:var(--adm-muted);font-size:11px;line-height:1.8}
+.icon-close{width:36px;height:36px;flex-shrink:0;border:1px solid var(--adm-line)!important;border-radius:9px!important;background:var(--adm-raised)!important;color:var(--adm-text)!important;font:400 24px/1 Arial,sans-serif;cursor:pointer;box-shadow:none!important}
+.form-section{padding:3px 0 15px;margin-bottom:12px;border-bottom:1px solid var(--adm-line)}
+.form-section h3{margin:0 0 12px;color:var(--adm-text);font-size:13px;font-weight:900}
+.product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field-full{grid-column:1/-1}
+.field-block input:focus,.field-block select:focus,.search-field input:focus,.price-fields input:focus,.field-block textarea:focus{outline:3px solid color-mix(in srgb,var(--adm-action) 22%,transparent);outline-offset:1px;border-color:var(--adm-action)!important}
+.field-hint{margin:5px 0 0;color:var(--adm-muted);font-size:10px;line-height:1.7;font-weight:500}
+.activation-box{padding:13px;border:1px solid var(--adm-line);border-radius:12px;background:var(--adm-raised)}
+.activation-toggle{display:flex;align-items:center;gap:12px;cursor:pointer}
+.activation-toggle>span:last-child{display:flex;flex-direction:column;gap:3px}
+.activation-toggle strong{font-size:12px;color:var(--adm-text)}
+.activation-toggle small{font-size:10px;line-height:1.8;color:var(--adm-muted)}
+.product-form-actions{display:flex;gap:9px;margin-top:16px}
+.product-form-actions button{min-height:44px;padding:10px 14px;border:1px solid transparent;border-radius:11px;font:800 13px 'Vazirmatn',sans-serif;box-shadow:none;cursor:pointer}
+.product-form-actions .primary-btn{flex:1;background:var(--adm-action)!important;color:#fff!important;border-color:var(--adm-action)!important}
+.product-form-actions .secondary-btn{min-width:105px;background:var(--adm-raised)!important;color:var(--adm-text)!important;border-color:var(--adm-line)!important}
+body.modal-open{overflow:hidden}
+.toast{position:fixed;bottom:18px;left:50%;z-index:120;max-width:calc(100vw - 28px);transform:translate(-50%,14px);padding:11px 16px;border:1px solid var(--adm-line);border-radius:11px;background:var(--adm-text);color:#fff;font-size:12px;line-height:1.7;font-weight:700;box-shadow:0 8px 25px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:.2s;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+#installOverlay .modal-box{max-width:390px}
+#installOverlay .modal-close{min-height:44px;border:0!important;border-radius:10px!important;background:var(--adm-action)!important;color:#fff!important;font:800 13px 'Vazirmatn',sans-serif;box-shadow:none!important}
+#installOverlay .modal-secondary{background:var(--adm-raised)!important;color:var(--adm-text)!important;border:1px solid var(--adm-line)!important}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--fl-teal-deep,#087b87)!important;outline-offset:3px}
+@media(max-width:760px){
+ #dash.shell{padding:16px 14px 38px}
+ .product-list,.price-list{grid-template-columns:1fr}
+ .product-toolbar{grid-template-columns:1fr;align-items:stretch}
+ .filter-chips{overflow-x:auto;flex-wrap:nowrap;padding:2px 0 5px}
+ .filter-chip{flex-shrink:0}
+}
+@media(max-width:520px){
+ .admin-header{align-items:flex-start;gap:8px;padding-bottom:14px}
+ .admin-brand{gap:9px}
+ .admin-logo{width:44px;height:44px;border-radius:13px}
+ .admin-logo img{width:35px;height:35px}
+ .admin-brand-copy h1{font-size:17px}
+ .admin-brand-copy p{font-size:10px}
+ .session-chip{display:none}
+ .logout-btn{min-height:36px;padding:6px 10px}
+ .admin-nav{top:4px}
+ .admin-tab{min-height:42px;padding:8px 6px;font-size:12px}
+ .panel-head{flex-direction:column;align-items:stretch;gap:12px}
+ .panel-head .primary-btn{width:100%}
+ .panel-head h2{font-size:18px}
+ .product-stats{gap:6px}
+ .stat-box{padding:10px 9px;flex-direction:column;align-items:flex-start;gap:3px}
+ .stat-box span{font-size:10px}
+ .stat-box strong{font-size:18px}
+ .product-card{align-items:flex-start;padding:11px;gap:8px}
+ .product-card-name{font-size:13px}
+ .product-actions button{min-width:62px;padding:6px 7px}
+ .price-fields{gap:7px}
+ .save-area{align-items:stretch;flex-direction:column}
+ .save-wide{width:100%}
+ .product-grid{grid-template-columns:1fr}
+ .field-full{grid-column:auto}
+ .modal-overlay{padding:10px}
+ .modal-box{max-height:94svh;padding:16px;border-radius:16px!important}
+ .product-form-actions{flex-direction:column}
+ .product-form-actions .secondary-btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
 </head>
 <body>
 
@@ -193,85 +366,172 @@
 </div>
 
 <div id="dash" class="shell">
-  <div class="topbar">
-    <div>
-      <h1>داشبورد مدیریت</h1>
-      <p>جعبه ابزار QC — تغییرات این‌جا برای همه‌ی کاربرها نمایش داده می‌شه</p>
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="admin-logo"><img src="qc-toolbox-logo-symbol.webp" width="46" height="42" alt="QC Toolbox"></div>
+      <div class="admin-brand-copy">
+        <h1>مدیریت QC Toolbox</h1>
+        <p>مدیریت اطلاعات عملیاتی برنامه</p>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;"><button id="logoutBtn" class="modal-close" style="width:auto;padding:8px;font-size:12px;background:var(--paper);color:var(--ink);">خروج</button><div class="badge">⚙️</div></div>
+    <div class="admin-header-actions">
+      <span class="session-chip"><span class="session-dot"></span> دسترسی مدیر</span>
+      <button id="logoutBtn" class="logout-btn" type="button">خروج</button>
+    </div>
+  </header>
+
+  <div id="dataStatus" class="data-status" role="status" aria-live="polite">
+    <span class="data-status-dot"></span><span id="dataStatusText">در حال دریافت اطلاعات از سرور…</span>
   </div>
 
-  <div class="panel">
-    <h3>📌 اعلان بالای برنامه</h3>
-    <p class="sub">این پیام به‌صورت یک نوار زرد بالای صفحه‌ی اصلی جعبه ابزار QC به همه نشون داده می‌شه</p>
-    <textarea id="annText" placeholder="مثلاً: امروز خط ۲ به دلیل تعمیرات تعطیله"></textarea>
-    <div class="toggle-row">
-      <label class="switch">
-        <input type="checkbox" id="annActive">
-        <span class="slider"></span>
-      </label>
-      <label for="annActive">نمایش اعلان فعال باشه</label>
-    </div>
-    <button class="save-btn" id="saveAnn">ذخیره اعلان</button>
-  </div>
+  <nav class="admin-nav" role="tablist" aria-label="بخش‌های مدیریت">
+    <button id="adminTabProducts" class="admin-tab active" type="button" role="tab" aria-selected="true" aria-controls="productManagerPanel" tabindex="0" data-admin-tab="products">محصولات</button>
+    <button id="adminTabPrices" class="admin-tab" type="button" role="tab" aria-selected="false" aria-controls="pricePanel" tabindex="-1" data-admin-tab="prices">قیمت‌ها</button>
+    <button id="adminTabAnnouncements" class="admin-tab" type="button" role="tab" aria-selected="false" aria-controls="announcementPanel" tabindex="-1" data-admin-tab="announcements">اعلان‌ها</button>
+  </nav>
 
-  <div class="panel" id="productManagerPanel">
-    <h3>🧃 مدیریت محصولات</h3>
-    <p class="sub">محصولات، حجم، نوع تولید، ماندگاری مصوب و حرف اختصاصی کد بچ را مدیریت کن. محصول ناقص تا تکمیل مشخصات وارد محاسبات نمی‌شود.</p>
-    <div id="productList" class="product-list" aria-live="polite"></div>
-    <div class="product-form">
-      <h4 id="productFormTitle">افزودن محصول جدید</h4>
-      <input id="productId" type="hidden">
+  <main>
+    <section id="productManagerPanel" class="admin-panel active" data-admin-panel="products" role="tabpanel" aria-labelledby="adminTabProducts">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">کاتالوگ مرکزی</p>
+          <h2>مدیریت محصولات</h2>
+          <p class="panel-description">مشخصات تولید، ماندگاری و وضعیت فعال‌بودن محصولات را مدیریت کن.</p>
+        </div>
+        <button id="openProductFormBtn" class="primary-btn" type="button" disabled>＋ افزودن محصول</button>
+      </div>
+
+      <div class="product-stats" aria-label="خلاصه وضعیت محصولات">
+        <div class="stat-box"><span>فعال</span><strong id="productCountActive">۰</strong></div>
+        <div class="stat-box"><span>نیازمند تکمیل</span><strong id="productCountDraft">۰</strong></div>
+        <div class="stat-box"><span>غیرفعال</span><strong id="productCountInactive">۰</strong></div>
+      </div>
+
+      <div class="product-toolbar">
+        <label class="search-field" for="productSearch">
+          <span class="search-label">جست‌وجوی محصول</span>
+          <input id="productSearch" type="search" placeholder="نام یا حجم محصول…" autocomplete="off">
+        </label>
+        <div class="filter-chips" role="group" aria-label="فیلتر محصولات">
+          <button type="button" class="filter-chip active" data-product-filter="all" aria-pressed="true">همه</button>
+          <button type="button" class="filter-chip" data-product-filter="standard" aria-pressed="false">عادی</button>
+          <button type="button" class="filter-chip" data-product-filter="restaurant" aria-pressed="false">رستورانی</button>
+          <button type="button" class="filter-chip" data-product-filter="draft" aria-pressed="false">نیازمند تکمیل</button>
+          <button type="button" class="filter-chip" data-product-filter="inactive" aria-pressed="false">غیرفعال</button>
+        </div>
+      </div>
+
+      <div id="productList" class="product-list" aria-live="polite"></div>
+      <p class="section-footnote">محصول ناقص یا فاقد ماندگاری مصوب و حرف کد بچ، وارد محاسبات تولید و چاپ نمی‌شود.</p>
+    </section>
+
+    <section id="pricePanel" class="admin-panel" data-admin-panel="prices" role="tabpanel" aria-labelledby="adminTabPrices" hidden>
+      <div class="panel-head panel-head-stack">
+        <div>
+          <p class="eyebrow">قیمت‌گذاری آنلاین</p>
+          <h2>مدیریت قیمت‌ها</h2>
+          <p class="panel-description">برای هر محصول عادی، هر دو قیمت را با هم ثبت کن. واحد تمام مبالغ ریال است.</p>
+        </div>
+      </div>
+      <div class="info-note"><strong>توجه:</strong> محصولات ویژه رستوران در این بخش نمایش داده نمی‌شوند و هیچ قیمت عادی به آن‌ها منتقل نخواهد شد. در محصولات دارای قیمت پیش‌فرض، خالی‌کردن هر دو فیلد مقدار پیش‌فرض برنامه را بازیابی می‌کند.</div>
+      <div class="price-list-head"><span>محصول</span><span>قیمت تولیدکننده و مصرف‌کننده</span></div>
+      <div id="priceList" class="price-list"></div>
+      <div class="save-area">
+        <p class="save-hint">تغییرات پس از ذخیره روی سرور ثبت و برای کاربران برنامه اعمال می‌شود.</p>
+        <button class="primary-btn save-wide" id="savePrices" type="button" disabled>ذخیره همه قیمت‌ها</button>
+      </div>
+    </section>
+
+    <section id="announcementPanel" class="admin-panel" data-admin-panel="announcements" role="tabpanel" aria-labelledby="adminTabAnnouncements" hidden>
+      <div class="panel-head panel-head-stack">
+        <div>
+          <p class="eyebrow">اطلاع‌رسانی به کاربران</p>
+          <h2>مدیریت اعلان‌ها</h2>
+          <p class="panel-description">متن این بخش به‌صورت نوار اطلاع‌رسانی در صفحه اصلی برنامه نمایش داده می‌شود.</p>
+        </div>
+      </div>
+      <div class="field-block">
+        <label for="annText">متن اعلان</label>
+        <textarea id="annText" rows="4" maxlength="500" disabled placeholder="مثلاً: امروز خط ۲ به دلیل تعمیرات متوقف است."></textarea>
+        <div class="field-meta"><span>حداکثر ۵۰۰ نویسه</span><span id="annCharCount">۰ / ۵۰۰</span></div>
+      </div>
+      <div class="announcement-control">
+        <div>
+          <strong>وضعیت نمایش اعلان</strong>
+          <p>با غیرفعال‌کردن، متن ذخیره می‌ماند اما به کاربران نشان داده نمی‌شود.</p>
+        </div>
+        <label class="switch" for="annActive" aria-label="فعال یا غیرفعال کردن اعلان">
+          <input type="checkbox" id="annActive" disabled><span class="slider"></span>
+        </label>
+      </div>
+      <div class="announcement-preview" aria-live="polite">
+        <div class="preview-heading"><span class="preview-icon">i</span><strong>پیش‌نمایش اعلان</strong><span id="annPreviewState" class="preview-state">غیرفعال</span></div>
+        <p id="annPreviewText">متن اعلان پس از واردکردن، اینجا نمایش داده می‌شود.</p>
+      </div>
+      <div class="save-area">
+        <p class="save-hint">پیش از فعال‌سازی، متن اعلان را بازبینی کن.</p>
+        <button class="primary-btn save-wide" id="saveAnn" type="button" disabled>ذخیره تنظیمات اعلان</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-overlay product-modal" id="productModal" aria-hidden="true">
+  <div class="modal-box product-modal-box" role="dialog" aria-modal="true" aria-labelledby="productFormTitle">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">مشخصات کاتالوگ</p>
+        <h2 id="productFormTitle">افزودن محصول جدید</h2>
+        <p id="productFormSubtitle">ابتدا مشخصات پایه را وارد کن؛ فعال‌سازی فقط پس از تکمیل الزامات ممکن است.</p>
+      </div>
+      <button id="productModalClose" class="icon-close" type="button" aria-label="بستن پنجره">×</button>
+    </div>
+    <input id="productId" type="hidden">
+    <div class="form-section">
+      <h3>۱. مشخصات محصول</h3>
       <div class="product-grid">
-        <div>
-          <label for="productNameInput">نام محصول (بدون حجم)</label>
-          <input id="productNameInput" type="text" maxlength="50" placeholder="مثلاً: دوغ">
+        <div class="field-block">
+          <label for="productNameInput">نام محصول</label>
+          <input id="productNameInput" type="text" maxlength="50" placeholder="مثلاً: دوغ" autocomplete="off">
         </div>
-        <div>
-          <label for="productVolumeInput">حجم (میلی‌لیتر)</label>
-          <input id="productVolumeInput" type="number" min="50" max="5000" step="1" placeholder="مثلاً: ۲۷۵">
+        <div class="field-block">
+          <label for="productVolumeInput">حجم بطری (میلی‌لیتر)</label>
+          <input id="productVolumeInput" type="number" min="50" max="5000" step="1" inputmode="numeric" placeholder="مثلاً: ۲۷۵">
         </div>
-        <div>
+        <div class="field-block field-full">
           <label for="productTypeInput">نوع تولید</label>
           <select id="productTypeInput">
-            <option value="standard">تولید عادی (قیمت‌دار)</option>
-            <option value="restaurant">ویژه رستوران (اسلیو)</option>
+            <option value="standard">تولید عادی — قیمت‌دار</option>
+            <option value="restaurant">ویژه رستوران — چاپ اسلیو</option>
           </select>
+          <p id="productTypeHint" class="field-hint">محصول عادی به قیمت تولیدکننده و مصرف‌کننده نیاز دارد.</p>
         </div>
-        <div>
-          <label for="productShelfInput">ماندگاری مصوب (ماه)</label>
-          <input id="productShelfInput" type="number" min="1" max="36" step="1" placeholder="هنوز تعیین نشده">
-        </div>
-        <div>
-          <label for="productLetterInput">حرف اختصاصی کد بچ</label>
-          <input id="productLetterInput" type="text" maxlength="1" pattern="[A-Za-z]" autocapitalize="characters" placeholder="مثلاً: K" style="direction:ltr;text-transform:uppercase;">
-        </div>
-      </div>
-      <div class="toggle-row">
-        <label class="switch"><input type="checkbox" id="productActiveInput"><span class="slider"></span></label>
-        <label for="productActiveInput">فعال‌سازی محصول پس از تکمیل مشخصات</label>
-      </div>
-      <p class="product-hint">برای فعال‌سازی، ثبت ماندگاری مصوب و حرف کد بچ الزامی است. در محصولات ویژه رستوران قیمت‌گذاری غیرفعال است و هیچ قیمتی به آن‌ها منتقل نمی‌شود.</p>
-      <div class="product-form-actions">
-        <button type="button" id="saveProduct">ذخیره محصول</button>
-        <button type="button" id="cancelProductEdit">انصراف / محصول جدید</button>
       </div>
     </div>
-  </div>
-
-  <div class="panel">
-    <button type="button" class="collapsible-header" id="priceToggle">
-      <div>
-        <h3>💰 قیمت محصولات</h3>
-        <p class="sub" style="margin-bottom:0;">برای دیدن و ویرایش لیست، بازش کن — قیمت‌ها به ریال</p>
+    <div class="form-section">
+      <h3>۲. مشخصات عملیاتی</h3>
+      <div class="product-grid">
+        <div class="field-block">
+          <label for="productShelfInput">ماندگاری مصوب (ماه)</label>
+          <input id="productShelfInput" type="number" min="1" max="36" step="1" inputmode="numeric" placeholder="هنوز تعیین نشده">
+          <p class="field-hint">بدون ماندگاری مصوب، محاسبه و چاپ غیرفعال می‌ماند.</p>
+        </div>
+        <div class="field-block">
+          <label for="productLetterInput">حرف اختصاصی کد بچ</label>
+          <input id="productLetterInput" type="text" maxlength="1" pattern="[A-Za-z]" autocapitalize="characters" placeholder="مثلاً A" style="direction:ltr;text-transform:uppercase;">
+          <p class="field-hint">یک حرف انگلیسی از A تا Z.</p>
+        </div>
       </div>
-      <span class="chevron">›</span>
-    </button>
-    <div class="collapsible-body" id="priceBody">
-      <div class="collapsible-body-inner">
-        <div id="priceList"></div>
-        <button class="save-btn" id="savePrices" style="background:var(--green);">ذخیره قیمت‌ها</button>
-      </div>
+    </div>
+    <div class="activation-box">
+      <label class="activation-toggle" for="productActiveInput">
+        <span class="switch"><input type="checkbox" id="productActiveInput"><span class="slider"></span></span>
+        <span><strong>فعال‌سازی محصول پس از ذخیره</strong><small>نیازمند ماندگاری، حرف بچ و برای محصولات عادی، هر دو قیمت معتبر.</small></span>
+      </label>
+    </div>
+    <div class="product-form-actions">
+      <button type="button" id="saveProduct" class="primary-btn" disabled>ذخیره محصول</button>
+      <button type="button" id="cancelProductEdit" class="secondary-btn">انصراف</button>
     </div>
   </div>
 </div>
@@ -330,6 +590,10 @@
   let startupSessionCheck = null;
   let productCatalog = QCProductCatalog.normalizeCatalog(null);
   let effectivePriceOverrides = {};
+  let dataReady = false;
+  let productFilter = 'all';
+  let productFormBaseline = '';
+  let productModalReturnFocus = null;
 
   // same defaults baked into the QC tool — dashboard shows/edits on top of these
   const priceDefaults = {
@@ -388,13 +652,36 @@
   document.getElementById('logoutBtn').addEventListener('click',async()=>{ if(supa) await supa.auth.signOut(); showGate(); });
   startupSessionCheck = verifyAdminSession().catch(() => { showGate(); return false; });
 
-  const priceToggle = document.getElementById('priceToggle');
-  const priceBody = document.getElementById('priceBody');
-  priceToggle.addEventListener('click', () => {
-    const willOpen = !priceBody.classList.contains('open');
-    priceBody.classList.toggle('open', willOpen);
-    priceToggle.classList.toggle('open', willOpen);
+  // The dashboard is divided into focused work areas; only one area is shown at a time.
+  function activateAdminTab(name){
+    document.querySelectorAll('[data-admin-tab]').forEach(tab=>{
+      const active=tab.dataset.adminTab===name;
+      tab.classList.toggle('active',active);
+      tab.setAttribute('aria-selected',active?'true':'false');
+      tab.tabIndex=active?0:-1;
+    });
+    document.querySelectorAll('[data-admin-panel]').forEach(panel=>{
+      const active=panel.dataset.adminPanel===name;
+      panel.classList.toggle('active',active);
+      panel.hidden=!active;
+    });
+  }
+  document.querySelectorAll('[data-admin-tab]').forEach((tab,index,tabs)=>{
+    tab.addEventListener('click',()=>activateAdminTab(tab.dataset.adminTab));
+    tab.addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+      event.preventDefault();
+      const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:event.key==='ArrowLeft'?(index+1)%tabs.length:(index-1+tabs.length)%tabs.length;
+      tabs[next].focus();activateAdminTab(tabs[next].dataset.adminTab);
+    });
   });
+
+  function setDataStatus(message,state=''){
+    const box=document.getElementById('dataStatus');
+    document.getElementById('dataStatusText').textContent=message;
+    box.classList.remove('success','error');
+    if(state)box.classList.add(state);
+  }
 
   function showToast(msg){
     const t = document.getElementById('toast');
@@ -423,76 +710,133 @@
       && !!product.batchLetter && productHasValidPrices(product);
   }
 
+  function productNeedsAttention(product){
+    return !QCProductCatalog.isValidShelfLife(product.shelfLifeMonths)
+      || !product.batchLetter
+      || (product.pricingEnabled && !productHasValidPrices(product));
+  }
+
   function productStatusLabel(product){
-    if (!QCProductCatalog.isValidShelfLife(product.shelfLifeMonths)) return 'پیش‌نویس: ماندگاری تعیین نشده';
-    if (!product.batchLetter) return 'پیش‌نویس: حرف کد بچ ثبت نشده';
-    if (product.pricingEnabled && !productHasValidPrices(product)) return product.active ? 'خطا: قیمت ناقص' : 'پیش‌نویس: قیمت‌ها ثبت نشده';
-    return QCProductCatalog.statusText(product);
+    if (!QCProductCatalog.isValidShelfLife(product.shelfLifeMonths)) return 'ماندگاری تعیین نشده';
+    if (!product.batchLetter) return 'حرف کد بچ ثبت نشده';
+    if (product.pricingEnabled && !productHasValidPrices(product)) return 'قیمت ناقص';
+    return product.active ? 'فعال' : 'غیرفعال';
+  }
+
+  function updateProductCounts(){
+    const active=productCatalog.filter(product=>product.active&&productCanBeActivated(product)).length;
+    const draft=productCatalog.filter(product=>productNeedsAttention(product)).length;
+    const inactive=Math.max(0,productCatalog.length-active-draft);
+    document.getElementById('productCountActive').textContent=QCProductCatalog.toPersianDigits(active);
+    document.getElementById('productCountDraft').textContent=QCProductCatalog.toPersianDigits(draft);
+    document.getElementById('productCountInactive').textContent=QCProductCatalog.toPersianDigits(inactive);
   }
 
   function buildProductList(){
-    const wrap = document.getElementById('productList');
+    const wrap=document.getElementById('productList');
+    const search=(document.getElementById('productSearch')?.value||'').trim().toLocaleLowerCase('fa');
     wrap.replaceChildren();
-    productCatalog.forEach(product => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      const info = document.createElement('div');
-      const name = document.createElement('div');
-      name.className = 'product-card-name';
-      name.textContent = product.displayName;
-      const meta = document.createElement('div');
-      meta.className = 'product-card-meta';
-      const typeText = product.productionType === 'restaurant' ? 'ویژه رستوران · اسلیو' : 'تولید عادی · قیمت‌دار';
-      const shelfText = product.shelfLifeMonths ? product.shelfLifeMonths + ' ماه' : 'تعیین نشده';
-      const letterText = product.batchLetter || 'ثبت نشده';
-      meta.textContent = typeText + ' · ماندگاری: ' + shelfText + ' · حرف بچ: ' + letterText;
-      const status = document.createElement('span');
-      status.className = 'product-status' + (QCProductCatalog.canUse(product) ? ' ready' : '');
-      status.textContent = productStatusLabel(product);
-      info.append(name, meta, status);
-
-      const actions = document.createElement('div');
-      actions.className = 'product-actions';
-      const edit = document.createElement('button');
-      edit.type = 'button'; edit.className = 'product-edit'; edit.dataset.action = 'edit'; edit.dataset.id = product.id; edit.textContent = 'ویرایش';
-      const toggle = document.createElement('button');
-      toggle.type = 'button'; toggle.className = 'product-toggle'; toggle.dataset.action = 'toggle'; toggle.dataset.id = product.id;
-      toggle.textContent = product.active ? 'غیرفعال' : 'فعال‌سازی';
-      if (!product.active && !productCanBeActivated(product)) toggle.disabled = true;
-      actions.append(edit, toggle);
-      card.append(info, actions);
-      wrap.appendChild(card);
+    updateProductCounts();
+    const visible=productCatalog.filter(product=>{
+      const matchesSearch=!search||product.displayName.toLocaleLowerCase('fa').includes(search)||product.name.toLocaleLowerCase('fa').includes(search);
+      let matchesFilter=true;
+      if(productFilter==='standard')matchesFilter=product.productionType==='standard';
+      if(productFilter==='restaurant')matchesFilter=product.productionType==='restaurant';
+      if(productFilter==='draft')matchesFilter=productNeedsAttention(product);
+      if(productFilter==='inactive')matchesFilter=!product.active&&!productNeedsAttention(product);
+      return matchesSearch&&matchesFilter;
     });
-    if (!productCatalog.length) {
-      const empty = document.createElement('div'); empty.className = 'product-empty'; empty.textContent = 'هنوز محصولی تعریف نشده است.'; wrap.appendChild(empty);
+
+    visible.forEach(product=>{
+      const card=document.createElement('article');card.className='product-card';
+      const info=document.createElement('div');info.className='product-card-info';
+      const name=document.createElement('div');name.className='product-card-name';name.textContent=product.displayName;
+      const shelfText=product.shelfLifeMonths?QCProductCatalog.toPersianDigits(product.shelfLifeMonths)+' ماه':'تعیین نشده';
+      const letterText=product.batchLetter||'ثبت نشده';
+      const meta=document.createElement('div');meta.className='product-card-meta';
+      meta.textContent='ماندگاری: '+shelfText+'  ·  حرف بچ: '+letterText;
+      const tags=document.createElement('div');tags.className='product-card-tags';
+      const type=document.createElement('span');type.className='product-type';
+      type.textContent=product.productionType==='restaurant'?'ویژه رستوران · اسلیو':'تولید عادی · قیمت‌دار';
+      const status=document.createElement('span');
+      const ready=product.active&&productCanBeActivated(product);
+      status.className='product-status '+(ready?'ready':productNeedsAttention(product)?'draft':'inactive');
+      status.textContent=productStatusLabel(product);
+      tags.append(type,status);info.append(name,meta,tags);
+
+      const actions=document.createElement('div');actions.className='product-actions';
+      const edit=document.createElement('button');edit.type='button';edit.className='product-edit';edit.dataset.action='edit';edit.dataset.id=product.id;edit.textContent='ویرایش';edit.disabled=!dataReady;
+      const toggle=document.createElement('button');toggle.type='button';toggle.className='product-toggle';toggle.dataset.action='toggle';toggle.dataset.id=product.id;
+      toggle.textContent=product.active?'غیرفعال‌کردن':'فعال‌سازی';
+      toggle.disabled=!dataReady||(!product.active&&!productCanBeActivated(product));
+      actions.append(edit,toggle);card.append(info,actions);wrap.appendChild(card);
+    });
+    if(!visible.length){
+      const empty=document.createElement('div');empty.className='product-empty';
+      empty.textContent=productCatalog.length?'محصولی با این جست‌وجو یا فیلتر پیدا نشد.':'هنوز محصولی تعریف نشده است.';
+      wrap.appendChild(empty);
     }
   }
 
-  function resetProductForm(){
-    document.getElementById('productId').value = '';
-    document.getElementById('productNameInput').value = '';
-    document.getElementById('productVolumeInput').value = '';
-    document.getElementById('productTypeInput').value = 'standard';
-    document.getElementById('productShelfInput').value = '';
-    document.getElementById('productLetterInput').value = '';
-    document.getElementById('productActiveInput').checked = false;
-    document.getElementById('productFormTitle').textContent = 'افزودن محصول جدید';
-    document.getElementById('saveProduct').textContent = 'ذخیره محصول';
+  function productFormSignature(){
+    return JSON.stringify({
+      id:document.getElementById('productId').value,
+      name:document.getElementById('productNameInput').value,
+      volume:document.getElementById('productVolumeInput').value,
+      type:document.getElementById('productTypeInput').value,
+      shelf:document.getElementById('productShelfInput').value,
+      letter:document.getElementById('productLetterInput').value,
+      active:document.getElementById('productActiveInput').checked
+    });
   }
-
+  function openProductModal(){
+    const modal=document.getElementById('productModal');productModalReturnFocus=document.activeElement;
+    modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');
+    setTimeout(()=>document.getElementById('productNameInput').focus(),40);
+  }
+  function closeProductModal(){
+    const modal=document.getElementById('productModal');
+    modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');
+    if(productModalReturnFocus&&typeof productModalReturnFocus.focus==='function')productModalReturnFocus.focus();
+    productModalReturnFocus=null;
+  }
+  function updateProductTypeHint(){
+    const restaurant=document.getElementById('productTypeInput').value==='restaurant';
+    document.getElementById('productTypeHint').textContent=restaurant
+      ?'ویژه رستوران: قیمت‌گذاری در این بخش غیرفعال است و فرم چاپ از مسیر اسلیو صادر می‌شود.'
+      :'تولید عادی: برای محصول جدید، ابتدا پیش‌نویس را ذخیره کن؛ سپس هر دو قیمت را در بخش قیمت‌ها ثبت و بعد محصول را فعال کن.';
+  }
+  function resetProductForm(){
+    document.getElementById('productId').value='';
+    document.getElementById('productNameInput').value='';
+    document.getElementById('productVolumeInput').value='';
+    document.getElementById('productTypeInput').value='standard';
+    document.getElementById('productShelfInput').value='';
+    document.getElementById('productLetterInput').value='';
+    document.getElementById('productActiveInput').checked=false;
+    document.getElementById('productFormTitle').textContent='افزودن محصول جدید';
+    document.getElementById('productFormSubtitle').textContent='ابتدا مشخصات پایه را وارد کن؛ فعال‌سازی فقط پس از تکمیل الزامات ممکن است.';
+    document.getElementById('saveProduct').textContent='ذخیره محصول';
+    productFormBaseline=productFormSignature();
+    updateProductTypeHint();closeProductModal();
+  }
+  function discardProductForm(){
+    if(productFormSignature()!==productFormBaseline&&!window.confirm('تغییرات ذخیره نشده‌اند. از این فرم خارج می‌شوی؟'))return;
+    resetProductForm();
+  }
   function editProduct(id){
-    const product = productCatalog.find(item => item.id === id);
-    if (!product) return;
-    document.getElementById('productId').value = product.id;
-    document.getElementById('productNameInput').value = product.name;
-    document.getElementById('productVolumeInput').value = product.volumeMl;
-    document.getElementById('productTypeInput').value = product.productionType;
-    document.getElementById('productShelfInput').value = product.shelfLifeMonths || '';
-    document.getElementById('productLetterInput').value = product.batchLetter || '';
-    document.getElementById('productActiveInput').checked = product.active;
-    document.getElementById('productFormTitle').textContent = 'ویرایش ' + product.displayName;
-    document.getElementById('saveProduct').textContent = 'ذخیره تغییرات';
-    document.getElementById('productManagerPanel').scrollIntoView({behavior:'smooth',block:'start'});
+    const product=productCatalog.find(item=>item.id===id);if(!product)return;
+    document.getElementById('productId').value=product.id;
+    document.getElementById('productNameInput').value=product.name;
+    document.getElementById('productVolumeInput').value=product.volumeMl;
+    document.getElementById('productTypeInput').value=product.productionType;
+    document.getElementById('productShelfInput').value=product.shelfLifeMonths||'';
+    document.getElementById('productLetterInput').value=product.batchLetter||'';
+    document.getElementById('productActiveInput').checked=product.active;
+    document.getElementById('productFormTitle').textContent='ویرایش محصول';
+    document.getElementById('productFormSubtitle').textContent=product.displayName+' · تغییرات فقط پس از ذخیره روی سرور اعمال می‌شوند.';
+    document.getElementById('saveProduct').textContent='ذخیره تغییرات';
+    productFormBaseline=productFormSignature();updateProductTypeHint();openProductModal();
   }
 
   async function persistProductCatalog(nextCatalog){
@@ -571,6 +915,10 @@
         : 'تا تعیین ماندگاری و حرف کد بچ، محصول قابل فعال‌سازی نیست');
       return;
     }
+    const confirmation=active
+      ? 'این محصول در فهرست انتخاب تولید و چاپ کاربران قرار می‌گیرد. فعال‌سازی انجام شود؟'
+      : 'با غیرفعال‌کردن، این محصول از فهرست انتخاب کاربران خارج می‌شود. ادامه می‌دهی؟';
+    if(!window.confirm(confirmation))return;
     const next = productCatalog.map(item => item.id === id ? QCProductCatalog.normalizeProduct({...item, active}) : item);
     try {
       await persistProductCatalog(next);
@@ -580,71 +928,94 @@
     } catch (error) { showToast('تغییر وضعیت ذخیره نشد: ' + (error?.message || 'اتصال را بررسی کن')); }
   }
 
-  document.getElementById('saveProduct').addEventListener('click', saveProduct);
-  document.getElementById('cancelProductEdit').addEventListener('click', resetProductForm);
-  document.getElementById('productLetterInput').addEventListener('input', event => { event.target.value = event.target.value.replace(/[^a-z]/gi, '').slice(0,1).toUpperCase(); });
-  document.getElementById('productList').addEventListener('click', event => {
-    const button = event.target.closest('button[data-action]');
-    if (!button) return;
-    if (button.dataset.action === 'edit') editProduct(button.dataset.id);
-    if (button.dataset.action === 'toggle') toggleProduct(button.dataset.id);
+  document.getElementById('saveProduct').addEventListener('click',saveProduct);
+  document.getElementById('cancelProductEdit').addEventListener('click',discardProductForm);
+  document.getElementById('productModalClose').addEventListener('click',discardProductForm);
+  document.getElementById('openProductFormBtn').addEventListener('click',()=>{resetProductForm();openProductModal();});
+  document.getElementById('productModal').addEventListener('click',event=>{if(event.target.id==='productModal')discardProductForm();});
+  document.addEventListener('keydown',event=>{
+    const modal=document.getElementById('productModal');if(!modal.classList.contains('open'))return;
+    if(event.key==='Escape'){event.preventDefault();discardProductForm();return;}
+    if(event.key==='Tab'){
+      const focusable=Array.from(modal.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[href],[tabindex]:not([tabindex="-1"])')).filter(el=>el.offsetParent!==null);
+      if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+  });
+  document.getElementById('productTypeInput').addEventListener('change',updateProductTypeHint);
+  document.getElementById('productSearch').addEventListener('input',buildProductList);
+  document.querySelectorAll('[data-product-filter]').forEach(button=>button.addEventListener('click',()=>{
+    productFilter=button.dataset.productFilter;
+    document.querySelectorAll('[data-product-filter]').forEach(item=>{
+      const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',active?'true':'false');
+    });
+    buildProductList();
+  }));
+  document.getElementById('productLetterInput').addEventListener('input',event=>{event.target.value=event.target.value.replace(/[^a-z]/gi,'').slice(0,1).toUpperCase();});
+  document.getElementById('productList').addEventListener('click',event=>{
+    const button=event.target.closest('button[data-action]');if(!button||button.disabled)return;
+    if(button.dataset.action==='edit')editProduct(button.dataset.id);
+    if(button.dataset.action==='toggle')toggleProduct(button.dataset.id);
   });
 
   function buildPriceList(effective){
-    const wrap = document.getElementById('priceList');
-    wrap.replaceChildren();
-    productCatalog.filter(product => product.pricingEnabled).forEach(product => {
-      const key = product.priceKey || product.id;
-      const stored = safePriceObject(effective);
-      const vals = Object.prototype.hasOwnProperty.call(stored, key)
-        ? safePriceObject(stored[key])
-        : (priceDefaults[key] || {});
-      const row = document.createElement('div');
-      row.className = 'price-row';
-      const name = document.createElement('div'); name.className = 'name'; name.textContent = product.displayName;
-      const fields = document.createElement('div'); fields.className = 'price-fields';
-      [['producer','قیمت تولیدکننده'],['consumer','قیمت مصرف‌کننده']].forEach(([field,labelText]) => {
-        const col = document.createElement('div');
-        const label = document.createElement('label'); label.textContent = labelText;
-        const input = document.createElement('input'); input.type = 'number'; input.min = '0'; input.step = '1'; input.dataset.product = key; input.dataset.field = field;
-        input.placeholder = 'ثبت نشده';
-        input.value = Number.isSafeInteger(vals[field]) && vals[field] >= 0 ? String(vals[field]) : '';
-        col.append(label,input); fields.appendChild(col);
+    const wrap=document.getElementById('priceList');wrap.replaceChildren();
+    const pricedProducts=productCatalog.filter(product=>product.pricingEnabled);
+    pricedProducts.forEach(product=>{
+      const key=product.priceKey||product.id;
+      const stored=safePriceObject(effective);
+      const vals=Object.prototype.hasOwnProperty.call(stored,key)?safePriceObject(stored[key]):(priceDefaults[key]||{});
+      const row=document.createElement('div');row.className='price-row';
+      const name=document.createElement('div');name.className='name';name.textContent=product.displayName;
+      const fields=document.createElement('div');fields.className='price-fields';
+      [['producer','قیمت تولیدکننده (ریال)'],['consumer','قیمت مصرف‌کننده (ریال)']].forEach(([field,labelText])=>{
+        const col=document.createElement('div');
+        const label=document.createElement('label');label.textContent=labelText;
+        const input=document.createElement('input');input.type='number';input.min='0';input.step='1';input.inputMode='numeric';input.dir='ltr';input.dataset.product=key;input.dataset.field=field;
+        input.placeholder='ثبت نشده';input.value=Number.isSafeInteger(vals[field])&&vals[field]>=0?String(vals[field]):'';
+        input.disabled=!dataReady;
+        col.append(label,input);fields.appendChild(col);
       });
-      row.append(name,fields); wrap.appendChild(row);
+      row.append(name,fields);wrap.appendChild(row);
     });
+    if(!pricedProducts.length){const empty=document.createElement('div');empty.className='product-empty';empty.textContent='در حال حاضر محصول قیمت‌دار تعریف نشده است.';wrap.appendChild(empty);}
   }
 
   async function loadData(){
-    try {
-      const { data, error } = await supa.from('qc_settings').select('key,value').in('key', ['prices','announcement','product_catalog']);
-      if(error || !data) throw error || new Error('داده‌ای دریافت نشد');
-
-      const priceRow = data.find(r => r.key === 'prices');
-      effectivePriceOverrides = safePriceObject(priceRow ? priceRow.value : {});
-      const catalogRow = data.find(r => r.key === 'product_catalog');
-      productCatalog = QCProductCatalog.normalizeCatalog(catalogRow ? catalogRow.value : null);
-      buildProductList();
-      buildPriceList(effectivePriceOverrides);
-
-      const annRow = data.find(r => r.key === 'announcement');
-      if(annRow && annRow.value){
-        document.getElementById('annText').value = annRow.value.text || '';
-        document.getElementById('annActive').checked = !!annRow.value.active;
+    dataReady=false;setDataStatus('در حال دریافت اطلاعات محصولات، قیمت‌ها و اعلان‌ها از سرور…');
+    document.getElementById('openProductFormBtn').disabled=true;
+    document.getElementById('savePrices').disabled=true;
+    document.getElementById('saveAnn').disabled=true;
+    document.getElementById('saveProduct').disabled=true;
+    try{
+      const {data,error}=await supa.from('qc_settings').select('key,value').in('key',['prices','announcement','product_catalog']);
+      if(error||!data)throw error||new Error('داده‌ای دریافت نشد');
+      const priceRow=data.find(row=>row.key==='prices');
+      effectivePriceOverrides=safePriceObject(priceRow?priceRow.value:{});
+      const catalogRow=data.find(row=>row.key==='product_catalog');
+      productCatalog=QCProductCatalog.normalizeCatalog(catalogRow?catalogRow.value:null);
+      const annRow=data.find(row=>row.key==='announcement');
+      if(annRow&&annRow.value){
+        document.getElementById('annText').value=annRow.value.text||'';
+        document.getElementById('annActive').checked=!!annRow.value.active;
       }
-    } catch(e){
-      productCatalog = QCProductCatalog.normalizeCatalog(null);
-      buildProductList();
-      buildPriceList({});
-      showToast('دریافت اطلاعات ناموفق بود؛ ذخیره نکن');
-      document.getElementById('savePrices').disabled = true;
-      document.getElementById('saveAnn').disabled = true;
-      document.getElementById('saveProduct').disabled = true;
-      return;
+      dataReady=true;
+      buildProductList();buildPriceList(effectivePriceOverrides);updateAnnouncementPreview();
+      document.getElementById('openProductFormBtn').disabled=false;
+      document.getElementById('savePrices').disabled=false;
+      document.getElementById('saveAnn').disabled=false;
+      document.getElementById('annText').disabled=false;
+      document.getElementById('annActive').disabled=false;
+      document.getElementById('saveProduct').disabled=false;
+      setDataStatus('اطلاعات آنلاین با موفقیت دریافت شد. تغییرات پس از ذخیره روی سرور ثبت می‌شوند.','success');
+    }catch(error){
+      dataReady=false;
+      productCatalog=QCProductCatalog.normalizeCatalog(null);
+      buildProductList();buildPriceList({});updateAnnouncementPreview();
+      setDataStatus('دریافت اطلاعات از سرور ناموفق بود؛ برای جلوگیری از بازنویسی اطلاعات، امکان ویرایش و ذخیره غیرفعال شده است. اتصال و مجوز دسترسی را بررسی کن.','error');
+      showToast('دریافت اطلاعات ناموفق بود؛ فعلاً چیزی ذخیره نکن');
     }
-    document.getElementById('savePrices').disabled = false;
-    document.getElementById('saveAnn').disabled = false;
-    document.getElementById('saveProduct').disabled = false;
   }
 
   async function requireAdminForWrite(){
@@ -653,11 +1024,25 @@
     if(error || !user || user.id !== verifiedAdminId){ showGate();throw new Error('نشست مدیریت منقضی شده است'); }
   }
 
+  function updateAnnouncementPreview(){
+    const text=document.getElementById('annText').value.trim();
+    const checked=document.getElementById('annActive').checked;
+    const active=checked&&!!text;
+    document.getElementById('annPreviewText').textContent=text||'متن اعلان پس از واردکردن، اینجا نمایش داده می‌شود.';
+    document.getElementById('annPreviewState').textContent=checked&&!text?'متن لازم است':active?'فعال':'غیرفعال';
+    document.getElementById('annPreviewState').classList.toggle('active',active);
+    document.getElementById('annCharCount').textContent=QCProductCatalog.toPersianDigits(document.getElementById('annText').value.length)+' / ۵۰۰';
+  }
+  document.getElementById('annText').addEventListener('input',updateAnnouncementPreview);
+  document.getElementById('annActive').addEventListener('change',updateAnnouncementPreview);
+  updateProductTypeHint();updateAnnouncementPreview();
+
   document.getElementById('saveAnn').addEventListener('click', async () => {
     const value = {
       text: document.getElementById('annText').value.trim(),
       active: document.getElementById('annActive').checked
     };
+    if(value.active&&!value.text){showToast('برای فعال‌کردن اعلان، ابتدا متن آن را وارد کن');return;}
     const btn = document.getElementById('saveAnn'); btn.disabled=true;
     try {
       await requireAdminForWrite();
@@ -678,7 +1063,13 @@
     }
     for (const [key, fields] of grouped.entries()) {
       const producerRaw = fields.producer || '', consumerRaw = fields.consumer || '';
-      if (!producerRaw && !consumerRaw) { delete overrides[key]; continue; }
+      if (!producerRaw && !consumerRaw) {
+        const product=productCatalog.find(item=>(item.priceKey||item.id)===key);
+        const defaults=priceDefaults[key]||{};
+        const hasValidDefaults=Number.isSafeInteger(defaults.producer)&&defaults.producer>=0&&Number.isSafeInteger(defaults.consumer)&&defaults.consumer>=0;
+        if(product?.active&&!hasValidDefaults){showToast('برای خالی‌کردن قیمت محصول فعال، ابتدا آن را غیرفعال کن.');return;}
+        delete overrides[key];continue;
+      }
       if (!producerRaw || !consumerRaw) { showToast('برای هر محصول باید هر دو قیمت ثبت شوند یا هر دو خالی باشند'); return; }
       const producer = Number(producerRaw), consumer = Number(consumerRaw);
       if (!Number.isSafeInteger(producer) || producer < 0 || !Number.isSafeInteger(consumer) || consumer < 0) {
